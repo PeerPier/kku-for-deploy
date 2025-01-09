@@ -58,4 +58,4 @@ const initializeSocket = () => {
   });
 };
 
-module.exports = initializeSocket;
+initializeSocket()
