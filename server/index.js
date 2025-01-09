@@ -32,20 +32,20 @@ admin.initializeApp({
 app.use(cookieParser());
 app.use(express.json());
 
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, "uploads/");
-//   },
-//   filename: (req, file, cb) => {
-//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-//     cb(
-//       null,
-//       file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
-//     );
-//   },
-// });
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(
+      null,
+      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
+    );
+  },
+});
 
-// const upload = multer({ storage: storage });
+const upload = multer({ storage: storage });
 
 const registerRouter = require("./routes/register");
 const loginRouter = require("./routes/login");
@@ -85,7 +85,7 @@ app.use("/admin", AdminProfile);
 app.use("/admin/register", AdminRegister);
 app.use("/api/questions", questionRouter);
 app.use("/api/report", reportRouter);
-// app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static("uploads"));
 app.use("/create-blog", BlogCreated);
 app.use("/views", viewsRouter);
 app.use("/token", token);
@@ -166,21 +166,21 @@ app.post("/google-auth", async (req, res) => {
   }
 });
 
-// app.post("/get-upload-picture", upload.single("file"), (req, res) => {
-//   try {
-//     if (!req.file) {
-//       return res.status(400).json({ error: "No file uploaded" });
-//     }
+app.post("/get-upload-picture", upload.single("file"), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
 
-//     return res.status(200).json({
-//       message: "File uploaded successfully",
-//       filename: req.file.filename,
-//     });
-//   } catch (err) {
-//     console.log(err.message);
-//     return res.status(500).json({ error: err.message });
-//   }
-// });
+    return res.status(200).json({
+      message: "File uploaded successfully",
+      filename: req.file.filename,
+    });
+  } catch (err) {
+    console.log(err.message);
+    return res.status(500).json({ error: err.message });
+  }
+});
 
 app.post("/search-blogs", (req, res) => {
   const { tag, author, query, page, limit, eliminate_blog } = req.body;
@@ -254,7 +254,6 @@ app.post("/search-users", (req, res) => {
 console.log("MONGO CONNECT");
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
-  console.log("SERVER");
 });
 mongoose
   .connect(uri)
