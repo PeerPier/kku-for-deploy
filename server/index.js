@@ -10,7 +10,6 @@ const cookieParser = require("cookie-parser");
 const admin = require("firebase-admin");
 const { getAuth } = require("firebase-admin/auth");
 const jwt = require("jsonwebtoken");
-const initializeSocket = require("./socket/index");
 const app = express();
 require("dotenv").config();
 const port = process.env.PORT || 3001;
@@ -251,8 +250,6 @@ app.post("/search-users", (req, res) => {
       return res.status(500).json({ error: err.message });
     });
 });
-
-initializeSocket();
 
 console.log("MONGO CONNECT");
 app.listen(port, () => {
