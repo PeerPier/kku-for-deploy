@@ -19,7 +19,7 @@ app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://kku-client.vercel.app",
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
