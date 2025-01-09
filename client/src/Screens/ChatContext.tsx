@@ -144,7 +144,7 @@ export const ChatContextProvider: React.FC<ChatContextProviderProps> = ({ childr
 
   useEffect(() => {
     const newSocket = io(
-      process.env.SOCKET_ENDPOINT || "http://localhost:3002"
+      process.env.SOCKET_ENDPOINT || "https://kku-socket.onrender.com"
       // "https://kku-blog-server-ak2l.onrender.com" ||
       // "https://kku-for-deploy.onrender.com"
     );
