@@ -210,7 +210,6 @@ router.post("/increment-view", async (req, res) => {
   }
 });
 
-
 router.post("/get-blog", async (req, res) => {
   try {
     const { blog_id } = req.body;
@@ -239,25 +238,35 @@ router.post("/get-blog", async (req, res) => {
       return res.status(404).json({ error: "Blog not found" });
     }
 
+    if (!userId) {
+      if (blog.visibility == 'public'){
+        return res.status(200).json({ blog });
+      }else{
+        return res.status(403).json({
+          error: "This post is only visible to followers"
+        });
+      }
+    }
+
     // Check viewing permissions using the canView static method
     const canViewBlog = await Blog.canView(userId, blog.author._id);
-    
+
     if (typeof canViewBlog === 'boolean' && canViewBlog) {
       // User is the author - can see everything
       return res.status(200).json({ blog });
     } else if (typeof canViewBlog === 'object') {
       // User is either a follower or not logged in - apply visibility filter
       const visibilityFilter = canViewBlog;
-      
+
       // Check if the blog's visibility matches the allowed visibility
-      const canView = visibilityFilter.$or.some(filter => {
-        if (filter.visibility === blog.visibility) return true;
-        return false;
+      const canView = Array.isArray(visibilityFilter.$or) && visibilityFilter.$or.some(filter => {
+        console.log(filter, blog.visibility)
+        return filter.visibility === blog.visibility;
       });
 
-      if (!canView) {
-        return res.status(403).json({ 
-          error: "This post is only visible to followers" 
+      if (!canView && userId) {
+        return res.status(403).json({
+          error: "This post is only visible to followers"
         });
       }
 
@@ -265,8 +274,8 @@ router.post("/get-blog", async (req, res) => {
     }
 
     // If we get here, user doesn't have permission
-    return res.status(403).json({ 
-      error: "You don't have permission to view this post" 
+    return res.status(403).json({
+      error: "You don't have permission to view this post"
     });
 
   } catch (err) {
