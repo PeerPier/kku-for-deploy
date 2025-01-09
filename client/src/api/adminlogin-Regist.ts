@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 
-const API_BASE_URL = "http://localhost:3001";
+const API_BASE_URL = "https://kku-for-deploy.onrender.com";
 
 export const registerAdmin = async (admin: any): Promise<any> => {
   const url = `${API_BASE_URL}/admin/register`;

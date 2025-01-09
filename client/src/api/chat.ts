@@ -1,4 +1,4 @@
-export const API_BASE_URL = "http://localhost:3001";
+export const API_BASE_URL = "https://kku-for-deploy.onrender.com";
 
 export const postRequest = async (url: string, body: any) => {
   const response = await fetch(url, {

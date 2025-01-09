@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:3001";
+const API_BASE_URL = "https://kku-for-deploy.onrender.com";
 
 // Function to fetch all questions
 export const fetchQuestionsAPI = async () => {

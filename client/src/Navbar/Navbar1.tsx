@@ -116,8 +116,8 @@ const Navbar1: React.FC<Navbar1Props> = ({ children }) => {
   //       const encodedQuery = encodeURIComponent(query);
   //       const endpoint =
   //         searchType === "users"
-  //           ? `http://localhost:3001/users/search?query=${encodedQuery}`
-  //           : `http://localhost:3001/posts/search?query=${encodedQuery}`;
+  //           ? `https://kku-for-deploy.onrender.com/users/search?query=${encodedQuery}`
+  //           : `https://kku-for-deploy.onrender.com/posts/search?query=${encodedQuery}`;
 
   //       const response = await fetch(endpoint, {
   //         method: "GET",
@@ -226,7 +226,7 @@ const Navbar1: React.FC<Navbar1Props> = ({ children }) => {
   ) => {
     e.preventDefault();
     try {
-      await axios.patch(`http://localhost:3001/notifications/${notificationId}/mark-as-read`);
+      await axios.patch(`https://kku-for-deploy.onrender.com/notifications/${notificationId}/mark-as-read`);
       setNotifications((prevNotifications) =>
         prevNotifications.map((notification) =>
           notification._id === notificationId ? { ...notification, isRead: true } : notification
@@ -241,7 +241,7 @@ const Navbar1: React.FC<Navbar1Props> = ({ children }) => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/notifications?userId=${userId}`);
+        const response = await axios.get(`https://kku-for-deploy.onrender.com/notifications?userId=${userId}`);
         setNotifications(response.data);
       } catch (error) {
         console.error("Error fetching notifications:", error);

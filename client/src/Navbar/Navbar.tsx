@@ -22,7 +22,7 @@ function Navbar() {
   const userId = sessionStorage.getItem("userId");
 
   const [notifications, setNotifications] = useState<any[]>([]);
-  const API_BASE_URL = "http://localhost:3001";
+  const API_BASE_URL = "https://kku-for-deploy.onrender.com";
 
   useEffect(() => {
     const fetchNotifications = async () => {

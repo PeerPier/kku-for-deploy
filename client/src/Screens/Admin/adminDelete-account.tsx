@@ -12,7 +12,7 @@ const DeleteAdminAccountModal: React.FC<{
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const API_BASE_URL = "http://localhost:3001";
+  const API_BASE_URL = "https://kku-for-deploy.onrender.com";
   const navigate = useNavigate();
 
   const handleDeleteAccount = async () => {

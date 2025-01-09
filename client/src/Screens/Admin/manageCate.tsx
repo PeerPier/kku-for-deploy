@@ -70,7 +70,7 @@ const ManageCate: React.FC<{ blogsData: Blog[] }> = ({ blogsData }) => {
   const handleEditTag = async () => {
     if (selectedTag) {
       try {
-        const response = await fetch("http://localhost:3001/create-blog/edit-tag", {
+        const response = await fetch("https://kku-for-deploy.onrender.com/create-blog/edit-tag", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -106,7 +106,7 @@ const ManageCate: React.FC<{ blogsData: Blog[] }> = ({ blogsData }) => {
   const handleDeleteTag = async () => {
     if (selectedTag) {
       try {
-        const response = await fetch("http://localhost:3001/create-blog/deletetag", {
+        const response = await fetch("https://kku-for-deploy.onrender.com/create-blog/deletetag", {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json"

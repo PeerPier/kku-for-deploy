@@ -36,7 +36,7 @@ export function FollowingModal({ userProfile }: any) {
   }, [userProfile, myUser, isFollowingModal]);
 
   const handleFollow = useCallback(async (you: string) => {
-    const API_BASE_URL = "http://localhost:3001/follow";
+    const API_BASE_URL = "https://kku-for-deploy.onrender.com/follow";
     try {
       const response = await fetch(API_BASE_URL, {
         method: "POST",
@@ -63,7 +63,7 @@ export function FollowingModal({ userProfile }: any) {
   }, []);
 
   const handleUnfollow = useCallback(async (you: string) => {
-    const API_BASE_URL_DELETE = "http://localhost:3001/follow/delete";
+    const API_BASE_URL_DELETE = "https://kku-for-deploy.onrender.com/follow/delete";
     try {
       const response = await fetch(API_BASE_URL_DELETE, {
         method: "DELETE",

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:3001";
+const API_BASE_URL = "https://kku-for-deploy.onrender.com";
 
 export const fetchAdminProfile = async (id: string): Promise<any> => {
   if (!id) {
@@ -58,7 +58,7 @@ export const fetchUser = async () => {
     console.error("No token found, redirecting to login...");
     return;
   }
-  const response = await fetch("http://localhost:3001/profile", {
+  const response = await fetch("https://kku-for-deploy.onrender.com/profile", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -80,7 +80,7 @@ export const fetchViews = async () => {
     console.error("No token found, redirecting to login...");
     return;
   }
-  const response = await fetch("http://localhost:3001/views", {
+  const response = await fetch("https://kku-for-deploy.onrender.com/views", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -104,7 +104,7 @@ export const fetchUsersAPI = async () => {
     return;
   }
 
-  const response = await fetch("http://localhost:3001/admin/users", {
+  const response = await fetch("https://kku-for-deploy.onrender.com/admin/users", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -125,7 +125,7 @@ export const fetchAllUser = async () => {
     return;
   }
 
-  const response = await fetch("http://localhost:3001/admin/viewer", {
+  const response = await fetch("https://kku-for-deploy.onrender.com/admin/viewer", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -148,7 +148,7 @@ export const fetchAllBlog = async () => {
   }
 
   const response = await fetch(
-    "http://localhost:3001/admin/blogs/within24hour",
+    "https://kku-for-deploy.onrender.com/admin/blogs/within24hour",
     {
       method: "GET",
       headers: {
@@ -171,7 +171,7 @@ export const fetchBlogById = async (userId: string | null) => {
     console.error("No token found, redirecting to login...");
     return;
   }
-  const response = await fetch(`http://localhost:3001/admin/blogs/${userId}`, {
+  const response = await fetch(`https://kku-for-deploy.onrender.com/admin/blogs/${userId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

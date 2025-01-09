@@ -16,7 +16,7 @@ interface LoginPageProps {
 
 const Login: React.FC<LoginPageProps> = ({ type }) => {
   const authForm = useRef<HTMLFormElement>(null);
-  const API_URL = "http://localhost:3001";
+  const API_URL = "https://kku-for-deploy.onrender.com";
   const navigate = useNavigate();
 
   const {

@@ -20,7 +20,7 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
   refreshReports
 }) => {
   const navigate = useNavigate();
-  const API_BASE_URL = "http://localhost:3001";
+  const API_BASE_URL = "https://kku-for-deploy.onrender.com";
 
   const verifyReport = async (
     reportId: string,
