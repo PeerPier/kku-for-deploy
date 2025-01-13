@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Notification = require("../models/notifaications");
+const Notifications = require("../models/notifications");
 const Report = require("../models/report");
 const Post = require("../models/blog");
 const Comment = require("../models/comment");
