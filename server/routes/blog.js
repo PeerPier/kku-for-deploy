@@ -10,6 +10,7 @@ const Notifications = require("../models/notifaications");
 const View = require("../models/view");
 const Comment = require("../models/comments");
 const auth = require("./authMiddleware");
+const bcrypt = require("bcrypt");
 
 const verifyJWT = (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -556,6 +557,69 @@ router.post("/edit-tag", async (req, res) => {
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
+});
+
+let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
+
+router.post("/change-password", verifyJWT, (req, res) => {
+  let { currentPassword, newPassword, ChecknewPassword } = req.body;
+
+  if (
+    !passwordRegex.test(currentPassword) ||
+    !passwordRegex.test(newPassword) ||
+    !passwordRegex.test(ChecknewPassword)
+  ) {
+    return res.status(403).json({
+      error:
+        "รหัสผ่านควรมีความยาว 6-20 ตัวอักษร พร้อมตัวเลข ตัวพิมพ์เล็ก 1 ตัว ตัวพิมพ์ใหญ่ 1 ตัว",
+    });
+  }
+
+  if (newPassword !== ChecknewPassword) {
+    return res.status(403).json({ error: "รหัสผ่านใหม่ไม่ตรงกัน" });
+  }
+  User.findOne({ _id: req.user })
+    .then((user) => {
+      if (user.google_auth) {
+        return res.status(403).json({
+          error:
+            "คุณไม่สามารถเปลี่ยนรหัสผ่านของบัญชีนี้ได้เพราะคุณเข้าสู่ระบบผ่าน Google",
+        });
+      }
+
+      bcrypt.compare(currentPassword, user.password, (err, result) => {
+        if (err) {
+          return res.status(500).json({
+            error:
+              "เกิดข้อผิดพลาดบางอย่างขณะบันทึกรหัสผ่านใหม่ โปรดลองอีกครั้งภายหลัง",
+          });
+        }
+
+        if (!result) {
+          return res.status(403).json({ error: "รหัสผ่านปัจจุบันไม่ถูกต้อง" });
+        }
+
+        bcrypt.hash(newPassword, 10, (err, hashed_password) => {
+          User.findOneAndUpdate(
+            { _id: req.user },
+            { password: hashed_password }
+          )
+            .then((u) => {
+              return res.status(200).json({ status: "เปลี่ยนรหัสผ่านแล้ว" });
+            })
+            .catch((err) => {
+              return res.status(500).json({
+                error:
+                  "เกิดข้อผิดพลาดบางอย่างขณะบันทึกรหัสผ่านใหม่ โปรดลองอีกครั้งภายหลัง",
+              });
+            });
+        });
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ error: "หาผู้ใช้ไม่พบ" });
+    });
 });
 
 router.post("/user-written-blog", verifyJWT, (req, res) => {
