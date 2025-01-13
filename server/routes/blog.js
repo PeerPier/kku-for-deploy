@@ -622,6 +622,28 @@ router.post("/change-password", verifyJWT, (req, res) => {
     });
 });
 
+router.post("/save-blog", verifyJWT, (req, res) => {
+  let { _id, issavedByUser } = req.body;
+
+  let incrementVal = !issavedByUser ? 1 : -1;
+
+  Blog.findOneAndUpdate(
+    { _id },
+    { $inc: { "activity.total_saves": incrementVal } },
+    { new: true }
+  )
+    .then((blog) => {
+      if (!blog) {
+        return res.status(404).json({ error: "Blog not found" });
+      }
+
+      return res.status(200).json({ saved_by_user: !issavedByUser });
+    })
+    .catch((err) => {
+      return res.status(500).json({ error: "Failed to update blog" });
+    });
+});
+
 router.post("/user-written-blog", verifyJWT, (req, res) => {
   let user_id = req.user;
   let { page, draft, query, deleteDocCount } = req.body;

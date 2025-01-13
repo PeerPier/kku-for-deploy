@@ -47,6 +47,10 @@ const postSchema = new mongoose.Schema(
         type: Number,
         default: 0,
       },
+      total_saves: {
+        type: Number,
+        default: 0,
+      },
       total_comments: {
         type: Number,
         default: 0,

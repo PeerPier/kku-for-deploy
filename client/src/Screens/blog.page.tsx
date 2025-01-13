@@ -29,6 +29,8 @@ interface BlogContextType {
   setBlog: Dispatch<SetStateAction<Partial<Post>>>;
   islikedByUser: boolean;
   setLikeByUser: React.Dispatch<React.SetStateAction<boolean>>;
+  issavedByUser: boolean;
+  setSaveByUser: React.Dispatch<React.SetStateAction<boolean>>;
   commentWrapper: boolean;
   setCommentWrapper: React.Dispatch<React.SetStateAction<boolean>>;
   totalParentCommentsLoaded: number;
@@ -57,6 +59,7 @@ export const BlogState: Partial<Post> = {
   activity: {
     total_likes: 0,
     total_comments: 0,
+    total_saves: 0,
   },
   views: 0,
   visibility: "public",
@@ -75,6 +78,7 @@ const BlogPage = () => {
   const [error, setError] = useState<string | null>(null);
   let { _id, topic, content, banner, author, publishedAt, visibility } = blog;
   const [islikedByUser, setLikeByUser] = useState(false);
+  const [issavedByUser, setSaveByUser] = useState(false);
   const [commentWrapper, setCommentWrapper] = useState(false);
   const [totalParentCommentsLoaded, setTotalParentCommentsLoaded] = useState(0);
 
@@ -257,6 +261,8 @@ const BlogPage = () => {
             setBlog,
             islikedByUser,
             setLikeByUser,
+            issavedByUser,
+            setSaveByUser,
             commentWrapper,
             setCommentWrapper,
             totalParentCommentsLoaded,
