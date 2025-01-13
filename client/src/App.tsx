@@ -42,6 +42,8 @@ import AccountPreferences from "./Screens/AccountPreferences";
 // import ResetPassword from './Screens/Admin/ResetPassword';
 import SideNav from "./components/sideNavbar";
 import ChangPassword from "./Screens/change-password";
+import Notifications from "./Screens/notifications.page";
+import ManageBlogs from "./Screens/manageblogs";
 
 interface UserContextType {
   userAuth: {
@@ -112,7 +114,13 @@ function App() {
             <Route path="/sidebar" element={<Sidebar />} />
             <Route path="/st" element={<Settingtest />} />
             <Route path="/footer" element={<Footer />} />
-            <Route path="/dashboard/blogs" element={<DashboardUser />} />
+
+            <Route path="dashboard" element={<SideNav />}>
+              <Route path="blogs" element={<ManageBlogs />} />
+              <Route path="notifications" element={<Notifications />} />
+            </Route>
+
+            {/* <Route path="/dashboard/blogs" element={<DashboardUser />} /> */}
             <Route path="/helpcentre" element={<HelpCentre />} />
             {/* <Route path="/content/:id" element={<Content />} /> */}
             <Route path="/category" element={<Category />} />
