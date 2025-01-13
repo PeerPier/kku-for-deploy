@@ -5,7 +5,7 @@ import RegistPage from "./Screens/register";
 import TestPage from "./Screens/test";
 import HomePage from "./Screens/home.page";
 import Profile from "./Screens/profile";
-import EditProfile from "./Screens/edit-profile";
+import EditProfile from "./Screens/edit-profile.page";
 import RegisterAdmin from "./Screens/Admin/adminRegister";
 import Writepost from "./Screens/post";
 // import Content from "./Screens/Content";
@@ -40,6 +40,8 @@ import AccountPreferences from "./Screens/AccountPreferences";
 // import ForgotPassword from './Screens/Admin/ForgotPassword';
 // import VerifyOTP from "./Screens/Admin/VerifyOTP";
 // import ResetPassword from './Screens/Admin/ResetPassword';
+import SideNav from "./components/sideNavbar";
+import ChangPassword from "./Screens/change-password";
 
 interface UserContextType {
   userAuth: {
@@ -48,6 +50,7 @@ interface UserContextType {
     username?: string;
     fullname?: string;
     profile_picture?: string;
+    new_notification_available?: boolean;
   };
   setUserAuth: React.Dispatch<React.SetStateAction<any>>;
 }
@@ -73,9 +76,11 @@ function App() {
 
   useEffect(() => {
     const userInSession = lookInSession("user");
-
-    userInSession ? setUserAuth(JSON.parse(userInSession)) : setUserAuth({ access_token: null });
+    userInSession
+      ? setUserAuth(JSON.parse(userInSession))
+      : setUserAuth({ access_token: null });
   }, []);
+  
   return (
     <UserContext.Provider value={{ userAuth, setUserAuth }}>
       <ChatContextProvider>
@@ -95,6 +100,12 @@ function App() {
             <Route path="/test" element={<TestPage />} />
             <Route path="/profile/:id" element={<Profile />} />
             <Route path="/profile/edit-profile/:id" element={<EditProfile />} />
+            
+            <Route path="settings" element={<SideNav />}>
+              <Route path="edit-profile" element={<EditProfile />}></Route>
+              <Route path="change-password" element={<ChangPassword />}></Route>
+            </Route>
+
             <Route path="/posts" element={<Post />} />
             <Route path="/writepost" element={<Writepost />} />
             <Route path="/editpost/:id" element={<EditPost />} />

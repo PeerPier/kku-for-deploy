@@ -39,7 +39,7 @@ router.post("/", async (req, res) => {
     from: "piyarat4543@gmail.com",
     to: foundUser.email,
     subject: "Reset Password Request",
-    text: `http://localhost:3000/reset_password/${userType}/${foundUser._id}/${token}`, // เพิ่ม userType ใน URL
+    text: `${process.env.FRONTEND_ENDPOINT}/reset_password/${userType}/${foundUser._id}/${token}`, // เพิ่ม userType ใน URL
   };
 
   transporter.sendMail(mailOptions, function (error, info) {

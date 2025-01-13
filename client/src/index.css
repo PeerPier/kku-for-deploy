@@ -32,9 +32,9 @@ code {
 }
 
 /* Apply Kanit font to all elements */
-* {
+/* * {
   font-family: 'Kanit', sans-serif !important;
-}
+} */
 
 /* Optional: Apply different weights for specific elements */
 h1,

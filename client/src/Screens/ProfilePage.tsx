@@ -25,11 +25,25 @@ import { FollowerModal } from "./follower-modal";
 import { FollowingModal } from "./following-modal";
 import { ChatContext } from "./ChatContext";
 
-export const profileData = {
+interface Profile {
+  fullname: string;
+  username: string;
+  profile_picture: string;
+  bio: string;
+  email: string;
+  total_posts: number;
+  total_reads: number;
+  total_blogs: number;
+  social_links: Record<string, string>;
+  joinedAt: string;
+}
+
+export const profileData: Profile = {
   fullname: "",
   username: "",
   profile_picture: "",
   bio: "",
+  email: "",
   total_posts: 0,
   total_reads: 0,
   total_blogs: 0,
@@ -355,7 +369,7 @@ const ProfilePage = () => {
             {checkUser ? (
               <div className="edit d-flex justify-content-center my-4">
                 <Link
-                  to="/settings/edit-profile"
+                  to={`/settings/edit-profile`}
                   className="btn-light rounded-3"
                 >
                   แก้ไขโปรไฟล์

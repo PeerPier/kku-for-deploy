@@ -9,11 +9,12 @@ import { IoEyeOutline } from "react-icons/io5";
 interface InputBoxProps {
   name: string;
   type: string;
-  id: string;
+  id?: string;
   value?: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder: string;
   icon?: string;
+  className?: string;
   disabled?: boolean;
 }
 const iconMap: { [key: string]: React.ElementType } = {
@@ -40,6 +41,17 @@ const InputBox: React.FC<InputBoxProps> = ({
       className="Box"
       style={{ position: "relative", width: "100%", marginBottom: "1rem" }}
     >
+      {icon && (
+        <i
+          className={icon}
+          style={{
+            position: "absolute",
+            left: "16px",
+            top: "50%",
+            transform: "translateY(-50%)",
+          }}
+        ></i>
+      )}
       {IconComponent && (
         <IconComponent
           className="input-icon"
@@ -57,12 +69,11 @@ const InputBox: React.FC<InputBoxProps> = ({
           type === "password" ? (passwordVisible ? "text" : "password") : type
         }
         placeholder={placeholder}
-        value={value}
-        onChange={onChange}
+        defaultValue={value}
         id={id}
         className="input-box"
-        style={{ paddingLeft: "48px" }}
         disabled={disabled}
+        style={{ paddingLeft: "48px" }}
       />
 
       {type === "password" &&
