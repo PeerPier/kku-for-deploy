@@ -19,7 +19,7 @@ const ForgotPassword = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
+    console.log("DEBUG",email)
     fetch(`${process.env.REACT_APP_API_ENDPOINT}/forgot-password`, {
       method: "POST",
       headers: {
@@ -91,7 +91,7 @@ const ForgotPassword = () => {
             placeholder="อีเมล"
             icon="MdOutlineMail"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {setEmail(e.target.value);console.log(e.target.value)}}
             disabled={alert.show}
           />
 

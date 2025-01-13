@@ -70,6 +70,7 @@ const InputBox: React.FC<InputBoxProps> = ({
         }
         placeholder={placeholder}
         defaultValue={value}
+        onChange={onChange}
         id={id}
         className="input-box"
         disabled={disabled}
