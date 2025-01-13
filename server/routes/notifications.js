@@ -183,7 +183,7 @@ router.post("/notifications", verifyJWT, (req, res) => {
     .populate("replied_on_comment", "comment")
     .populate("reply", "comment")
     .sort({ createdAt: -1 })
-    .select("createdAt type seen reply")
+    .select("createdAt type seen reply reason")
     .then((notifications) => {
       
       Notifications.updateMany(findQuery, {seen: true})
@@ -191,6 +191,7 @@ router.post("/notifications", verifyJWT, (req, res) => {
       .limit(maxLimit)
       .then(() => console.log("ดูการแจ้งเตือนแล้ว"))
 
+      console.log(notifications)
       return res.status(200).json({ notifications });
     })
     .catch((err) => {

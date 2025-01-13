@@ -26,7 +26,7 @@ const Notification = () => {
   const [filter, setFilter] = useState("all");
   const [notifications, setNotifications] =
     useState<NotificationsResponse | null>(null);
-  let filters = ["all", "like", "comment", "reply"];
+  let filters = ["all", "like", "comment", "reply", "follow", "system"];
 
   const fetchNotifications = ({
     page,
@@ -38,7 +38,7 @@ const Notification = () => {
     axios
       .post(
         `${process.env.REACT_APP_API_ENDPOINT}/notifications/notifications`,
-        { page, filter, deletedDoccount },
+        { page,  filter: filter !== "system" ? filter : "delete", deletedDoccount },
         {
           headers: {
             Authorization: `Bearer ${access_token}`,
@@ -52,7 +52,7 @@ const Notification = () => {
           data,
           page,
           countRoute: "/notifications/all-notification-count",
-          data_to_send: { filter },
+          data_to_send:  filter!="system" ? filter : "delete" ,
           user: access_token ?? undefined,
         });
         setNotifications(formatedData);
