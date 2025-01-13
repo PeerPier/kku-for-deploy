@@ -120,7 +120,7 @@ function App() {
               <Route path="notifications" element={<Notifications />} />
             </Route>
 
-            {/* <Route path="/dashboard/blogs" element={<DashboardUser />} /> */}
+            <Route path="/dashboard/blogs/statistics" element={<DashboardUser />} />
             <Route path="/helpcentre" element={<HelpCentre />} />
             {/* <Route path="/content/:id" element={<Content />} /> */}
             <Route path="/category" element={<Category />} />

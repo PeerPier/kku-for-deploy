@@ -29,8 +29,11 @@ const UserNavigationPanel = () => {
           โปรไฟล์
         </Link>
 
-        <Link to={`/dashboard/blogs`} className="link pl-8 ">
+        <Link to={`/dashboard/blogs/statistics`} className="link pl-8 ">
           สถิติการเข้าชม
+        </Link>
+        <Link to={`/settings/edit-profile`} className="link pl-8">
+          แก้ไขโปรไฟล์
         </Link>
         <Link to={`/account/preference/${userId}`} className="link pl-8">
           ตั้งค่าบัญชีผู้ใช้
