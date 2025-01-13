@@ -3,7 +3,7 @@ const { Server } = require("socket.io");
 const initializeSocket = () => {
   const io = new Server(3002, {
     cors: {
-      origin: "https://kku-client.vercel.app",
+      origin: ["https://kku-client.vercel.app", "http://localhost:3000"],
       methods: ["GET", "POST"],
       credentials: true
     }
