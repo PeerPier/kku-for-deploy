@@ -558,6 +558,44 @@ router.post("/edit-tag", async (req, res) => {
   }
 });
 
+router.post("/user-written-blog", verifyJWT, (req, res) => {
+  let user_id = req.user;
+  let { page, draft, query, deleteDocCount } = req.body;
+
+  let maxLimit = 5;
+  let skipDocs = (page - 1) * maxLimit;
+
+  if (deleteDocCount) {
+    skipDocs -= deleteDocCount;
+  }
+
+  Blog.find({ author: user_id, draft, topic: new RegExp(query, "i") })
+    .skip(skipDocs)
+    .limit(maxLimit)
+    .sort({ publishedAt: -1 })
+    .select(" topic banner publishedAt blog_id activity des draft -_id")
+    .then((blogs) => {
+      return res.status(200).json({ blogs });
+    })
+    .catch((err) => {
+      return res.status(500).json({ error: err.message });
+    });
+});
+
+router.post("/user-written-blog-count", verifyJWT, (req, res) => {
+  let user_id = req.user;
+  let { draft, query } = req.body;
+
+  Blog.countDocuments({ author: user_id, draft, topic: new RegExp(query, "i") })
+    .then((count) => {
+      return res.status(200).json({ totalDocs: count });
+    })
+    .catch((err) => {
+      console.log(err.message);
+      return res.status(500).json({ error: err.message });
+    });
+});
+
 // Delete Tag API
 router.delete("/deletetag", async (req, res) => {
   const { blog_id, tag } = req.body;
