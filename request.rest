@@ -12,12 +12,17 @@
 #     "username": "piyarat4543"
 # }
 
-
-POST http://localhost:3001/users/update-profile-img
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MTc0YTQ5MTJjZmFkNDBhODViOGQxNCIsImlhdCI6MTczNjk2ODI3OCwiZXhwIjoxNzM3NTczMDc4fQ.qyW0ciNQILTh_DTJIO4bXIGihvG2h1UQBYOFsF3fcCk
-
+POST https://kku-for-deploy.onrender.com/create-blog
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MDdiODVmMTE0NGI5NDlkNmFmNjg3NyIsImlhdCI6MTcyODYzNjYxOX0.LsdkFU7XqMrcNMR1xk-LjWWKRXOUuhGIsdKjsbKxfE8
 Content-Type: application/json
 
 {
-    "url": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.ryt9.com%2Fs%2Fprg%2F3200978&psig=AOvVaw3MJe58sZofHAE-ffnVHBPk&ust=1737056370815000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCJiZi7K9-IoDFQAAAAAdAAAAABAE"
+    "topic": "kdvdbdk",
+    "banner": "https://kku-for-deploy.onrender.com/uploads/file-1728661793587-905069819.jpg",
+    "des": "kk",
+    "content": {
+        "blocks": [1,2]
+    },
+    "tags": ["tag1","tag2"]
+
 }

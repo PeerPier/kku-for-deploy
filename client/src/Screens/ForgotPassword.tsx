@@ -100,7 +100,10 @@ const ForgotPassword = () => {
               variant="contained"
               fullWidth
               disableElevation
-              onClick={() => navigate("/")}
+              onClick={() => {
+                window.location.href = "https://kku-client.vercel.app/admin/login";
+              }}
+              
               sx={{
                 backgroundColor: "#000",
                 color: "#fff",
@@ -136,12 +139,7 @@ const ForgotPassword = () => {
           )}
         </form>
         <Box sx={{ marginTop: "20px" }}>
-          <Typography variant="body1">
-            ยังไม่มีบัญชีใช่ไหม?{" "}
-            <Link to="/signup" style={{ color: "#635bff", textDecoration: "none" }}>
-              ลงทะเบียน
-            </Link>
-          </Typography>
+         
         </Box>
       </Box>
     </Container>
