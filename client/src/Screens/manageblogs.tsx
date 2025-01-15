@@ -18,6 +18,7 @@ import AnimationWrapper from "./page-animation";
 import {
   ManageDraftBlogPost,
   ManagePublishedBlogCard,
+  SaveBlog,
 } from "../components/manage-blogcard.component";
 import LoadMoreDataBtn from "../components/load-more.component";
 import { useSearchParams } from "react-router-dom";
@@ -44,7 +45,9 @@ interface BlogsResponse {
 const ManageBlogs = () => {
   const [blogs, setBlogs] = useState<BlogsResponse | null>(null);
   const [drafts, setDraft] = useState<BlogsResponse | null>(null);
+  const [save, setSave] = useState<BlogsResponse | null>(null);
   const [query, setQuery] = useState("");
+
 
   let activeTab = useSearchParams()[0].get("tab");
 
@@ -70,7 +73,8 @@ const ManageBlogs = () => {
       )
       .then(async ({ data }) => {
         let formatedData = await filterPaginationData({
-          state: draft ? drafts : blogs,
+          state: draft ? drafts : draft === null ? save : blogs,  // เช็คให้แน่ใจว่า state เป็นสิ่งที่เหมาะสม
+          save: blogs,  // ส่ง save เป็น parameter ให้ถูกต้อง
           data: data.blogs,
           page,
           user: access_token || undefined,
@@ -80,7 +84,12 @@ const ManageBlogs = () => {
         console.log("draft" + draft, formatedData);
         if (draft) {
           setDraft(formatedData);
-        } else {
+          
+        } 
+       else if (save === null) {
+        setSave(formatedData);
+       }
+       else {
           setBlogs(formatedData);
         }
       })
@@ -141,7 +150,7 @@ const ManageBlogs = () => {
       </div>
 
       <InpageNavigation
-        routes={["บล็อกที่เผยแพร่แล้ว", "บล็อกที่จัดเก็บ"]}
+        routes={["บล็อกที่เผยแพร่แล้ว", "บล็อกที่จัดเก็บ","บล็อกที่บันทึก"]}
         defaultActiveIndex={activeTab !== "draft" ? 0 : 1}
       >
         {blogs === null ? (
@@ -194,6 +203,32 @@ const ManageBlogs = () => {
           </>
         ) : (
           <NoDataMessage message="ไม่มีบล็อกที่ร่างไว้" />
+        )}
+         {save === null ? (
+          <Loader />
+        ) : save.result.length ? (
+          <>
+            {save.result.map((blog, index) => {
+              return (
+                <AnimationWrapper
+                  key={blog.blog_id} // ใช้ blog_id เป็น key
+                  transition={{ delay: index * 0.04 }}
+                >
+                  <SaveBlog blog={{ ...blog, setStateFunc: setSave }} />
+                </AnimationWrapper>
+              );
+            })}
+            <LoadMoreDataBtn
+              state={save}
+              fetchDataFun={getBlogs}
+              additionalParam={{
+                drafts: false,
+                deleteDocCount: save.deleteDocCount,
+              }}
+            />
+          </>
+        ) : (
+          <NoDataMessage message="ไม่มีบล็อกที่บันทึก" />
         )}
       </InpageNavigation>
     </>

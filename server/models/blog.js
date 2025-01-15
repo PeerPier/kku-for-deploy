@@ -76,10 +76,24 @@ const postSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Like",
     }],
-    saves: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "SavedPost",
-    }],
+    saves: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        blogId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Post",
+          required: true,
+        },
+        savedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
     views: {
       type: Number,
       default: 0,

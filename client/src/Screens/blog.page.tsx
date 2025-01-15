@@ -446,6 +446,8 @@ const BlogPage = () => {
             </div>
 
             <BlogInteraction />
+            <CommentsContainer/>
+
 
             {similarBlogs !== null && similarBlogs.length ? (
               <>
