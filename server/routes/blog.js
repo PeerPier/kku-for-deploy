@@ -627,26 +627,70 @@ router.post("/change-password", verifyJWT, (req, res) => {
     });
 });
 
-router.post("/save-blog", verifyJWT, (req, res) => {
-  let { _id, issavedByUser } = req.body;
+router.post("/save-blog", verifyJWT, async (req, res) => {
+  const user_id = req.user;
+  const { _id, issavedByUser } = req.body;
 
-  let incrementVal = !issavedByUser ? 1 : -1;
+  const incrementVal = !issavedByUser ? 1 : -1;
 
-  Blog.findOneAndUpdate(
-    { _id },
-    { $inc: { "activity.total_saves": incrementVal } },
-    { new: true }
-  )
-    .then((blog) => {
-      if (!blog) {
-        return res.status(404).json({ error: "Blog not found" });
-      }
+  try {
+    const blog = await Blog.findOneAndUpdate(
+      { _id },
+      { $inc: { "activity.total_saves": incrementVal } },
+      { new: true }
+    );
 
-      return res.status(200).json({ saved_by_user: !issavedByUser });
-    })
-    .catch((err) => {
-      return res.status(500).json({ error: "Failed to update blog" });
-    });
+    if (!blog) {
+      return res.status(404).json({ error: "Blog not found" });
+    }
+
+    // อัปเดตข้อมูลการบันทึกในฟิลด์ saves ของโพสต์
+    const updateSave = !issavedByUser
+      ? { $addToSet: { saves: { user: user_id, blogId: _id } } }
+      : { $pull: { saves: { user: user_id, blogId: _id } } };
+
+    await Blog.findByIdAndUpdate(_id, updateSave);
+
+    return res.status(200).json({ saved_by_user: !issavedByUser });
+  } catch (error) {
+    console.error("Error saving blog:", error);
+    return res.status(500).json({ error: "Failed to save blog" });
+  }
+});
+
+router.get("/saved-blogs", verifyJWT, async (req, res) => {
+  const user_id = req.user; // User ID จาก JWT
+
+  try {
+    const blogs = await Blog.find({ "saves.user": user_id }).populate("author");
+
+    if (!blogs || blogs.length === 0) {
+      return res.status(404).json({ error: "No saved blogs found" });
+    }
+
+    return res.status(200).json({ savedBlogs: blogs });
+  } catch (error) {
+    console.error("Error fetching saved blogs:", error);
+    return res.status(500).json({ error: "Failed to fetch saved blogs" });
+  }
+});
+router.get("/saved-blogsPost", verifyJWT, async (req, res) => {
+  const user_id = req.user;
+
+  try {
+    const blogs = await Blog.find({ "saves.user": user_id })
+      .populate("author", "username")
+      .select("topic banner des publishedAt blog_id");
+
+    if (!blogs || blogs.length === 0) {
+      return res.status(404).json({ error: "No saved blogs found" });
+    }
+
+    return res.status(200).json({ savedBlogs: blogs });
+  } catch (error) {
+    console.error("Error fetching saved blogs:", error);
+    return res.status(500).json({ error: "Failed to fetch saved blogs" });
+  }
 });
 
 router.post("/user-written-blog", verifyJWT, (req, res) => {
