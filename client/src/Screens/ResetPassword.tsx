@@ -119,6 +119,7 @@ const ResetPassword: React.FC = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        minHeight: "100vh", // Ensures the container spans the full height of the viewport
         padding: "10px"
       }}
     >
