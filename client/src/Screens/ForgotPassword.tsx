@@ -51,7 +51,7 @@ const ForgotPassword = () => {
         alignItems: "center",         // จัดกลางในแนวตั้ง
         minHeight: "100vh",           // ทำให้ Container ใช้พื้นที่ทั้งหน้าจอ
         padding: "10px",              // กำหนดระยะห่างขอบ
-        backgroundColor: "#f4f4f4",   // กำหนดพื้นหลังให้ไม่เป็นสีขาว
+        
       }}
     >
       <ToastContainer />
@@ -63,7 +63,7 @@ const ForgotPassword = () => {
           width: "100%",
           maxWidth: "400px",
           textAlign: "center",
-          boxShadow: 3,                // เพิ่มเงาให้กับกล่องเพื่อความสวยงาม
+                    // เพิ่มเงาให้กับกล่องเพื่อความสวยงาม
         }}
       >
         <Typography variant="h4" component="h1" sx={{ marginBottom: "20px", fontWeight: "600" }}>
@@ -92,10 +92,7 @@ const ForgotPassword = () => {
             placeholder="อีเมล"
             icon="MdOutlineMail"
             value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              console.log(e.target.value);
-            }}
+            onChange={(e) => {setEmail(e.target.value);console.log(e.target.value)}}
             disabled={alert.show}
           />
 
