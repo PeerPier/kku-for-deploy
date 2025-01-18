@@ -119,7 +119,7 @@ const EditProfile = () => {
           if (e.currentTarget) {
             e.currentTarget.removeAttribute("disabled");
           }
-          toast.error("อัพโหลดรูปไม่สำเร็จ");
+          toast.error(`อัพโหลดรูปไม่สำเร็จ`);
         });
     }
   };
