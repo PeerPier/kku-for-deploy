@@ -53,6 +53,7 @@ const CommentField = ({
     if (!comment.length) {
       return toast.error("เขียนอะไรบางอย่างเพื่อแสดงความคิดเห็น");
     }
+    let loadingToast = toast.loading("กำลังคอมเมนต์...");
 
     axios
       .post(
@@ -65,6 +66,8 @@ const CommentField = ({
         }
       )
       .then(({ data }) => {
+        toast.dismiss(loadingToast);
+        toast.success("สำเร็จ");
         setComment("");
         data.commented_by = { username, profile_picture, fullname };
 
@@ -103,7 +106,8 @@ const CommentField = ({
         setTotalParentCommentsLoaded((preVal) => preVal + parentCommentIncrementVal);
       })
       .catch((err) => {
-        console.log(err);
+        toast.dismiss(loadingToast);
+        toast.error(err.response.data.error);
       });
   };
   return (

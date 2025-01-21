@@ -191,7 +191,7 @@ const EditProfile = () => {
       .catch(({ response }) => {
         toast.dismiss(loadingToast);
         button.removeAttribute("disabled");
-        toast.success(response.data.error);
+        toast.error(response.data.error);
       });
   };
 

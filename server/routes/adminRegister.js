@@ -1,10 +1,15 @@
 const express = require("express");
 const Admin = require("../models/admin");
+const { default: BadWordScanner } = require("../utils/badword");
 const router = express.Router();
 
 router.post("/", async (req, res) => {
   const { username, email, password, firstname, lastname, tel } = req.body;
-
+  try {
+    await BadWordScanner(req.body);
+  } catch (err) {
+    return res.status(403).json({ error: `${err}`, details: err });
+  }
   try {
     const existingAdmin = await Admin.findOne({
       $or: [{ username }, { email }],

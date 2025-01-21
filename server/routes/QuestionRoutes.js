@@ -1,5 +1,6 @@
 const express = require("express");
 const Question = require("../models/Question");
+const { default: BadWordScanner } = require("../utils/badword");
 const router = express.Router();
 
 // Get all questions
@@ -18,6 +19,11 @@ router.get("/", async (req, res) => {
 
 // Create a new question
 router.post("/", async (req, res) => {
+  try {
+    await BadWordScanner(req.body);
+  } catch (err) {
+    return res.status(403).json({ error: `${err}`, details: err });
+  }
   const { topic, answer, createdBy } = req.body;
 
   try {
@@ -32,6 +38,11 @@ router.post("/", async (req, res) => {
 
 // Update a question
 router.put("/:id", async (req, res) => {
+  try {
+    await BadWordScanner(req.body);
+  } catch (err) {
+    return res.status(403).json({ error: `${err}`, details: err });
+  }
   const { topic, answer } = req.body;
 
   try {

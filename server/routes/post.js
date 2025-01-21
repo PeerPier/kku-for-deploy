@@ -10,6 +10,7 @@ const auth = require("./authMiddleware");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const { NotiMailer } = require("../mail/noti_sender");
+const { default: BadWordScanner } = require("../utils/badword");
 
 router.get("/search", async (req, res) => {
   const query = req.query.query;
@@ -35,6 +36,11 @@ router.get("/search", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
+    try {
+      await BadWordScanner(req.body);
+    } catch (err) {
+      return res.status(403).json({ error: `${err}`, details: err });
+    }
   const { user, topic, detail, category, image, contentWithImages } = req.body;
 
   if (!user || !topic || !category || !image) {
@@ -243,6 +249,11 @@ router.get("/:id", getPost, (req, res) => {
 });
 
 router.patch("/:id", getPost, async (req, res) => {
+  try {
+    await BadWordScanner(req.body);
+  } catch (err) {
+    return res.status(403).json({ error: `${err}`, details: err });
+  }
   const { topic, detail, category, image, contentWithImages } = req.body;
 
   if (topic != null) res.post.topic = topic;
@@ -529,6 +540,11 @@ const addReplyComment = async (commentId, reply) => {
 
 //การตอบกลับความคิดเห็น
 router.post("/:postId/comment/:commentId/reply", auth, async (req, res) => {
+  try {
+    await BadWordScanner(req.body);
+  } catch (err) {
+    return res.status(403).json({ error: `${err}`, details: err });
+  }
   const { postId, commentId } = req.params;
   const { content, author, replyTo } = req.body;
 

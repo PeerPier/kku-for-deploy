@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
+const { default: BadWordScanner } = require("../utils/badword");
 
 const verifyJWT = (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -92,8 +93,15 @@ router.post("/update-profile-img", verifyJWT, (req, res) => {
     });
 });
 
-router.post("/update-profile", verifyJWT, (req, res) => {
+router.post("/update-profile", verifyJWT, async (req, res) => {
   let { username, bio, social_links } = req.body;
+
+  try {
+    await BadWordScanner(req.body);
+  } catch (err) {
+    return res.status(403).json({ error: `${err}`, details: err });
+  }
+
 
   let bioLimit = 150;
   if (username.length < 3) {

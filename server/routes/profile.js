@@ -7,6 +7,7 @@ const Like = require("../models/like");
 const Comment = require("../models/comment");
 const Report = require("../models/report");
 const bcrypt = require("bcrypt");
+const { default: BadWordScanner } = require("../utils/badword");
 
 // Route URL to get all users
 router.get("/", async (req, res) => {
@@ -48,6 +49,11 @@ router.get("/:id", async function (req, res, next) {
 });
 
 router.post("/edit-profile/update/:id", async (req, res) => {
+    try {
+      await BadWordScanner(req.body);
+    } catch (err) {
+      return res.status(403).json({ error: `${err}`, details: err });
+    }
   const userId = req.params.id;
   const userData = req.body;
 
@@ -66,6 +72,11 @@ router.post("/edit-profile/update/:id", async (req, res) => {
 });
 
 router.put("/edit-profile/update-info/:id", async (req, res) => {
+  try {
+    await BadWordScanner(req.body);
+  } catch (err) {
+    return res.status(403).json({ error: `${err}`, details: err });
+  }
   const userId = req.params.id;
   const { fullname, email } = req.body;
 

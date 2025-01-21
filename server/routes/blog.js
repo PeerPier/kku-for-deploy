@@ -12,6 +12,7 @@ const Comment = require("../models/comments");
 const auth = require("./authMiddleware");
 const bcrypt = require("bcrypt");
 const { NotiMailer } = require("../mail/noti_sender");
+const { default: BadWordScanner } = require("../utils/badword");
 
 const verifyJWT = (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -31,11 +32,15 @@ const verifyJWT = (req, res, next) => {
   });
 };
 
-router.post("/", verifyJWT, (req, res) => {
+router.post("/", verifyJWT, async (req, res) => {
   const { nanoid } = require("nanoid");
   let authorId = req.user;
   let { topic, des, banner, tags, content, draft, visibility, id } = req.body;
-
+  try {
+    await BadWordScanner(req.body);
+  } catch (err) {
+    return res.status(403).json({ error: `${err}`, details: err });
+  }
   if (!topic || topic.length === 0) {
     return res.status(403).json({ error: "คุณต้องระบุชื่อบล็อก" });
   }
@@ -143,8 +148,12 @@ router.post("/", verifyJWT, (req, res) => {
 router.post("/increment-view", async (req, res) => {
   try {
     const { blog_id, userId } = req.body;
-    
-    // If no userId provided, return error
+    try {
+      await BadWordScanner(req.body);
+    } catch (err) {
+      return res.status(403).json({ error: `${err}`, details: err });
+    }
+        // If no userId provided, return error
     if (!userId) {
       return res.status(400).json({ error: "User ID is required" });
     }
@@ -407,7 +416,14 @@ router.post("/dislike-blog", verifyJWT, async (req, res) => {
   }
 });
 
-router.post("/add-comment", verifyJWT, (req, res) => {
+router.post("/add-comment", verifyJWT, async (req, res) => {
+
+  try {
+    await BadWordScanner(req.body);
+  } catch (err) {
+    return res.status(403).json({ error: `${err}`, details: err });
+  }
+
   let user_id = req.user;
   let { _id, comment, blog_author, replying_to } = req.body;
 
@@ -693,7 +709,12 @@ router.get("/saved-blogsPost", verifyJWT, async (req, res) => {
   }
 });
 
-router.post("/user-written-blog", verifyJWT, (req, res) => {
+router.post("/user-written-blog", verifyJWT,async (req, res) => {
+  try {
+    await BadWordScanner(req.body);
+  } catch (err) {
+    return res.status(403).json({ error: `${err}`, details: err });
+  }
   let user_id = req.user;
   let { page, draft, query, deleteDocCount } = req.body;
 
@@ -717,7 +738,12 @@ router.post("/user-written-blog", verifyJWT, (req, res) => {
     });
 });
 
-router.post("/user-written-blog-count", verifyJWT, (req, res) => {
+router.post("/user-written-blog-count", verifyJWT,async (req, res) => {
+  try {
+    await BadWordScanner(req.body);
+  } catch (err) {
+    return res.status(403).json({ error: `${err}`, details: err });
+  }
   let user_id = req.user;
   let { draft, query } = req.body;
 

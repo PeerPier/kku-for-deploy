@@ -193,7 +193,11 @@ const BlogEditor = () => {
             setTimeout(() => {
               navigate("/dashboard/blogs?tab=draft");
             }, 500);
-          });
+          }).catch(err=>{
+            toast.dismiss(loadingToast);
+            toast.error(err.response.data.error);
+            target.classList.remove("disable");
+          })
       });
     }
   };
