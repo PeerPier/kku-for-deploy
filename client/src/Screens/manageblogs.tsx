@@ -146,7 +146,7 @@ const ManageBlogs = () => {
       </div>
 
       <InpageNavigation
-        routes={["บล็อกที่เผยแพร่แล้ว", "บล็อกที่จัดเก็บ", "บล็อกที่บันทึก"]}
+        routes={["บล็อกที่เผยแพร่แล้ว", "บล็อกที่บันทึกร่าง", "บล็อกที่บันทึก"]}
         defaultActiveIndex={activeTab !== "draft" ? 0 : 1}
       >
         {blogs === null ? (
@@ -200,6 +200,7 @@ const ManageBlogs = () => {
         ) : (
           <NoDataMessage message="ไม่มีบล็อกที่ร่างไว้" />
         )}
+
         {save === null ? (
           <Loader />
         ) : save.result.length ? (

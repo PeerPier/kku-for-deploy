@@ -15,15 +15,16 @@ const PotentialChats = () => {
   };
 
   return (
+    
     <div className="all-users">
+    
       {potentialChats &&
         potentialChats.map((u, index) => (
-          <div className="single-user" key={index} onClick={(event) => handleClick(event, u._id)}>
-            <img src={u.profile_picture} alt={u.firstname} />
+          
             <span
               className={onlineUsers?.some((user) => user?.userId === u?._id) ? "user-online" : ""}
             ></span>
-          </div>
+        
         ))}
     </div>
   );

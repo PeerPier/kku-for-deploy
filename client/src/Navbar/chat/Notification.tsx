@@ -92,27 +92,11 @@ const Notifications = () => {
               <Chat />
             </div>
           )}
-          {/* {modifiedNotifications?.length === 0 ? (
-            <span className="notification">
-              <Chat />
-            </span>
-          ) : null} */}
-          {/* {modifiedNotifications &&
-            modifiedNotifications.map((n, index) => {
-              return (
-                <div
-                  key={index}
-                  className={
-                    n.isRead ? "notification" : "notification not-read"
-                  }
-                >
-                  <span></span>
-                </div>
-              );
-            })} */}
+          
         </div>
       )}
     </div>
+    
   );
 };
 

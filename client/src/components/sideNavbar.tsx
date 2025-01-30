@@ -10,6 +10,7 @@ import { FaBarsStaggered } from "react-icons/fa6";
 import "../misc/blogpage.css";
 import { lookInSession } from "../common/session";
 
+
 const SideNav = () => {
   let {
     userAuth: { new_notification_available },
@@ -174,6 +175,14 @@ const SideNav = () => {
             >
               <SlLock />
               เปลี่ยนรหัสผ่าน
+            </NavLink>
+            <NavLink
+              to="/settings/notification"
+              onClick={(e) => setPageState(e.currentTarget.innerText)}
+              className="sidebar-link"
+            >
+             <IoNotificationsOutline />
+             การแจ้งเตือน
             </NavLink>
           </div>
         </div>

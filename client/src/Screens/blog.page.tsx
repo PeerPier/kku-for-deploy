@@ -338,17 +338,22 @@ const BlogPage = () => {
                   </p>
                 </div>
                 <div className="m-0 published-detail">
-                  <p>
-                    <p
-                      className="cursor-pointer"
+                  {/* Only show the "Report Issue" button if the current user is not the author */}
+                  {userId !== author?._id && (
+                    <button
+                      className="cursor-pointer bg-dark text-white p-2 rounded"
                       onClick={() => handleShowReportModal(_id)}
                     >
                       <MdReport
-                        style={{ fontSize: "22px", marginRight: "0.4rem",marginBottom:"2px" }}
+                        style={{
+                          fontSize: "22px",
+                          marginRight: "0.4rem",
+                          marginBottom: "2px",
+                        }}
                       />
                       รายงานปัญหา
-                    </p>{" "}
-                  </p>
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

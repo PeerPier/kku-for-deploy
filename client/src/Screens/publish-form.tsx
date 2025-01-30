@@ -170,13 +170,13 @@ const PublishForm = () => {
           </p>
 
           <p className="topic-p">
-            หัวเรื่อง -(ช่วยค้นหาและจัดอันดับบล็อกของคุณ)
+            เพิ่มแท็กเพื่อช่วยค้นหาและจัดอันดับบล็อกของคุณ
           </p>
 
           <div className="position-relative input-box pl-2 pb-4">
             <input
               type="text"
-              placeholder="หัวเรื่อง"
+              placeholder="Enter เพื่อเพิ่มแท็ก"
               className="sticky-bg input-box"
               onKeyDown={handleKeyDown}
             />
