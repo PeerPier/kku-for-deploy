@@ -12,7 +12,7 @@ const Comment = require("../models/comments");
 const auth = require("./authMiddleware");
 const bcrypt = require("bcrypt");
 const { NotiMailer } = require("../mail/noti_sender");
-const { default: BadWordScanner } = require("../utils/badword");
+const BadWordScanner = require("../utils/badword");
 
 const verifyJWT = (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -148,11 +148,6 @@ router.post("/", verifyJWT, async (req, res) => {
 router.post("/increment-view", async (req, res) => {
   try {
     const { blog_id, userId } = req.body;
-    try {
-      await BadWordScanner(req.body);
-    } catch (err) {
-      return res.status(403).json({ error: `${err}`, details: err });
-    }
         // If no userId provided, return error
     if (!userId) {
       return res.status(400).json({ error: "User ID is required" });
@@ -193,6 +188,12 @@ router.post("/increment-view", async (req, res) => {
           "activity.total_reads": 1
         }
       });
+
+      await User.findOneAndUpdate(
+        { _id: userId },
+        { $addToSet: { viewed_posts: blog._id } },
+        { new: true }
+      );
 
       // Update author's total reads
       if (blog.author) {
@@ -331,6 +332,12 @@ router.post("/like-blog", verifyJWT, async (req, res) => {
         entityModel: "User",
       });
 
+      await User.findOneAndUpdate(
+        { _id: user_id },
+        { $addToSet: { liked_posts: _id } },
+        { new: true }
+      );
+
       await notification.save();
       NotiMailer(notification.notification_for,user_id,notification.type,newLike.post);
 
@@ -347,6 +354,12 @@ router.post("/like-blog", verifyJWT, async (req, res) => {
           (likeId) => !likeId.equals(likeToRemove._id)
         );
         await post.save();
+
+        await User.findOneAndUpdate(
+          { _id: user_id }, 
+          { $pull: { liked_posts: _id } },
+          { new: true }
+        );      
 
         // Delete the associated like notification
         await Notifications.findOneAndDelete({
@@ -664,6 +677,18 @@ router.post("/save-blog", verifyJWT, async (req, res) => {
     const updateSave = !issavedByUser
       ? { $addToSet: { saves: { user: user_id, blogId: _id } } }
       : { $pull: { saves: { user: user_id, blogId: _id } } };
+
+    const updateUserSavePost = !issavedByUser
+    ? await User.findOneAndUpdate(
+      { _id: user_id }, 
+      { $addToSet: { saved_posts: _id } },
+      { new: true }
+    )
+    : await User.findOneAndUpdate(
+      { _id: user_id },  
+      { $pull: { saved_posts: _id } },
+      { new: true }
+    );
 
     await Blog.findByIdAndUpdate(_id, updateSave);
 

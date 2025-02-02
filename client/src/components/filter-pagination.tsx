@@ -6,8 +6,8 @@ interface FilterPaginationDataProps {
   state?: any;
   save?: any;  // เพิ่ม property save (ถ้าจำเป็น)
   data: any[];
-  page: number;
-  countRoute: string;
+  page?: number;
+  countRoute?: string;
   data_to_send?: any;
   user?: string;
 }

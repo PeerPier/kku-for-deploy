@@ -7,7 +7,7 @@ const Like = require("../models/like");
 const Comment = require("../models/comment");
 const Report = require("../models/report");
 const bcrypt = require("bcrypt");
-const { default: BadWordScanner } = require("../utils/badword");
+const BadWordScanner = require("../utils/badword");
 
 // Route URL to get all users
 router.get("/", async (req, res) => {

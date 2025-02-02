@@ -3,7 +3,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
-const { default: BadWordScanner } = require("../utils/badword");
+const BadWordScanner = require("../utils/badword");
 
 const verifyJWT = (req, res, next) => {
   const authHeader = req.headers["authorization"];
