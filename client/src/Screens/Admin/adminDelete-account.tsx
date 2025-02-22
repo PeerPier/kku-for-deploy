@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const DeleteAdminAccountModal: React.FC<{
@@ -9,7 +9,7 @@ const DeleteAdminAccountModal: React.FC<{
   onClose: () => void;
   onDeleteSuccess: () => void;
 }> = ({ userId, show, onClose, onDeleteSuccess }) => {
-  const [password, setPassword] = useState("");
+  const [adminPassword, setAdminPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const API_BASE_URL = process.env.REACT_APP_API_ENDPOINT;
@@ -20,19 +20,19 @@ const DeleteAdminAccountModal: React.FC<{
       const response = await axios.delete(
         `${API_BASE_URL}/profile/edit-profile/delete/${userId}`,
         {
-          data: { password },
+          data: { adminPassword },
         }
       );
 
       if (response.data.message === "User deleted successfully") {
-        setSuccessMessage("Account deleted successfully!");
+        setSuccessMessage("ลบบัญชีผู้ใช้สำเร็จ!");
         setErrorMessage("");
         onDeleteSuccess();
       } else {
-        setErrorMessage(response.data.error);
+        setErrorMessage(response.data.error || "เกิดข้อผิดพลาดในการลบผู้ใช้");
       }
     } catch (error) {
-      setErrorMessage("Error deleting account. Please check your password.");
+      setErrorMessage("ไม่สามารถลบบัญชีได้ โปรดตรวจสอบรหัสผ่านของผู้ดูแลอีกครั้ง");
     }
   };
 
@@ -42,14 +42,15 @@ const DeleteAdminAccountModal: React.FC<{
         <Modal.Title>ลบบัญชีผู้ใช้</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>คุณแน่ใจหรือไม่ว่าต้องการลบบัญชีของคุณ</p>
+        <p>คุณแน่ใจหรือไม่ว่าต้องการลบบัญชีของผู้ใช้นี้?</p>
         <Form>
-          <Form.Group controlId="password">
-            <Form.Label>กรอกรหัสผ่านของคุณเพื่อยืนยัน</Form.Label>
+          <Form.Group controlId="adminPassword">
+            <Form.Label>กรอกรหัสผ่านของผู้ดูแลระบบเพื่อยืนยันการลบ</Form.Label>
             <Form.Control
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              placeholder="กรอกรหัสผ่านของแอดมิน"
+              value={adminPassword}
+              onChange={(e) => setAdminPassword(e.target.value)}
             />
           </Form.Group>
 
@@ -62,7 +63,7 @@ const DeleteAdminAccountModal: React.FC<{
           ยกเลิก
         </Button>
         <Button variant="danger" onClick={handleDeleteAccount}>
-          ยืนยัน
+          ยืนยันการลบ
         </Button>
       </Modal.Footer>
     </Modal>

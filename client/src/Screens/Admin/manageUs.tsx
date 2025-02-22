@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { PiUsersThreeFill } from "react-icons/pi";
 import { LuView } from "react-icons/lu";
 import { updateUserAPI } from "../../api/adminProfile";
 import { useNavigate, useParams } from "react-router-dom";
-
 import { Button, Modal, Form } from "react-bootstrap";
 import axios from "axios";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai"; // Import eye icons
@@ -28,6 +27,7 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
   const [passwordVisibility, setPasswordVisibility] = useState<{
     [key: string]: boolean;
   }>({});
+  const [searchKeyword, setSearchKeyword] = useState("");
 
   const API_BASE_URL = process.env.REACT_APP_API_ENDPOINT;
   const navigate = useNavigate();
@@ -65,7 +65,7 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
     }
   };
 
-  // Function to toggle password visibility for a specific user
+  // Toggle password visibility สำหรับผู้ใช้แต่ละคน
   const togglePasswordVisibility = (userId: string) => {
     setPasswordVisibility((prev) => ({
       ...prev,
@@ -87,6 +87,21 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
       console.error("Error fetching reports:", error);
     }
   };
+
+  // กำหนดรายชื่อผู้ใช้ที่จะนำไปค้นหา:
+  // หาก fetchUserData มีข้อมูลให้ใช้ fetchUserData ถ้าไม่มีให้ใช้ allUsers
+  const userList =
+    fetchUserData && fetchUserData.length > 0 ? fetchUserData : allUsers;
+
+  // คำนวณรายชื่อผู้ใช้ที่ค้นหา (filtered) ตาม searchKeyword (ค้นหาจาก fullname และ email)
+  const filteredUsers = useMemo(() => {
+    if (!searchKeyword) return userList;
+    return userList.filter(
+      (u: any) =>
+        u.fullname.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+        u.email.toLowerCase().includes(searchKeyword.toLowerCase())
+    );
+  }, [userList, searchKeyword]);
 
   return (
     <div className="manageUser">
@@ -117,17 +132,38 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
 
         <div className="recent-order" style={{ marginTop: "1.5rem" }}>
           <h2>รายการ</h2>
-          <div className="right" >
+          {/* ช่องค้นหาผู้ใช้ */}
+          <div className="search-user" style={{ marginBottom: "20px" }}>
+            <input
+              type="text"
+              placeholder="ค้นหาผู้ใช้..."
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+              style={{
+                width: "96%",
+                margin: "2%",
+                padding: "10px 15px",
+                marginTop: "20px",
+                fontSize: "16px",
+                border: "none",
+                borderRadius: "10px",
+                backgroundColor: "white",
+              }}
+            />
+          </div>
+
+          <div className="right">
             <div
               className="activity-analytics"
               style={{
                 marginTop: "0.5rem",
                 overflowY: "scroll",
-                maxHeight: "400px",
+                maxHeight: "380px",
+                
               }}
             >
               <table>
-                <thead className="pt-5" style={{margin:"20px 10px"}}>
+                <thead className="pt-5" style={{ margin: "20px 10px" }}>
                   <tr>
                     <th>วันที่</th>
                     <th>ชื่อบัญชีผู้ใช้</th>
@@ -138,92 +174,62 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {allUsers.length > 0 ? (
-                    fetchUserData.length > 0 ? (
-                      fetchUserData.map((u: any) => (
-                        <tr key={u._id}>
-                          <td>{new Date(u.joinedAt).toLocaleDateString()}</td>
-                          <td>{u.fullname}</td>
-                          <td>{u.email}</td>
-                          <td className="warning">
-                            <span>
-                              {passwordVisibility[u._id] ? u.password : "*****"}
-                            </span>
-                            <button
-                              onClick={() => togglePasswordVisibility(u._id)}
-                              style={{
-                                border: "none",
-                                background: "none",
-                                cursor: "pointer",
-                              }}
-                            >
-                              {passwordVisibility[u._id] ? (
-                                <AiFillEyeInvisible />
-                              ) : (
-                                <AiFillEye />
-                              )}
-                            </button>
-                          </td>
-                          <td className="primary">
-                            <Button onClick={() => handleEditUser(u)}>
-                              Edit
-                            </Button>
-                          </td>
-                          <td>
-                            <Button onClick={() => handleDeleteUser(u._id)}>
-                              Delete
-                            </Button>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      allUsers.map((u: any) => (
-                        <tr key={u._id}>
-                          <td>{new Date(u.joinedAt).toLocaleDateString()}</td>
-                          <td>{u.fullname}</td>
-                          <td>{u.email}</td>
-                          <td className="warning">
-                            <span>
-                              {passwordVisibility[u._id] ? u.password : "*****"}
-                            </span>
-                            <button
-                              onClick={() => togglePasswordVisibility(u._id)}
-                              style={{
-                                border: "none",
-                                background: "none",
-                                cursor: "pointer",
-                              }}
-                            >
-                              {passwordVisibility[u._id] ? (
-                                <AiFillEyeInvisible />
-                              ) : (
-                                <AiFillEye />
-                              )}
-                            </button>
-                          </td>
-                          <td className="primary">
-                            <Button
-                              disabled={u.google_auth ? true : false}
-                              onClick={() => handleEditUser(u)}
-                              style={{backgroundColor:"#f3b15a",border:"none"}}
-                            >
-                              แก้ไข
-                            </Button>
-                          </td>
-                          <td>
-                            <Button
-                              // disabled={u.google_auth ? true : false}
-                              onClick={() => handleDeleteUser(u._id)} style={{backgroundColor:"#f26665",border:"none"}}
-                            >
-                              ลบ
-                            </Button>
-                          </td>
-                        </tr>
-                      ))
-                    )
+                  {filteredUsers.length > 0 ? (
+                    filteredUsers.map((u: any) => (
+                      <tr key={u._id}>
+                        <td>{new Date(u.joinedAt).toLocaleDateString()}</td>
+                        <td>{u.fullname}</td>
+                        <td>{u.email}</td>
+                        <td className="warning">
+                          <span>
+                            {passwordVisibility[u._id] ? u.password : "*****"}
+                          </span>
+                          <button
+                            onClick={() => togglePasswordVisibility(u._id)}
+                            style={{
+                              border: "none",
+                              background: "none",
+                              cursor: "pointer",
+                            }}
+                          >
+                            {passwordVisibility[u._id] ? (
+                              <AiFillEyeInvisible />
+                            ) : (
+                              <AiFillEye />
+                            )}
+                          </button>
+                        </td>
+                        <td className="primary">
+                          <Button
+                            onClick={() => handleEditUser(u)}
+                            style={{
+                              backgroundColor: "#f3b15a",
+                              border: "none",
+                            }}
+                          >
+                            แก้ไข
+                          </Button>
+                        </td>
+                        <td>
+                          <Button
+                            onClick={() => handleDeleteUser(u._id)}
+                            style={{
+                              backgroundColor: "#f26665",
+                              border: "none",
+                            }}
+                          >
+                            ลบ
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
                   ) : (
                     <tr>
-                      <td colSpan={5}>ไม่มีรายงาน</td>
+                      <td colSpan={6}>
+                        <div style={{ margin: "20% 0", textAlign: "center" }}>
+                          ไม่พบผู้ใช้ที่ค้นหา
+                        </div>
+                      </td>
                     </tr>
                   )}
                 </tbody>

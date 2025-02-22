@@ -1,8 +1,8 @@
-import { checkBadWords, addBadWords } from "@sit-sandbox/thai-bad-words";
+const { checkBadWords, addBadWords } = require("@sit-sandbox/thai-bad-words");
 
-addBadWords(['พ่อมึงตาย', 'แม่มึงตาย', 'ไอสันดาน', 'ไอสันขวาน', 'เอ๋อ','fuck']); // เพิ่ม bad words ที่ไม่มีใน default ✅
+addBadWords(['พ่อมึงตาย', 'แม่มึงตาย', 'ไอสันดาน', 'ไอสันขวาน', 'เอ๋อ', 'fuck']);
 
-export default async function BadWordScanner(input) {
+async function BadWordScanner(input) {
     for (const key in input) {
         if (input.hasOwnProperty(key)) {
             const value = input[key];
@@ -25,3 +25,5 @@ export default async function BadWordScanner(input) {
         }
     }
 }
+
+module.exports = BadWordScanner;

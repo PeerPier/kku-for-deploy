@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Post, Author } from "../types/post";
-import { FaRegHeart } from "react-icons/fa";
+import { FaRegHeart, FaRegCommentDots } from "react-icons/fa";
 import { getDay } from "../common/date";
 
 interface BlogCardProps {
@@ -15,10 +15,10 @@ const BlogCard: React.FC<BlogCardProps> = ({ content, author }) => {
     topic,
     des,
     banner,
-    activity: { total_likes },
+    activity: { total_likes, total_comments },
     blog_id: id,
   } = content;
-  // ใช้การตรวจสอบเพื่อหลีกเลี่ยงข้อผิดพลาด
+
   const {
     fullname = "Unknown Author",
     profile_picture = "",
@@ -40,7 +40,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ content, author }) => {
           <img
             src={profile_picture}
             alt=""
-            className=" rounded-circle"
+            className="rounded-circle"
             style={{ height: "24px", width: "24px" }}
           />
           <p
@@ -55,7 +55,17 @@ const BlogCard: React.FC<BlogCardProps> = ({ content, author }) => {
           >
             {fullname} @{username}
           </p>
-          <p className="w-auto m-0 fw-medium"> {getDay(publishedAt)}</p>
+          <p className="w-auto m-0 fw-medium">{publishedAt
+                      ? `${getDay(publishedAt)} ${
+                          new Date(publishedAt).getFullYear() + 543
+                        } เวลา ${new Date(publishedAt).toLocaleTimeString(
+                          "th-TH",
+                          {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }
+                        )}`
+                      : "ไม่ทราบวันที่"}</p>
         </div>
 
         <h1 className="blog-title mt-3">{topic}</h1>
@@ -64,19 +74,18 @@ const BlogCard: React.FC<BlogCardProps> = ({ content, author }) => {
 
         <div className="d-flex gap-4 mt-3">
           <span className="btn-light py-1 px-4">{tags[0]}</span>
-          <span
-            className="ml-3 d-flex align-items-center gap-2 "
-            style={{ color: "#404040" }}
-          >
+          <span className="ml-3 d-flex align-items-center gap-2" style={{ color: "#404040" }}>
             <FaRegHeart />
             {total_likes}
+          </span>
+          <span className="ml-3 d-flex align-items-center gap-2" style={{ color: "#404040" }}>
+            <FaRegCommentDots />
+            {total_comments} {/* แสดงจำนวนคอมเม้นต์ที่ถูกต้อง */}
           </span>
         </div>
       </div>
 
-      <div
-        style={{ aspectRatio: "1/1", height: "7rem", background: "#f0f0f0" }}
-      >
+      <div style={{ aspectRatio: "1/1", height: "7rem", background: "#f0f0f0" }}>
         <img
           src={banner}
           alt=""

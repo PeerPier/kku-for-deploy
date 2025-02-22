@@ -8,6 +8,7 @@ import { RiDashboardFill } from "react-icons/ri";
 import { IoIosHelpCircle, IoIosTime } from "react-icons/io";
 import { MdManageAccounts, MdCategory, MdOutlinePostAdd } from "react-icons/md";
 import { FiLogOut } from "react-icons/fi";
+import { RiCharacterRecognitionFill } from "react-icons/ri";
 import {
   fetchAdminProfile,
   fetchAllBlog,
@@ -442,6 +443,18 @@ const AdminHome: React.FC = () => {
             >
               <MdCategory />
               <h3>จัดการหมวดหมู่</h3>
+            </a>
+
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                handleCategorySelection("manage-cate");
+              }}
+              className={selectedCate === "manage-cate" ? "active" : ""}
+            >
+              <RiCharacterRecognitionFill />
+              <h3>จัดการคำหยาบ</h3>
             </a>
             <Link to={`/admin/login`}>
               <FiLogOut />

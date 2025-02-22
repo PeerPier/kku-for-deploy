@@ -88,9 +88,12 @@ const BlogPage = () => {
   const author_username = author?.username || "Unknown Username";
   const profile_picture = author?.profile_picture || "";
 
+  // Modal สำหรับรายงานปัญหา
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportPostId, setReportPostId] = useState<string | null>(null);
   const [reportReason, setReportReason] = useState("");
+  // Modal สำหรับรายงานเสร็จ (Report Submitted Modal)
+  const [showReportSubmittedModal, setShowReportSubmittedModal] = useState(false);
   const userId = sessionStorage.getItem("userId");
 
   const handleShowReportModal = (id: string | undefined) => {
@@ -115,11 +118,13 @@ const BlogPage = () => {
 
         if (response && response.status === 201) {
           toast.success("Report submitted successfully!");
+          // ปิด modal รายงานและแสดง modal แจ้งผลสำเร็จ
+          handleCloseReportModal();
+          setShowReportSubmittedModal(true);
         } else {
           toast.error("Failed to submit the report.");
+          handleCloseReportModal();
         }
-
-        handleCloseReportModal();
       } catch (error) {
         console.error("Failed to report post:", error);
         toast.error("An error occurred while submitting the report.");
@@ -338,17 +343,21 @@ const BlogPage = () => {
                   </p>
                 </div>
                 <div className="m-0 published-detail">
-                  <p>
-                    <p
-                      className="cursor-pointer"
+                  {userId !== author?._id && (
+                    <button
+                      className="cursor-pointer bg-dark text-white p-2 rounded"
                       onClick={() => handleShowReportModal(_id)}
                     >
                       <MdReport
-                        style={{ fontSize: "22px", marginRight: "0.4rem",marginBottom:"2px" }}
+                        style={{
+                          fontSize: "22px",
+                          marginRight: "0.4rem",
+                          marginBottom: "2px",
+                        }}
                       />
                       รายงานปัญหา
-                    </p>{" "}
-                  </p>
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -431,6 +440,31 @@ const BlogPage = () => {
               </Modal.Footer>
             </Modal>
 
+            {/* Report Submitted Modal */}
+            <Modal
+              show={showReportSubmittedModal}
+              onHide={() => setShowReportSubmittedModal(false)}
+              centered
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>รายงานปัญหาสำเร็จ</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                รายงานปัญหาของคุณได้รับการส่งเรียบร้อยแล้ว
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  variant="secondary"
+                  onClick={() => setShowReportSubmittedModal(false)}
+                >
+                  ปิด
+                </Button>
+                <Button variant="primary" onClick={() => navigate("/dashboard/reportcheck")}>
+                  ดูการรายงาน
+                </Button>
+              </Modal.Footer>
+            </Modal>
+
             <div className="my-4 blog-page-content">
               {content &&
               Array.isArray(content[0].blocks) &&
@@ -446,8 +480,7 @@ const BlogPage = () => {
             </div>
 
             <BlogInteraction />
-            <CommentsContainer/>
-
+            <CommentsContainer />
 
             {similarBlogs !== null && similarBlogs.length ? (
               <>

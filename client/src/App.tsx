@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Outlet } from "react-router-dom";
 import LoginPage from "./Screens/login";
 import RegistPage from "./Screens/register";
-import TestPage from "./Screens/test";
 import HomePage from "./Screens/home.page";
 import Profile from "./Screens/profile";
 import EditProfile from "./Screens/edit-profile.page";
@@ -10,9 +9,6 @@ import RegisterAdmin from "./Screens/Admin/adminRegister";
 import Writepost from "./Screens/post";
 // import Content from "./Screens/Content";
 import AdminHome from "./Screens/Admin/adminHome";
-
-import Sidebar from "./Screens/sidebar";
-import Settingtest from "./Screens/settingtest";
 import Category from "./Screens/category";
 import Footer from "./Navbar/footer";
 import ForgotPassword from "./Screens/ForgotPassword";
@@ -44,6 +40,8 @@ import SideNav from "./components/sideNavbar";
 import ChangPassword from "./Screens/change-password";
 import Notifications from "./Screens/notifications.page";
 import ManageBlogs from "./Screens/manageblogs";
+import ReportCheck from "./Screens/reportCheck";
+import NotiSetting from "./Screens/noti-setting";
 
 interface UserContextType {
   userAuth: {
@@ -96,28 +94,25 @@ function App() {
             <Route path="/user/:id" element={<ProfilePage />} />
             <Route path="/search/:query" element={<SearchPage />} />
             <Route path="*" element={<PageNotFound />} />
-
             <Route path="/blog/:blog_id" element={<BlogPage />}></Route>
-
-            <Route path="/test" element={<TestPage />} />
             <Route path="/profile/:id" element={<Profile />} />
             <Route path="/profile/edit-profile/:id" element={<EditProfile />} />
-            
             <Route path="settings" element={<SideNav />}>
               <Route path="edit-profile" element={<EditProfile />}></Route>
               <Route path="change-password" element={<ChangPassword />}></Route>
+              <Route path="noti-setting" element={<NotiSetting />} />
+              
             </Route>
-
+            
             <Route path="/posts" element={<Post />} />
             <Route path="/writepost" element={<Writepost />} />
             <Route path="/editpost/:id" element={<EditPost />} />
-            <Route path="/sidebar" element={<Sidebar />} />
-            <Route path="/st" element={<Settingtest />} />
             <Route path="/footer" element={<Footer />} />
-
+            
             <Route path="dashboard" element={<SideNav />}>
               <Route path="blogs" element={<ManageBlogs />} />
               <Route path="notifications" element={<Notifications />} />
+              <Route path="reportCheck" element={<ReportCheck />} />
             </Route>
 
             <Route path="/dashboard/blogs/statistics" element={<DashboardUser />} />
