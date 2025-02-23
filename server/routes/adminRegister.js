@@ -1,6 +1,6 @@
 const express = require("express");
 const Admin = require("../models/admin");
-const { default: BadWordScanner } = require("../utils/badword");
+const BadWordScanner = require("../utils/badword");
 const router = express.Router();
 
 router.post("/", async (req, res) => {

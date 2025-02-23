@@ -103,7 +103,6 @@ function App() {
               <Route path="noti-setting" element={<NotiSetting />} />
               
             </Route>
-            
             <Route path="/posts" element={<Post />} />
             <Route path="/writepost" element={<Writepost />} />
             <Route path="/editpost/:id" element={<EditPost />} />

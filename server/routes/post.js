@@ -7,10 +7,28 @@ const Like = require("../models/like");
 const SavedPost = require("../models/save");
 const Notification = require("../models/notifaications");
 const auth = require("./authMiddleware");
-const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const { NotiMailer } = require("../mail/noti_sender");
-const { default: BadWordScanner } = require("../utils/badword");
+const BadWordScanner = require("../utils/badword");
+const recommend = require("../utils/itembase");
+
+const verifyJWT = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (token === null) {
+    return res.status(401).json({ error: "ไม่มี token การเข้าถึง" });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ error: "การเข้าถึง token ไม่ถูกต้อง" });
+    }
+
+    req.user = user.id;
+    next();
+  });
+};
 
 router.get("/search", async (req, res) => {
   const query = req.query.query;
@@ -740,6 +758,36 @@ router.delete("/:postId/save", async (req, res) => {
   } catch (error) {
     console.error("Error removing save:", error);
     res.status(500).send({ error: "Failed to remove save" });
+  }
+});
+
+router.post("/blog-recommends",verifyJWT, async (req, res) => {
+  let user_id = req.user;
+  try {        
+    const rec = await recommend(user_id, 5); 
+    const currentUser = await User.findById(user_id);
+    const postIds = rec; 
+
+    const blogs = await Post.find({ _id: { $in: postIds } })  
+      .populate({
+        path: "author",
+        select: "profile_picture username fullname followers"
+      })
+      .sort({ publishedAt: -1 })
+      .select("blog_id topic des banner activity tags publishedAt visibility author")
+      .lean();
+
+      const filteredBlogs = blogs.filter(blog => {
+        if (blog.visibility === "public") {
+          return true;
+        }
+        return blog.visibility === "followers" && blog.author.followers.includes(user_id);
+      });
+    
+    return res.status(200).json({ blogs: filteredBlogs });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 

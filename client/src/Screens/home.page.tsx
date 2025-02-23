@@ -20,7 +20,9 @@ interface BlogState {
 
 const HomePage = () => {
   const API_URL = process.env.REACT_APP_API_ENDPOINT || "https://kku-blog-server-ak2l.onrender.com";
+  const [recommend, setRecommend] = useState<BlogState | null>(null);
   const [blogs, setBlogs] = useState<BlogState | null>(null);
+  const [uniqueBlogs, setUniqueBlogs] = useState<BlogState | null>(null);
   const [trendingBlogs, setTrendingBlogs] = useState<Post[] | null>(null);
   const [pageState, setPageState] = useState("หน้าหลัก");
   const category = ["มข", "กีฬา", "ข่าวสาร", "รับน้อง", "น้องใหม่", "รีวิว", "ร้านอาหาร", "Blog"];
@@ -105,6 +107,53 @@ const HomePage = () => {
       });
   };
 
+  // recommend
+  useEffect(()=>{
+      const headers = getAuthHeaders();
+
+      axios
+        .post(API_URL + "/posts/blog-recommends",{}, {headers})
+        .then(async ({ data }) => {  
+
+          let formatData = await filterPaginationData({
+            state: recommend,
+            data: data.blogs,
+            page: 1,
+            countRoute: "/posts/all-latest-blogs-count"
+          });
+
+          setRecommend(formatData);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+  },[])
+
+  useEffect(()=>{
+    if (recommend?.result && blogs?.result) {
+      const combinedBlogs = [...recommend.result, ...blogs.result];
+  
+      const uniqueBlogsResult = combinedBlogs.reduce((acc, blog) => {
+        if (!acc.some((b) => b.blog_id === blog.blog_id)) {
+          acc.push(blog);
+        }
+        return acc;
+      }, [] as Post[]);
+  
+      const totalDocs = uniqueBlogsResult.length;
+      
+      const page = recommend?.page ?? blogs?.page ?? 1;
+  
+      setUniqueBlogs({
+        result: uniqueBlogsResult,
+        totalDocs,
+        page,
+      });
+    }else{
+      setUniqueBlogs(blogs);
+    }
+  },[recommend,blogs])
+
   useEffect(() => {
     activeTabRef.current?.click();
 
@@ -127,8 +176,8 @@ const HomePage = () => {
             <>
               {blogs === null ? (
                 <Loader />
-              ) : blogs.result.length ? (
-                blogs.result.map((blog, i) => {
+              ) : uniqueBlogs?.result.length ? (
+                uniqueBlogs?.result.map((blog, i) => {
                   return (
                     <AnimationWrapper transition={{ duration: 1, delay: i * 0.1 }} key={i}>
                       <BlogCard content={blog} author={blog.author} />

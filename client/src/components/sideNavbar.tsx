@@ -186,7 +186,7 @@ const SideNav = () => {
               เปลี่ยนรหัสผ่าน
             </NavLink>
             <NavLink
-              to="/settings/noti-setting"
+              to="/settings/notification"
               onClick={(e) => setPageState(e.currentTarget.innerText)}
               className="sidebar-link"
             >

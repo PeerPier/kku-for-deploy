@@ -1,6 +1,6 @@
 const express = require("express");
 const Question = require("../models/Question");
-const { default: BadWordScanner } = require("../utils/badword");
+const BadWordScanner = require("../utils/badword");
 const router = express.Router();
 
 // Get all questions

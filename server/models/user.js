@@ -140,6 +140,18 @@ const userSchema = new mongoose.Schema(
       ref: "posts",
       default: [],
     },
+    viewed_posts: {
+      type: [String], 
+      default: [],
+    },
+    liked_posts: {
+      type: [String], 
+      default: [],
+    },
+    saved_posts: {
+      type: [String], 
+      default: [],
+    },
   },
   {
     timestamps: {
