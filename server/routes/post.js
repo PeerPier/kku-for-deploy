@@ -307,7 +307,7 @@ router.delete("/:id", auth, getPost, async (req, res) => {
         
     await Report.updateMany(
       { post: post._id },
-      { $set: { status: "Cancle", verified: true } }
+      { $set: { status: "Cancel", verified: true } }
     );
 
     res.json({ message: "Post deleted successfully" });

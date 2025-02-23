@@ -681,7 +681,7 @@ const AdminHome: React.FC = () => {
                   {new Date(report.createdAt).toLocaleDateString()}
                 </td>
                 <td>{report.reason || "No Title"}</td>
-                <td className="warning">{report.status == "Approved" ? "อนุมัติ" : report.status == "Pending" ? "รอดำเนินการ" : report.status == "Cancle" ? "โพสต์ถูกลบ/ยกเลิกรายงาน" : "ปฏิเสธ"}</td>
+                <td className="warning">{report.status == "Approved" ? "อนุมัติ" : report.status == "Pending" ? "รอดำเนินการ" : report.status == "Cancel" ? "โพสต์ถูกลบ/ยกเลิกรายงาน" : "ปฏิเสธ"}</td>
                 <td className="primary">
                   <Button
                     variant="info"
@@ -751,7 +751,7 @@ const AdminHome: React.FC = () => {
                                   ).toLocaleDateString()}
                                 </td>
                                 <td>{report.reason || "No Title"}</td>
-                                <td className="warning">{report.status == "Approved" ? "อนุมัติ" : report.status == "Pending" ? "รอดำเนินการ" : report.status == "Cancle" ? "โพสต์ถูกลบ/ยกเลิกรายงาน" : "ปฏิเสธ"}</td>
+                                <td className="warning">{report.status == "Approved" ? "อนุมัติ" : report.status == "Pending" ? "รอดำเนินการ" : report.status == "Cancel" ? "โพสต์ถูกลบ/ยกเลิกรายงาน" : "ปฏิเสธ"}</td>
                                 <td className="primary">
                                   <Button
                                     variant="info"
@@ -828,13 +828,13 @@ const AdminHome: React.FC = () => {
                           />
                             <Form.Check
                             inline
-                            label="Cancle"
+                            label="Cancel"
                             style={{ color: "#ff7782" }}
                             name="group1"
                             type="radio"
                             id={`inline-${type}-3`}
-                            onChange={() => setSelectedApprove("blog-cancle")}
-                            checked={selectedApprove === "blog-cancle"}
+                            onChange={() => setSelectedApprove("blog-cancel")}
+                            checked={selectedApprove === "blog-cancel"}
                           />
                         </div>
                       ))}
@@ -870,7 +870,7 @@ const AdminHome: React.FC = () => {
                                       ).toLocaleDateString()}
                                     </td>
                                     <td>{report.reason || "No Title"}</td>
-                                    <td className="warning">{report.status == "Approved" ? "อนุมัติ" : report.status == "Pending" ? "รอดำเนินการ" : report.status == "Cancle" ? "โพสต์ถูกลบ/ยกเลิกรายงาน" : "ปฏิเสธ"}</td>
+                                    <td className="warning">{report.status == "Approved" ? "อนุมัติ" : report.status == "Pending" ? "รอดำเนินการ" : report.status == "Cancel" ? "โพสต์ถูกลบ/ยกเลิกรายงาน" : "ปฏิเสธ"}</td>
                                     <td className="primary">
                                       <Button
                                         variant="info"
@@ -951,7 +951,7 @@ const AdminHome: React.FC = () => {
                     </table>
                   )}
 
-                  {selectedApprove === "blog-cancle" && (
+                  {selectedApprove === "blog-cancel" && (
                     <table>
                       <thead className="pt-5">
                         <tr>
@@ -966,7 +966,7 @@ const AdminHome: React.FC = () => {
                         <tbody>
                           {reports.length > 0 ? (
                             reports.map((report) =>
-                              report.status === "Cancle" ? (
+                              report.status === "Cancel" ? (
                                 <tr key={report._id}>
                                   <td>
                                     {report.reportedBy

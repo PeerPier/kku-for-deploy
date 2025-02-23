@@ -827,7 +827,7 @@ router.post("/delete-blog", verifyJWT, (req, res) => {
 
       Report.updateMany(
         { post: blog._id },
-        { $set: { status: "Cancle", verified: true } }
+        { $set: { status: "Cancel", verified: true } }
       ).then(()=>{
         console.log("ตรวจสอบ report แล้ว");
       });
