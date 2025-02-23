@@ -152,6 +152,14 @@ const userSchema = new mongoose.Schema(
       type: [String], 
       default: [],
     },
+    notification_enable: {
+      type: Boolean, 
+      default: true,
+    },
+    notification_email_enable: {
+      type: Boolean, 
+      default: true,
+    },
   },
   {
     timestamps: {

@@ -9,6 +9,25 @@ const Report = require("../models/report");
 const bcrypt = require("bcrypt");
 const BadWordScanner = require("../utils/badword");
 const Admin = require("../models/admin");
+const jwt = require("jsonwebtoken");
+
+const verifyJWT = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (token === null) {
+    return res.status(401).json({ error: "ไม่มี token การเข้าถึง" });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ error: "การเข้าถึง token ไม่ถูกต้อง" });
+    }
+
+    req.user = user.id;
+    next();
+  });
+};
 
 // Route URL to get all users
 router.get("/", async (req, res) => {
@@ -185,6 +204,72 @@ router.post("/changepassword/:id", async (req, res) => {
   } catch (err) {
     console.error("Error updating password:", err);
     res.status(500).json({ error: "Error updating password" });
+  }
+});
+
+// Use post instead get because the line 58 is conflict
+router.post("/notification-status", verifyJWT, async (req, res) => {
+  try {
+    const userId = req.user;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({
+      success: true,
+      notification_enable: user.notification_enable,
+      notification_email_enable: user.notification_email_enable,
+    });
+  } catch (error) {
+    console.error("Error fetching notification status:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+
+// Toggle notification
+router.patch("/notification-enable", verifyJWT, async (req, res) => {
+  try {
+    const userId = req.user;
+    console.log(userId)
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const newValue = !user.notification_enable;
+    console.log(user.notification_enable,newValue)
+    user.notification_enable = newValue;
+    await user.save();
+
+    res.json({ status: "success", notification_enable: newValue });
+  } catch (error) {
+    console.error("Error updating notification_enable:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+// Toggle email notification 
+router.patch("/notification-email-enable", verifyJWT, async (req, res) => {
+  try {
+    const userId = req.user;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const newValue = !user.notification_email_enable;
+    user.notification_email_enable = newValue;
+    await user.save();
+
+    res.json({ success: true, notification_email_enable: newValue });
+  } catch (error) {
+    console.error("Error updating notification_email_enable:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
