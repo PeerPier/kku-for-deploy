@@ -20,10 +20,10 @@ const DeleteAdminAccountModal: React.FC<{
       const response = await axios.delete(
         `${API_BASE_URL}/profile/edit-profile/delete/${userId}`,
         {
-          data: { adminPassword },
+          data: { adminPassword , adminId:sessionStorage.getItem("adminId") },
         }
       );
-
+      
       if (response.data.message === "User deleted successfully") {
         setSuccessMessage("ลบบัญชีผู้ใช้สำเร็จ!");
         setErrorMessage("");

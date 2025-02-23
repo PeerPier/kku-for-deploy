@@ -76,7 +76,7 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
   const handleDeleteSuccess = () => {
     setShowDeleteModal(false);
     fetchUsers();
-    alert("Your account has been deleted.");
+    alert("User account has been deleted.");
   };
 
   const fetchUsers = async () => {

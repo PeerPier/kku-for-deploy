@@ -8,6 +8,7 @@ const Comment = require("../models/comment");
 const Report = require("../models/report");
 const bcrypt = require("bcrypt");
 const BadWordScanner = require("../utils/badword");
+const Admin = require("../models/admin");
 
 // Route URL to get all users
 router.get("/", async (req, res) => {
@@ -127,22 +128,26 @@ router.post("/edit-profile/notifications/:id", async (req, res) => {
 router.delete("/edit-profile/delete/:id", async function (req, res, next) {
   try {
     const user = await User.findById(req.params.id);
+    const admin = await Admin.findById(req.body.adminId);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-    const isMatch = await bcrypt.compare(req.body.password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ error: "Incorrect password" });
-    }
-    await Post.deleteMany({ author: req.params.id });
-    await Notification.deleteMany({ user: req.params.id });
-    await Like.deleteMany({ user: req.params.id });
-    await Comment.deleteMany({ blog_author: req.params.id });
-    await Report.deleteMany({
-      $or: [{ post: req.params.id }, { reportedBy: req.params.id }],
-    });
-    await User.findByIdAndDelete(req.params.id);
-    res.json({ message: "User deleted successfully" });
+
+    const isMatch = await bcrypt.compare(req.body.adminPassword, admin.password);
+
+    if(isMatch){
+      await Post.deleteMany({ author: req.params.id });
+      await Notification.deleteMany({ user: req.params.id });
+      await Like.deleteMany({ user: req.params.id });
+      await Comment.deleteMany({ blog_author: req.params.id });
+      await Report.deleteMany({
+        $or: [{ post: req.params.id }, { reportedBy: req.params.id }],
+      });
+      await User.findByIdAndDelete(req.params.id);
+      res.json({ message: "User deleted successfully" });
+    }else{
+      throw new Error("Password is Incorrect");
+    };
   } catch (err) {
     console.error("Error deleting user and related data: ", err);
     res.status(500).json({ error: "Error deleting user and related data" });
