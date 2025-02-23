@@ -11,6 +11,7 @@ const jwt = require("jsonwebtoken");
 const { NotiMailer } = require("../mail/noti_sender");
 const BadWordScanner = require("../utils/badword");
 const recommend = require("../utils/itembase");
+const Report = require("../models/report");
 
 const verifyJWT = (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -303,6 +304,11 @@ router.delete("/:id", auth, getPost, async (req, res) => {
     await Like.deleteMany({ post: post._id });
 
     await Post.deleteOne({ _id: post._id });
+        
+    await Report.updateMany(
+      { post: post._id },
+      { $set: { status: "Cancle", verified: true } }
+    );
 
     res.json({ message: "Post deleted successfully" });
   } catch (error) {

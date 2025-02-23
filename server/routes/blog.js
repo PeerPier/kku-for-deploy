@@ -13,6 +13,7 @@ const auth = require("./authMiddleware");
 const bcrypt = require("bcrypt");
 const { NotiMailer } = require("../mail/noti_sender");
 const BadWordScanner = require("../utils/badword");
+const Report = require("../models/report");
 
 const verifyJWT = (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -823,6 +824,13 @@ router.post("/delete-blog", verifyJWT, (req, res) => {
         { _id: user_id },
         { $pull: { blog: blog._id }, $inc: { total_posts: -1 } }
       ).then((user) => console.log("ลบบล็อกแล้ว"));
+
+      Report.updateMany(
+        { post: blog._id },
+        { $set: { status: "Cancle", verified: true } }
+      ).then(()=>{
+        console.log("ตรวจสอบ report แล้ว");
+      });
 
       return res.status(200).json({ status: "เรียบร้อยแล้ว" });
     })
