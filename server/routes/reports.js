@@ -48,7 +48,10 @@ router.get("/", async (req, res) => {
 
 router.get("/by/:id", async (req, res) => {
   try {
-    const reports = await Report.find({ reportedBy: req.params.id })
+    const reports = await Report.find({ 
+      reportedBy: req.params.id, 
+      status: { $ne: "Cancel" }
+    })
       .populate("reportedBy")
       .populate({
         path: "post",
@@ -114,6 +117,28 @@ router.patch("/:id/verify",verifyJWT, async (req, res) => {
 
     report.verified = true;
     report.status = verified ? "Approved" : "Declined";
+
+    await report.save();
+
+    res.status(200).json({ message: "Report updated", report });
+  } catch (error) {
+    console.error("Error updating report:", error);
+    res
+      .status(500)
+      .json({ message: "Error updating report: " + error.message });
+  }
+});
+
+// Cancel a report
+router.patch("/:id/cancel",verifyJWT, async (req, res) => {
+  try {
+    const report = await Report.findById(req.params.id);
+    if (!report) {
+      return res.status(404).json({ message: "Report not found" });
+    }
+
+    report.verified = true;
+    report.status = "Cancel";
 
     await report.save();
 

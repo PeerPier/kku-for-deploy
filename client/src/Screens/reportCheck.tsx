@@ -66,9 +66,20 @@ const ReportCheck: React.FC = () => {
   };
 
   // ฟังก์ชันลบรายงาน
-  const handleDeleteReport = async (reportId: string) => {
+  const handleCancelReport = async (reportId: string) => {
     try {
-      await axios.delete(`${API_BASE_URL}/api/report/${reportId}`);
+      const userData = sessionStorage.getItem("user");
+      const token: string | null = userData ? JSON.parse(userData).access_token : null;
+
+      if (!token) {
+        console.error("No access token found");
+      } else {
+        await axios.patch(`${API_BASE_URL}/api/report/${reportId}/cancel`, {}, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      }
       setReports((prevReports) =>
         prevReports.filter((report) => report._id !== reportId)
       );
@@ -102,14 +113,14 @@ const ReportCheck: React.FC = () => {
 
   return (
     <>
-    {selectedReport && (
-                    <ReportDetailsModal
-                      showModal={showModal}
-                      handleClose={handleCloseModal}
-                      report={selectedReport}
-                      refreshReports={refreshReports}
-                    />
-                  )}
+      {selectedReport && (
+        <ReportDetailsModal
+          showModal={showModal}
+          handleClose={handleCloseModal}
+          report={selectedReport}
+          refreshReports={refreshReports}
+        />
+      )}
       <div style={{ margin: "2% 2%", fontSize: "14px" }}>
         <h2>รายงานทั้งหมด</h2>
         <div
@@ -170,7 +181,7 @@ const ReportCheck: React.FC = () => {
                         border: "none",
                         borderRadius: "4px",
                       }}
-                      onClick={() => handleDeleteReport(report._id)}
+                      onClick={() => handleCancelReport(report._id)}
                     >
                       ยกเลิก
                     </button>
