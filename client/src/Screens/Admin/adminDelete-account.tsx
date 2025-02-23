@@ -43,7 +43,7 @@ const DeleteAdminAccountModal: React.FC<{
       </Modal.Header>
       <Modal.Body>
         <p>คุณแน่ใจหรือไม่ว่าต้องการลบบัญชีของผู้ใช้นี้?</p>
-        <Form>
+        <Form onSubmit={(e) => e.preventDefault()}>
           <Form.Group controlId="adminPassword">
             <Form.Label>กรอกรหัสผ่านของผู้ดูแลระบบเพื่อยืนยันการลบ</Form.Label>
             <Form.Control
