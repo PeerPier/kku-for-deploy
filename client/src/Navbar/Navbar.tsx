@@ -17,7 +17,7 @@ function Navbar() {
   const navigate = useNavigate();
   const {
     userAuth: { username },
-    setUserAuth,
+    setUserAuth,NotificationShow,
   } = useContext(UserContext);
   const userId = sessionStorage.getItem("userId");
 
@@ -200,6 +200,7 @@ function Navbar() {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
+                      opacity: NotificationShow?1:0
                     }}
                   >
                     {countUnseenNotifications(notifications)}

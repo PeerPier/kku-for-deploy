@@ -53,11 +53,15 @@ interface UserContextType {
     new_notification_available?: boolean;
   };
   setUserAuth: React.Dispatch<React.SetStateAction<any>>;
+  NotificationShow: boolean;
+  setNotificationShow: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const UserContext = createContext<UserContextType>({
   userAuth: { access_token: null },
-  setUserAuth: () => {}
+  setUserAuth: () => {},
+  NotificationShow: true,
+  setNotificationShow: () => {},
 });
 
 function NavbarLayout() {
@@ -73,6 +77,7 @@ function App() {
   const [userAuth, setUserAuth] = useState<{ access_token: string | null }>({
     access_token: null
   });
+  const [NotificationShow, setNotificationShow] = useState(false);
 
   useEffect(() => {
     const userInSession = lookInSession("user");
@@ -82,7 +87,7 @@ function App() {
   }, []);
   
   return (
-    <UserContext.Provider value={{ userAuth, setUserAuth }}>
+    <UserContext.Provider value={{ userAuth, setUserAuth,NotificationShow,setNotificationShow  }}>
       <ChatContextProvider>
         <Routes>
           <Route path="/editor" element={<Editor />} />
