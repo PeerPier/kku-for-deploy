@@ -5,6 +5,7 @@ const Admin = require("../models/admin");
 const User = require("../models/user");
 const Post = require("../models/blog");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 //Admin
 // router.get("/", async (req, res) => {
@@ -41,9 +42,14 @@ router.post("/", async (req, res) => {
     if (!user) {
       return res.status(403).json({ error: "ไม่พบผู้ใช้" });
     }
-    
-    console.log("formDatatoSend(user)", formDatatoSend(user));
-    return res.status(200).json(formDatatoSend(user));
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if(isMatch){
+      return res.status(200).json(formDatatoSend(user));
+    }else{
+      throw new Error("Password is incorrect");
+    }
   } catch (err) {
     console.log(err.message);
     return res.status(500).json({ error: "เกิดข้อผิดพลาดในระบบ" });
