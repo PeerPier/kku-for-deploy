@@ -144,6 +144,15 @@ const SideNav = () => {
               เขียน
             </NavLink>
 
+            <NavLink
+  to="/dashboard/reportCheck"  // ✅ path ตรงกับ Route แล้ว
+  onClick={(e) => setPageState(e.currentTarget.innerText)}
+  className="sidebar-link"
+>
+  <LuFileEdit />
+  รายงานปัญหา
+</NavLink>
+
             <h1
               className="mb-3 mt-4"
               style={{ color: "#494949", fontSize: "16px" }}

@@ -40,6 +40,8 @@ import SideNav from "./components/sideNavbar";
 import ChangPassword from "./Screens/change-password";
 import Notifications from "./Screens/notifications.page";
 import ManageBlogs from "./Screens/manageblogs";
+import ReportCheck from "./Screens/reportCheck";
+import NotiSetting from "./Screens/noti-setting";
 
 interface UserContextType {
   userAuth: {
@@ -98,15 +100,18 @@ function App() {
             <Route path="settings" element={<SideNav />}>
               <Route path="edit-profile" element={<EditProfile />}></Route>
               <Route path="change-password" element={<ChangPassword />}></Route>
+              <Route path="noti-setting" element={<NotiSetting />} />
+              
             </Route>
             <Route path="/posts" element={<Post />} />
             <Route path="/writepost" element={<Writepost />} />
             <Route path="/editpost/:id" element={<EditPost />} />
             <Route path="/footer" element={<Footer />} />
-
+            
             <Route path="dashboard" element={<SideNav />}>
               <Route path="blogs" element={<ManageBlogs />} />
               <Route path="notifications" element={<Notifications />} />
+              <Route path="reportCheck" element={<ReportCheck />} />
             </Route>
 
             <Route path="/dashboard/blogs/statistics" element={<DashboardUser />} />
