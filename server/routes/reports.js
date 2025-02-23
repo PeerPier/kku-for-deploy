@@ -46,6 +46,26 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/by/:id", async (req, res) => {
+  try {
+    const reports = await Report.find({ reportedBy: req.params.id })
+      .populate("reportedBy")
+      .populate({
+        path: "post",
+        populate: {
+          path: "author",
+          model: "User",
+        },
+      });
+
+    res.status(200).json(reports);
+  } catch (error) {
+    console.error("Error fetching reports:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+
 // Add a new report
 router.post("/add", async (req, res) => {
   const { postId, reason, reportedBy } = req.body;
