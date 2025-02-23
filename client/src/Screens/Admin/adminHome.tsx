@@ -681,7 +681,7 @@ const AdminHome: React.FC = () => {
                   {new Date(report.createdAt).toLocaleDateString()}
                 </td>
                 <td>{report.reason || "No Title"}</td>
-                <td className="warning">{report.status}</td>
+                <td className="warning">{report.status == "Approved" ? "อนุมัติ" : report.status == "Pending" ? "รอดำเนินการ" : "ปฏิเสธ"}</td>
                 <td className="primary">
                   <Button
                     variant="info"
@@ -751,7 +751,7 @@ const AdminHome: React.FC = () => {
                                   ).toLocaleDateString()}
                                 </td>
                                 <td>{report.reason || "No Title"}</td>
-                                <td className="warning">{report.status}</td>
+                                <td className="warning">{report.status == "Approved" ? "อนุมัติ" : report.status == "Pending" ? "รอดำเนินการ" : "ปฏิเสธ"}</td>
                                 <td className="primary">
                                   <Button
                                     variant="info"
@@ -860,7 +860,7 @@ const AdminHome: React.FC = () => {
                                       ).toLocaleDateString()}
                                     </td>
                                     <td>{report.reason || "No Title"}</td>
-                                    <td className="warning">{report.status}</td>
+                                    <td className="warning">{report.status == "Approved" ? "อนุมัติ" : report.status == "Pending" ? "รอดำเนินการ" : "ปฏิเสธ"}</td>
                                     <td className="primary">
                                       <Button
                                         variant="info"
@@ -916,7 +916,7 @@ const AdminHome: React.FC = () => {
                                     ).toLocaleDateString()}
                                   </td>
                                   <td>{report.reason || "No Title"}</td>
-                                  <td className="warning">{report.status}</td>
+                                  <td className="warning">ปฏิเสธ</td>
                                   <td className="primary">
                                     <Button
                                       variant="info"
