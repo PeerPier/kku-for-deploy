@@ -164,7 +164,7 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
 
       <Modal.Footer>
         <Button variant="success" onClick={() => handleVerification(true)}>
-          อนุญาตให้บล็อกอยู่บนเว็บต่อ
+          อนุญาติให้บล็อกอยู่บนเว็บต่อ
         </Button>
         <Button variant="danger" onClick={() => handleVerification(false)}>
           ลบบล็อก
