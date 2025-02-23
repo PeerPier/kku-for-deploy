@@ -110,7 +110,6 @@ router.patch("/:id/verify",verifyJWT, async (req, res) => {
 router.delete("/:reportId/deletePost",verifyJWT, async (req, res) => {
   const { postId } = req.body;
   let user_id = req.user;
-  console.log("USER DEBUG",user_id)
 
   if (!postId) {
     return res.status(400).json({ message: "Post ID is required to delete." });
@@ -132,10 +131,16 @@ router.delete("/:reportId/deletePost",verifyJWT, async (req, res) => {
 
     await Post.deleteOne({ _id: post._id });
 
+    Report.updateMany(
+      { post: post._id, status: "Pending" },
+      { $set: { status: "Declined", verified: true } }
+    ).then(()=>{
+      console.log("update all report success");
+    })
+    
     report.verified = true;
     report.status = "Declined";
     await report.save();
-
 
     const notification = new Notification({
       user: user_id,
