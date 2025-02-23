@@ -51,8 +51,7 @@ router.post("/", async (req, res) => {
       throw new Error("Password is incorrect");
     }
   } catch (err) {
-    console.log(err.message);
-    return res.status(500).json({ error: "เกิดข้อผิดพลาดในระบบ" });
+    return res.status(500).json({ error: err.message });
   }
 });
 
