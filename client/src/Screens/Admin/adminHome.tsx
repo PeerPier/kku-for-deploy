@@ -662,7 +662,7 @@ const AdminHome: React.FC = () => {
     <table>
       <thead className="pt-5">
         <tr>
-          <th>ชื่อบัญชีผู้ใช้</th>
+          <th>ผู้รายงาน</th>
           <th>วันที่</th>
           <th>หัวข้อการรายงาน</th>
           <th>สถานะ</th>
@@ -727,7 +727,7 @@ const AdminHome: React.FC = () => {
                   <table>
                     <thead className="pt-5">
                       <tr>
-                        <th>ชื่อบัญชีผู้ใช้</th>
+                        <th>ผู้รายงาน</th>
                         <th>วันที่</th>
                         <th>หัวข้อการรายงาน</th>
                         <th>สถานะ</th>
@@ -835,7 +835,7 @@ const AdminHome: React.FC = () => {
                       <table>
                         <thead className="pt-5">
                           <tr>
-                            <th>ชื่อบัญชีผู้ใช้</th>
+                            <th>ผู้รายงาน</th>
                             <th>วันที่</th>
                             <th>หัวข้อการรายงาน</th>
                             <th>สถานะ</th>
@@ -892,7 +892,7 @@ const AdminHome: React.FC = () => {
                     <table>
                       <thead className="pt-5">
                         <tr>
-                          <th>ชื่อผู้ใช้</th>
+                          <th>ผู้รายงาน</th>
                           <th>วันที่</th>
                           <th>หัวข้อการรายงาน</th>
                           <th>สถานะ</th>
