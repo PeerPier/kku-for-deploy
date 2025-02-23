@@ -155,7 +155,7 @@ const ReportCheck: React.FC = () => {
                     {report.post.author.fullname}
                   </td>
                   <td style={{ padding: "10px" }}>{report.reason}</td>
-                  <td style={{ padding: "10px" }}>{report.status}</td>
+                  <td style={{ padding: "10px" }}>{report.status == "Approved" ? "อนุมัติ" : report.status == "Pending" ? "รอดำเนินการ" : report.status == "Cancel" ? "โพสต์ถูกลบ/ยกเลิกรายงาน" : "ปฏิเสธ"}</td>
                   <td style={{ padding: "10px" }}>
                     {new Date(report.createdAt).toLocaleDateString()}
                   </td>
@@ -173,6 +173,8 @@ const ReportCheck: React.FC = () => {
                     >
                       ดูรายละเอียด
                     </button>
+                    {
+                    report.status == "Pending"?
                     <button
                       style={{
                         padding: "5px 10px",
@@ -184,7 +186,20 @@ const ReportCheck: React.FC = () => {
                       onClick={() => handleCancelReport(report._id)}
                     >
                       ยกเลิก
-                    </button>
+                    </button>:
+                     <button
+                     disabled={true}
+                     style={{
+                       padding: "5px 10px",
+                       backgroundColor: "#939393",
+                       color: "white",
+                       border: "none",
+                       borderRadius: "4px",
+                     }}
+                   >
+                     ยกเลิก
+                   </button>
+                    }
                   </td>
                 </tr>
               ))}
