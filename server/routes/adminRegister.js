@@ -2,6 +2,7 @@ const express = require("express");
 const Admin = require("../models/admin");
 const BadWordScanner = require("../utils/badword");
 const router = express.Router();
+const bcrypt = require("bcrypt");
 
 router.post("/", async (req, res) => {
   const { username, email, password, firstname, lastname, tel } = req.body;
@@ -20,10 +21,12 @@ router.post("/", async (req, res) => {
         .json({ message: "Username or email already taken" });
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const newAdmin = new Admin({
       username,
       email,
-      password,
+      password: hashedPassword,
       firstname,
       lastname,
       tel,
