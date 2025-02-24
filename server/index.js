@@ -67,6 +67,7 @@ const BlogCreated = require("./routes/blog");
 const Post = require("./models/blog");
 const viewsRouter = require("./routes/view");
 const token = require("./routes/token");
+const badword = require("./routes/badword");
 
 app.use("/signup", registerRouter);
 app.use("/signin", loginRouter);
@@ -89,6 +90,7 @@ app.use("/uploads", express.static("uploads"));
 app.use("/create-blog", BlogCreated);
 app.use("/views", viewsRouter);
 app.use("/token", token);
+app.use("/badword",badword);
 
 const generateUsername = async (email) => {
   const { nanoid } = await import("nanoid");

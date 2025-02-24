@@ -36,6 +36,7 @@ import ReportDetailsModal from "./approve-modal";
 import { Button } from "react-bootstrap";
 import { Line } from "react-chartjs-2"; // ใช้แสดงกราฟ Line
 import "chart.js/auto"; // สำหรับการใช้งาน Chart.js
+import ManageBadwords from "./manage-badwords";
 
 export interface Report {
   _id: string;
@@ -449,9 +450,9 @@ const AdminHome: React.FC = () => {
               href="#"
               onClick={(e) => {
                 e.preventDefault();
-                handleCategorySelection("manage-cate");
+                handleCategorySelection("manage-badwords");
               }}
-              className={selectedCate === "manage-cate" ? "active" : ""}
+              className={selectedCate === "manage-badwords" ? "active" : ""}
             >
               <RiCharacterRecognitionFill />
               <h3>จัดการคำหยาบ</h3>
@@ -1046,6 +1047,10 @@ const AdminHome: React.FC = () => {
               <button id="menu-btn">
                 <RxHamburgerMenu />
               </button>
+              <div className="theme-toggler">
+                <MdLightMode className="active" />
+                <MdDarkMode />
+              </div>
 
               {adminProfile && (
                 <div className="profile">
@@ -1096,6 +1101,35 @@ const AdminHome: React.FC = () => {
 
         {selectedCate === "manage-cate" && <ManageCate blogsData={getBlog} />}
         {selectedCate === "manage-cate" && (
+          <div className="right">
+            <div className="top">
+              <button id="menu-btn">
+                <RxHamburgerMenu />
+              </button>
+              <div className="theme-toggler">
+                <MdLightMode className="active" />
+                <MdDarkMode />
+              </div>
+
+              {adminProfile && (
+                <div className="profile">
+                  <div className="info">
+                    <p>
+                      Hello, <b>{adminUsername}</b>
+                    </p>
+                    <small className="text-muted1">{adminUsername}</small>
+                  </div>
+                  <div className="profile-photo">
+                    <img src={Pro} alt="" />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {selectedCate === "manage-badwords" && <ManageBadwords/>}
+        {selectedCate === "manage-badwords" && (
           <div className="right">
             <div className="top">
               <button id="menu-btn">
