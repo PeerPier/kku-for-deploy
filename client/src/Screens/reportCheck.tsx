@@ -152,7 +152,7 @@ const ReportCheck: React.FC = () => {
               {reports.map((report) => (
                 <tr key={report._id} style={{ borderBottom: "1px solid #ddd" }}>
                   <td style={{ padding: "10px" }}>
-                    {report.post.author.fullname}
+                    {report.post ? report.post.author.fullname : "โพสต์ถูกลบแล้ว"}
                   </td>
                   <td style={{ padding: "10px" }}>{report.reason}</td>
                   <td style={{ padding: "10px" }}>{report.status == "Approved" ? "อนุมัติ" : report.status == "Pending" ? "รอดำเนินการ" : report.status == "Cancel" ? "โพสต์ถูกลบ/ยกเลิกรายงาน" : "ปฏิเสธ"}</td>
@@ -160,19 +160,37 @@ const ReportCheck: React.FC = () => {
                     {new Date(report.createdAt).toLocaleDateString()}
                   </td>
                   <td style={{ padding: "10px", textAlign: "center" }}>
-                    <button
+                    {
+                      report.post?
+                      <button
+                        style={{
+                          marginRight: "10px",
+                          padding: "5px 10px",
+                          backgroundColor: "#4CAF50",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "4px",
+                        }}
+                        onClick={() => handleShowModal(report)}
+                      >
+                        ดูรายละเอียด
+                      </button>
+                      :
+                      <button
                       style={{
                         marginRight: "10px",
                         padding: "5px 10px",
-                        backgroundColor: "#4CAF50",
+                        backgroundColor: "#939393",
                         color: "white",
                         border: "none",
                         borderRadius: "4px",
                       }}
-                      onClick={() => handleShowModal(report)}
+                      disabled={true}
                     >
                       ดูรายละเอียด
                     </button>
+                    }
+
                     {
                     report.status == "Pending"?
                     <button
