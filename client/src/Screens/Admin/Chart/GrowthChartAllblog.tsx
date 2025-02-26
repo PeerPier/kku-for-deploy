@@ -91,7 +91,7 @@ const GrowthChartAllblog: React.FC<GrowthChartAllblogProps> = ({ data }) => {
   return (
     <div>
       {/* Dropdown เลือกดูแบบรายปีหรือรายเดือน */}
-      <div style={{ display: "flex", gap: "10px", marginBottom: "10px" ,justifyContent: "flex-end"}}>
+      <div style={{ display: "flex", gap: "10px", margin: "20px" ,justifyContent: "flex-end"}}>
         <select value={viewMode} onChange={(e) => setViewMode(e.target.value as "monthly" | "yearly")}
         style={{
           backgroundColor: "#7380ec", // สีพื้นหลัง
@@ -123,7 +123,18 @@ const GrowthChartAllblog: React.FC<GrowthChartAllblogProps> = ({ data }) => {
 
       {/* แสดง "ไม่มีข้อมูล" ถ้า charts ว่าง */}
       {charts.length === 0 ? (
-        <p style={{ textAlign: "center", fontSize: "18px", color: "#888" }}>ไม่มีข้อมูล</p>
+        <div
+        style={{
+          display: "flex",
+          justifyContent: "center",  // จัดข้อความให้อยู่กลางในแนวนอน
+          alignItems: "center",      // จัดข้อความให้อยู่กลางในแนวตั้ง
+          height: "50vh",           // ใช้ความสูงของหน้าจอทั้งหมด (หรือความสูงของคอนเทนเนอร์ที่ต้องการ)
+        }}
+      >
+        <p style={{ fontSize: "18px", color: "#888" }}>
+          ไม่มีข้อมูล
+        </p>
+      </div>
       ) : (
         <canvas ref={chartRef} style={{ height: "180px" }} />
       )}

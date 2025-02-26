@@ -123,9 +123,8 @@ const AdminHome: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const API_BASE_URL = process.env.REACT_APP_API_ENDPOINT;
   const adminUsername = sessionStorage.getItem("userId");
-  const [selectedChart, setSelectedChart] = useState<"user" | "blog" | null>(
-    null
-  );
+  const [selectedChart, setSelectedChart] = useState<"user" | "blog">("user");
+
   const [adminProfile, setAdminProfile] = useState<any>(true);
   const [userCounter, setUserCounter] = useState<number>(0);
   const [postCounter, setPostCounter] = useState<number>(0);
