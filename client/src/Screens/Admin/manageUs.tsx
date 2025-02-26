@@ -247,7 +247,7 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
           alignItems: "center",
           justifyContent: "center",
         }}
-      >
+      centered>
         <Modal.Header closeButton>
           <Modal.Title>แก้ไขบัญชีผู้ใช้</Modal.Title>
         </Modal.Header>
@@ -276,7 +276,7 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
           <Button variant="secondary" onClick={handleModalClose}>
             ปิด
           </Button>
-          <Button variant="primary" onClick={handleUpdateUser}>
+          <Button style={{ backgroundColor: "#7380ec", borderColor: "#7380ec", color: "white" }}onClick={handleUpdateUser}>
             บันทึกการเปลี่ยนแปลง
           </Button>
         </Modal.Footer>

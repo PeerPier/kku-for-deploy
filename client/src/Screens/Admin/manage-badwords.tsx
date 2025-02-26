@@ -150,7 +150,7 @@ const ManageBadwords: React.FC = () => {
         </Modal.Footer>
       </Modal>
 
-      <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
+      <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>แก้ไขรายการคำหยาบ</Modal.Title>
         </Modal.Header>
@@ -164,11 +164,11 @@ const ManageBadwords: React.FC = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowEditModal(false)}>ยกเลิก</Button>
-          <Button variant="primary" onClick={handleUpdateBadWords}>บันทึก</Button>
+          <Button style={{ backgroundColor: "#7380ec", borderColor: "#7380ec", color: "white" }} onClick={handleUpdateBadWords}>บันทึก</Button>
         </Modal.Footer>
       </Modal>
 
-      <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)}>
+      <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)} centered >
         <Modal.Header closeButton>
           <Modal.Title>ยืนยันการลบ</Modal.Title>
         </Modal.Header>

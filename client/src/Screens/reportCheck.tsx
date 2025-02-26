@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ReportDetailsModal from "../components/report-view-modal";
-// Import the modal component
+import ConfirmCancelModal from "../components/ConfirmCancelModal"; // Import the confirmation modal
 
 export interface Report {
   _id: string;
@@ -54,6 +54,8 @@ const ReportCheck: React.FC = () => {
   const [reports, setReports] = useState<Report[]>([]);
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [showConfirmCancelModal, setShowConfirmCancelModal] = useState(false);
+  const [reportToCancel, setReportToCancel] = useState<string | null>(null); // Track which report to cancel
 
   // ฟังก์ชันเพื่อดึงข้อมูลรีพอร์ตจาก API
   const fetchReports = async () => {
@@ -66,26 +68,28 @@ const ReportCheck: React.FC = () => {
   };
 
   // ฟังก์ชันลบรายงาน
-  const handleCancelReport = async (reportId: string) => {
-    try {
-      const userData = sessionStorage.getItem("user");
-      const token: string | null = userData ? JSON.parse(userData).access_token : null;
+  const handleCancelReport = async () => {
+    if (reportToCancel) {
+      try {
+        const userData = sessionStorage.getItem("user");
+        const token: string | null = userData ? JSON.parse(userData).access_token : null;
 
-      if (!token) {
-        console.error("No access token found");
-      } else {
-        await axios.patch(`${API_BASE_URL}/api/report/${reportId}/cancel`, {}, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        if (!token) {
+          console.error("No access token found");
+        } else {
+          await axios.patch(`${API_BASE_URL}/api/report/${reportToCancel}/cancel`, {}, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+        }
+        setReports((prevReports) =>
+          prevReports.filter((report) => report._id !== reportToCancel)
+        );
+        setShowConfirmCancelModal(false); // Close confirmation modal
+      } catch (error) {
+        console.error("Error deleting report:", error);
       }
-      setReports((prevReports) =>
-        prevReports.filter((report) => report._id !== reportId)
-      );
-      handleCloseModal(); // ปิด Modal หลังลบรายงาน
-    } catch (error) {
-      console.error("Error deleting report:", error);
     }
   };
 
@@ -99,6 +103,18 @@ const ReportCheck: React.FC = () => {
   const handleCloseModal = () => {
     setShowModal(false);
     setSelectedReport(null);
+  };
+
+  // ฟังก์ชันแสดง Confirmation Modal
+  const handleOpenConfirmCancelModal = (reportId: string) => {
+    setReportToCancel(reportId); // Set the report to cancel
+    setShowConfirmCancelModal(true); // Open the modal
+  };
+
+  // ฟังก์ชันปิด Confirmation Modal
+  const handleCloseConfirmCancelModal = () => {
+    setShowConfirmCancelModal(false);
+    setReportToCancel(null); // Reset the selected report to cancel
   };
 
   // ฟังก์ชันรีเฟรชรายงานหลังจากการดำเนินการ
@@ -121,13 +137,19 @@ const ReportCheck: React.FC = () => {
           refreshReports={refreshReports}
         />
       )}
+      <ConfirmCancelModal
+        showModal={showConfirmCancelModal}
+        onCancel={handleCloseConfirmCancelModal}
+        onConfirm={handleCancelReport}
+        handleClose={handleCloseConfirmCancelModal}
+      />
       <div style={{ margin: "2% 2%", fontSize: "14px" }}>
         <h2>รายงานทั้งหมด</h2>
         <div
           style={{
-            maxHeight: "500px", // ความสูงสูงสุดก่อนจะเลื่อน
-            overflowY: "auto", // เพิ่ม scroll bar แนวตั้ง
-            overflowX: "auto", // เพิ่ม scroll bar แนวนอน
+            maxHeight: "500px",
+            overflowY: "auto",
+            overflowX: "auto",
             border: "1px solid #ddd",
             borderRadius: "8px",
           }}
@@ -155,13 +177,14 @@ const ReportCheck: React.FC = () => {
                     {report.post ? report.post.author.fullname : "โพสต์ถูกลบแล้ว"}
                   </td>
                   <td style={{ padding: "10px" }}>{report.reason}</td>
-                  <td style={{ padding: "10px" }}>{report.status == "Approved" ? "อนุมัติ" : report.status == "Pending" ? "รอดำเนินการ" : report.status == "Cancel" ? "โพสต์ถูกลบ/ยกเลิกรายงาน" : "ปฏิเสธ"}</td>
+                  <td style={{ padding: "10px" }}>
+                    {report.status === "Approved" ? "อนุมัติ" : report.status === "Pending" ? "รอดำเนินการ" : report.status === "Cancel" ? "โพสต์ถูกลบ/ยกเลิกรายงาน" : "ปฏิเสธ"}
+                  </td>
                   <td style={{ padding: "10px" }}>
                     {new Date(report.createdAt).toLocaleDateString()}
                   </td>
                   <td style={{ padding: "10px", textAlign: "center" }}>
-                    {
-                      report.post?
+                    {report.post ? (
                       <button
                         style={{
                           marginRight: "10px",
@@ -175,49 +198,49 @@ const ReportCheck: React.FC = () => {
                       >
                         ดูรายละเอียด
                       </button>
-                      :
+                    ) : (
                       <button
-                      style={{
-                        marginRight: "10px",
-                        padding: "5px 10px",
-                        backgroundColor: "#939393",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "4px",
-                      }}
-                      disabled={true}
-                    >
-                      ดูรายละเอียด
-                    </button>
-                    }
+                        style={{
+                          marginRight: "10px",
+                          padding: "5px 10px",
+                          backgroundColor: "#939393",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "4px",
+                        }}
+                        disabled={true}
+                      >
+                        ดูรายละเอียด
+                      </button>
+                    )}
 
-                    {
-                    report.status == "Pending"?
-                    <button
-                      style={{
-                        padding: "5px 10px",
-                        backgroundColor: "#f44336",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "4px",
-                      }}
-                      onClick={() => handleCancelReport(report._id)}
-                    >
-                      ยกเลิก
-                    </button>:
-                     <button
-                     disabled={true}
-                     style={{
-                       padding: "5px 10px",
-                       backgroundColor: "#939393",
-                       color: "white",
-                       border: "none",
-                       borderRadius: "4px",
-                     }}
-                   >
-                     ยกเลิก
-                   </button>
-                    }
+                    {report.status === "Pending" ? (
+                      <button
+                        style={{
+                          padding: "5px 10px",
+                          backgroundColor: "#f44336",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "4px",
+                        }}
+                        onClick={() => handleOpenConfirmCancelModal(report._id)} // Open confirmation modal
+                      >
+                        ยกเลิก
+                      </button>
+                    ) : (
+                      <button
+                        disabled={true}
+                        style={{
+                          padding: "5px 10px",
+                          backgroundColor: "#939393",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "4px",
+                        }}
+                      >
+                        ยกเลิก
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
