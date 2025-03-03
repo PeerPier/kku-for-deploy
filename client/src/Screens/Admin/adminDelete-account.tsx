@@ -37,7 +37,7 @@ const DeleteAdminAccountModal: React.FC<{
   };
 
   return (
-    <Modal show={show} onHide={onClose}>
+    <Modal show={show} onHide={onClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>ลบบัญชีผู้ใช้</Modal.Title>
       </Modal.Header>

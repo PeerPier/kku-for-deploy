@@ -147,7 +147,7 @@ const ManageQ: React.FC = () => {
           </div>
         </div>
       </div>
-      <Modal show={showAddModal} onHide={() => setShowAddModal(false)}>
+      <Modal show={showAddModal} onHide={() => setShowAddModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>เพิ่มคำถาม</Modal.Title>
         </Modal.Header>
@@ -172,12 +172,12 @@ const ManageQ: React.FC = () => {
           <Button variant="secondary" onClick={() => setShowAddModal(false)}>
             ยกเลิก
           </Button>
-          <Button variant="primary" onClick={handleAddQuestion}>
+          <Button style={{ backgroundColor: "#7380ec", borderColor: "#7380ec", color: "white" }} onClick={handleAddQuestion}>
             บันทึก
           </Button>
         </Modal.Footer>
       </Modal>
-      <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
+      <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>แก้ไขคำถามที่พบบ่อย</Modal.Title>
         </Modal.Header>
@@ -202,12 +202,12 @@ const ManageQ: React.FC = () => {
           <Button variant="secondary" onClick={() => setShowEditModal(false)}>
             ยกเลิก
           </Button>
-          <Button variant="primary" onClick={handleUpdateQuestion}>
+          <Button style={{ backgroundColor: "#7380ec", borderColor: "#7380ec", color: "white" }} onClick={handleUpdateQuestion}>
             บันทึก
           </Button>
         </Modal.Footer>
       </Modal>
-      <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)}>
+      <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>ยืนยันการลบ</Modal.Title>
         </Modal.Header>

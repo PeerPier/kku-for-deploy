@@ -8,8 +8,9 @@ import {
   useEffect,
   useState,
 } from "react";
-import { AiOutlineUser, AiOutlineGlobal } from "react-icons/ai";
+
 import { FaEarthAmericas } from "react-icons/fa6";
+import { FaUserAlt } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
 import { MdReport } from "react-icons/md";
 import AnimationWrapper from "./page-animation";
@@ -305,7 +306,7 @@ const BlogPage = () => {
                   {blog?.views || 0}
                   {visibility === "followers" ? (
                     <>
-                      <AiOutlineUser
+                      <FaUserAlt 
                         style={{ marginRight: "0.2rem", marginLeft: "0.5rem" }}
                       />
                       ผู้ติดตาม

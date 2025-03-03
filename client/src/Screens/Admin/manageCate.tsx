@@ -222,7 +222,11 @@ const ManageCate: React.FC<{ blogsData: Blog[] }> = ({ blogsData }) => {
         </div>
 
         {/* Modal สำหรับแก้ไข */}
-        <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
+        <Modal
+          show={showEditModal}
+          onHide={() => setShowEditModal(false)}
+          centered
+        >
           <Modal.Header closeButton>
             <Modal.Title>แก้ไขหมวดหมู่</Modal.Title>
           </Modal.Header>
@@ -239,14 +243,21 @@ const ManageCate: React.FC<{ blogsData: Blog[] }> = ({ blogsData }) => {
             <Button variant="secondary" onClick={() => setShowEditModal(false)}>
               ยกเลิก
             </Button>
-            <Button variant="primary" onClick={handleEditTag}>
-              บันทึก
-            </Button>
+            <Button
+  style={{ backgroundColor: "#7380ec", borderColor: "#7380ec", color: "white" }}
+  onClick={handleEditTag}
+>
+  บันทึก
+</Button>
           </Modal.Footer>
         </Modal>
 
         {/* Modal สำหรับลบ */}
-        <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+        <Modal
+          show={showDeleteModal}
+          onHide={() => setShowDeleteModal(false)}
+          centered
+        >
           <Modal.Header closeButton>
             <Modal.Title>ยืนยันการลบ</Modal.Title>
           </Modal.Header>

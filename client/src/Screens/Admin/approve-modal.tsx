@@ -163,7 +163,7 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
 </Modal.Body>
 
       <Modal.Footer>
-        <Button variant="success" onClick={() => handleVerification(true)}>
+        <Button style={{ backgroundColor: "#7380ec", borderColor: "#7380ec", color: "white" }}onClick={() => handleVerification(true)}>
           อนุญาติให้บล็อกอยู่บนเว็บต่อ
         </Button>
         <Button variant="danger" onClick={() => handleVerification(false)}>

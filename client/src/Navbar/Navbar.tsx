@@ -155,11 +155,13 @@ function Navbar() {
       </div>
 
       <div className="toggle-search">
+        <div className="toggle-search-2">
         <button
-          onClick={() => setSearchBoxVisibility((currentval) => !currentval)}
+          onClick={() => setSearchBoxVisibility((currentval) => !currentval)} className="search-toggle"
         >
           <IoIosSearch className="toggle-icon" />
         </button>
+        </div>
 
         <Link
           to="/editor"

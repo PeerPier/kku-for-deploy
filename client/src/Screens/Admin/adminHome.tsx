@@ -26,7 +26,7 @@ import Pro from "../../pic/start1.jpg";
 import { RiUserStarFill } from "react-icons/ri";
 import Form from "react-bootstrap/Form";
 import ManageUser from "./manageUs";
-import GrowthChart from "./Chart/GrowthChart";
+import GrowthChart from "./Chart/GrowthChartAllblog";
 import { IoNotifications } from "react-icons/io5";
 import { FaUserMinus } from "react-icons/fa6";
 import ManageCate from "./manageCate";
@@ -37,6 +37,8 @@ import { Button } from "react-bootstrap";
 import { Line } from "react-chartjs-2"; // ใช้แสดงกราฟ Line
 import "chart.js/auto"; // สำหรับการใช้งาน Chart.js
 import ManageBadwords from "./manage-badwords";
+import GrowthChartAlluser from "./Chart/GrowthChartAlluser";
+import GrowthChartAllblog from "./Chart/GrowthChartAllblog";
 
 export interface Report {
   _id: string;
@@ -121,6 +123,7 @@ const AdminHome: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const API_BASE_URL = process.env.REACT_APP_API_ENDPOINT;
   const adminUsername = sessionStorage.getItem("userId");
+  const [selectedChart, setSelectedChart] = useState<"user" | "blog">("user");
 
   const [adminProfile, setAdminProfile] = useState<any>(true);
   const [userCounter, setUserCounter] = useState<number>(0);
@@ -311,9 +314,8 @@ const AdminHome: React.FC = () => {
     );
   };
 
-  // สถานะเพื่อจัดการการ hover สำหรับ user-all และ view-all
+  // สถานะเพื่อจัดการการ hover สำหรับ user-all
   const [isUserHovered, setIsUserHovered] = useState(false);
-  const [isViewHovered, setIsViewHovered] = useState(false);
   const [monthsUser, setMonthsUser] = useState([
     { month: "January", joinAt: 0 },
     { month: "February", joinAt: 0 },
@@ -354,20 +356,6 @@ const AdminHome: React.FC = () => {
       },
     ],
   };
-  // ข้อมูลตัวอย่างสำหรับกราฟของการเยี่ยมชม
-  const viewData = {
-    labels: monthsPost.map((e) => e.month),
-    datasets: [
-      {
-        label: "จำนวนการเยี่ยมชม",
-        data: monthsPost.map((e) => e.publishedAt), // ข้อมูลกราฟการเยี่ยมชม
-        borderColor: "rgba(153, 102, 255, 1)",
-        backgroundColor: "rgba(153, 102, 255, 0.2)",
-        fill: true,
-      },
-    ],
-  };
-
   const options = {
     scales: {
       y: {
@@ -469,94 +457,70 @@ const AdminHome: React.FC = () => {
             <h1>Dashboard</h1>
 
             <div className="date">
-              <input type="date" />
+              <input
+                type="date"
+                defaultValue={new Date().toISOString().split("T")[0]}
+              />
             </div>
 
-            <div className="insights">
-              <div
-                className="user-all"
-                onMouseEnter={() => setIsUserHovered(true)} // เมื่อเมาส์เข้า
-                onMouseLeave={() => setIsUserHovered(false)} // เมื่อเมาส์ออก
-                style={{ position: "relative" }} // เพื่อให้กราฟอยู่บน div
-              >
-                <PiUsersThreeFill className="svg1" />
-                <div className="middle">
-                  <div className="left">
-                    <h3>ผู้ใช้ทั้งหมด</h3>
-                    <h1>{userCounter}</h1>
+            <div className="dashboard-container">
+              <div className="insights">
+                {/* ผู้ใช้ทั้งหมด */}
+                <div
+                  className={`user-all ${
+                    selectedChart === "user" ? "active" : ""
+                  }`}
+                  onClick={() => setSelectedChart("user")}
+                  style={{
+                    position: "relative",
+                    cursor: "pointer",
+                    backgroundColor:
+                      selectedChart === "user" ? "#9fa8f6" : "transparent", // สีพื้นหลังเป็นม่วงเมื่อเลือก
+                    color: selectedChart === "user" ? "white" : "black", // สีข้อความเป็นขาวเมื่อเลือก
+                  }}
+                >
+                  <PiUsersThreeFill className="svg1" />
+                  <div className="middle">
+                    <div className="left">
+                      <h3>ผู้ใช้ทั้งหมด</h3>
+                      <h1>{userCounter}</h1>
+                    </div>
                   </div>
                 </div>
 
-                {/* แสดงกราฟเมื่อ hover บน user-all */}
-                {isUserHovered && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: "100%",
-                      left: "50%",
-                      transform: "translateX(-50%)",
-                      backgroundColor: "white",
-                      border: "1px solid #ccc",
-                      padding: "10px",
-                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                      zIndex: 10,
-                      width: "300px",
-                    }}
-                  >
-                    <Line data={userData} options={options} />
+                {/* โพสต์ทั้งหมด */}
+                <div
+                  className={`blogpost-all ${
+                    selectedChart === "blog" ? "active" : ""
+                  }`}
+                  onClick={() => setSelectedChart("blog")}
+                  style={{
+                    position: "relative",
+                    cursor: "pointer",
+                    backgroundColor:
+                      selectedChart === "blog" ? "#9fa8f6" : "transparent", // สีพื้นหลังเป็นม่วงเมื่อเลือก
+                    color: selectedChart === "blog" ? "white" : "black", // สีข้อความเป็นขาวเมื่อเลือก
+                  }}
+                >
+                  <IoDocumentTextOutline className="svg3" />
+                  <div className="middle">
+                    <div className="left">
+                      <h3>บล็อกทั้งหมด</h3>
+                      <h1>{postCounter}</h1>
+                    </div>
                   </div>
+                </div>
+              </div>
+
+              {/* แสดงกราฟด้านล่าง */}
+              <div className="chart-container">
+                {selectedChart === "user" && (
+                  <GrowthChartAlluser data={getUser} />
+                )}
+                {selectedChart === "blog" && (
+                  <GrowthChartAllblog data={getBlog} />
                 )}
               </div>
-
-              {/* ส่วนของ view-all */}
-              <div
-                className="view-all"
-                onMouseEnter={() => setIsViewHovered(true)} // เมื่อเมาส์เข้า
-                onMouseLeave={() => setIsViewHovered(false)} // เมื่อเมาส์ออก
-                style={{ position: "relative" }} // เพื่อให้กราฟอยู่บน div
-              >
-                <LuView className="svg2" />
-                <div className="middle">
-                  <div className="left">
-                    <h3>การเยี่ยมชม</h3>
-                    <h1>{totalViews}</h1>
-                  </div>
-                </div>
-
-                {/* แสดงกราฟเมื่อ hover บน view-all */}
-                {isViewHovered && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: "100%",
-                      left: "50%",
-                      transform: "translateX(-50%)",
-                      backgroundColor: "white",
-                      border: "1px solid #ccc",
-                      padding: "10px",
-                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                      zIndex: 10,
-                      width: "300px",
-                    }}
-                  >
-                    <Line data={viewData} options={options} />
-                  </div>
-                )}
-              </div>
-
-              <div className="blogpost-all">
-                <IoDocumentTextOutline className="svg3" />
-                <div className="middle">
-                  <div className="left">
-                    <h3>บล็อกทั้งหมด</h3>
-                    <h1>{postCounter}</h1>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="recent-order">
-              <GrowthChart data={getBlog} />
             </div>
           </div>
         )}
@@ -651,57 +615,69 @@ const AdminHome: React.FC = () => {
                 รายการ
               </h2>
               {selectedBlog === "blog-all" && (
-  <div
-    className="recent-order"
-    style={{
-      overflowY: "auto",  // เพิ่ม scrollbar เมื่อเนื้อหามากเกินไป
-      maxHeight: "400px",  // กำหนดความสูงสูงสุดของ div
-      margin: "0",
-      borderRadius: "2rem",
-    }}
-  >
-    <table>
-      <thead className="pt-5">
-        <tr>
-          <th>ผู้รายงาน</th>
-          <th>วันที่</th>
-          <th>หัวข้อการรายงาน</th>
-          <th>สถานะ</th>
-          <th>รายละเอียด</th>
-        </tr>
-      </thead>
-      {adminProfile && (
-        <tbody>
-          {reports.length > 0 ? (
-            reports.map((report) => (
-              <tr key={report._id}>
-                <td>
-                  {report.reportedBy ? report.reportedBy.fullname : ""}
-                </td>
-                <td>
-                  {new Date(report.createdAt).toLocaleDateString()}
-                </td>
-                <td>{report.reason || "No Title"}</td>
-                <td className="warning">{report.status == "Approved" ? "อนุมัติ" : report.status == "Pending" ? "รอดำเนินการ" : report.status == "Cancel" ? "โพสต์ถูกลบ/ยกเลิกรายงาน" : "ปฏิเสธ"}</td>
-                <td className="primary">
-                  <Button
-                    variant="info"
-                    onClick={() => handleShowModal(report)}
-                    disabled={report.status !== "Pending"}
-                  >
-                    รายละเอียด
-                  </Button>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={5}>ไม่มีการรายงาน</td>
-            </tr>
-          )}
-        </tbody>
-      )}
-    </table>
+                <div
+                  className="recent-order"
+                  style={{
+                    overflowY: "auto", // เพิ่ม scrollbar เมื่อเนื้อหามากเกินไป
+                    maxHeight: "400px", // กำหนดความสูงสูงสุดของ div
+                    margin: "0",
+                    borderRadius: "2rem",
+                  }}
+                >
+                  <table>
+                    <thead className="pt-5">
+                      <tr>
+                        <th>ผู้รายงาน</th>
+                        <th>วันที่</th>
+                        <th>หัวข้อการรายงาน</th>
+                        <th>สถานะ</th>
+                        <th>รายละเอียด</th>
+                      </tr>
+                    </thead>
+                    {adminProfile && (
+                      <tbody>
+                        {reports.length > 0 ? (
+                          reports.map((report) => (
+                            <tr key={report._id}>
+                              <td>
+                                {report.reportedBy
+                                  ? report.reportedBy.fullname
+                                  : ""}
+                              </td>
+                              <td>
+                                {new Date(
+                                  report.createdAt
+                                ).toLocaleDateString()}
+                              </td>
+                              <td>{report.reason || "No Title"}</td>
+                              <td className="warning">
+                                {report.status == "Approved"
+                                  ? "อนุมัติ"
+                                  : report.status == "Pending"
+                                  ? "รอดำเนินการ"
+                                  : report.status == "Cancel"
+                                  ? "โพสต์ถูกลบ/ยกเลิกรายงาน"
+                                  : "ปฏิเสธ"}
+                              </td>
+                              <td className="primary">
+                                <Button
+                                  variant="info"
+                                  onClick={() => handleShowModal(report)}
+                                  disabled={report.status !== "Pending"}
+                                >
+                                  รายละเอียด
+                                </Button>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan={5}>ไม่มีการรายงาน</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    )}
+                  </table>
 
                   {/* Report Details Modal */}
                   {selectedReport && (
@@ -752,7 +728,15 @@ const AdminHome: React.FC = () => {
                                   ).toLocaleDateString()}
                                 </td>
                                 <td>{report.reason || "No Title"}</td>
-                                <td className="warning">{report.status == "Approved" ? "อนุมัติ" : report.status == "Pending" ? "รอดำเนินการ" : report.status == "Cancel" ? "โพสต์ถูกลบ/ยกเลิกรายงาน" : "ปฏิเสธ"}</td>
+                                <td className="warning">
+                                  {report.status == "Approved"
+                                    ? "อนุมัติ"
+                                    : report.status == "Pending"
+                                    ? "รอดำเนินการ"
+                                    : report.status == "Cancel"
+                                    ? "โพสต์ถูกลบ/ยกเลิกรายงาน"
+                                    : "ปฏิเสธ"}
+                                </td>
                                 <td className="primary">
                                   <Button
                                     variant="info"
@@ -827,7 +811,7 @@ const AdminHome: React.FC = () => {
                             onChange={() => setSelectedApprove("blog-decline")}
                             checked={selectedApprove === "blog-decline"}
                           />
-                            <Form.Check
+                          <Form.Check
                             inline
                             label="Cancel"
                             style={{ color: "#ff7782" }}
@@ -871,7 +855,15 @@ const AdminHome: React.FC = () => {
                                       ).toLocaleDateString()}
                                     </td>
                                     <td>{report.reason || "No Title"}</td>
-                                    <td className="warning">{report.status == "Approved" ? "อนุมัติ" : report.status == "Pending" ? "รอดำเนินการ" : report.status == "Cancel" ? "โพสต์ถูกลบ/ยกเลิกรายงาน" : "ปฏิเสธ"}</td>
+                                    <td className="warning">
+                                      {report.status == "Approved"
+                                        ? "อนุมัติ"
+                                        : report.status == "Pending"
+                                        ? "รอดำเนินการ"
+                                        : report.status == "Cancel"
+                                        ? "โพสต์ถูกลบ/ยกเลิกรายงาน"
+                                        : "ปฏิเสธ"}
+                                    </td>
                                     <td className="primary">
                                       <Button
                                         variant="info"
@@ -980,7 +972,9 @@ const AdminHome: React.FC = () => {
                                     ).toLocaleDateString()}
                                   </td>
                                   <td>{report.reason || "No Title"}</td>
-                                  <td className="warning">โพสต์ถูกลบ/ยกเลิกรายงาน</td>
+                                  <td className="warning">
+                                    โพสต์ถูกลบ/ยกเลิกรายงาน
+                                  </td>
                                   <td className="primary">
                                     <Button
                                       variant="info"
@@ -1004,7 +998,6 @@ const AdminHome: React.FC = () => {
                       )}
                     </table>
                   )}
-
                 </div>
               )}
             </div>
@@ -1128,7 +1121,7 @@ const AdminHome: React.FC = () => {
           </div>
         )}
 
-        {selectedCate === "manage-badwords" && <ManageBadwords/>}
+        {selectedCate === "manage-badwords" && <ManageBadwords />}
         {selectedCate === "manage-badwords" && (
           <div className="right">
             <div className="top">
