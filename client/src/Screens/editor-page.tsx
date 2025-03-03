@@ -15,6 +15,7 @@ const blogStructure = {
   tags: [] as string[],
   des: "",
   author: {},
+  visibility: ""
 };
 
 interface EditorContextType {

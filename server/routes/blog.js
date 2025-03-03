@@ -59,8 +59,10 @@ router.post("/", verifyJWT, async (req, res) => {
         .json({ error: "คุณต้องใส่หน้าปกเพื่อเผยแพร่บล็อก" });
     }
 
-    if (!content.blocks.length) {
-      return res.status(403).json({ error: "ต้องมีเนื้อหาบล็อกเพื่อเผยแพร่" });
+    if(content.blocks){
+      if (!content.blocks.length) {
+        return res.status(403).json({ error: "ต้องมีเนื้อหาบล็อกเพื่อเผยแพร่" });
+      }
     }
 
     if (!tags || tags.length === 0 || tags.length > 10) {
