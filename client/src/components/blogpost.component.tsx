@@ -73,7 +73,9 @@ const BlogCard: React.FC<BlogCardProps> = ({ content, author }) => {
         <p className="descript-blogpost">{des}</p>
 
         <div className="d-flex gap-4 mt-3">
-          <span className="btn-light py-1 px-4">{tags[0]}</span>
+          {tags[0]?
+          <span className="btn-light py-1 px-4">{tags[0]}</span>          
+          :null}
           <span className="ml-3 d-flex align-items-center gap-2" style={{ color: "#404040" }}>
             <FaRegHeart />
             {total_likes}

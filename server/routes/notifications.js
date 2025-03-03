@@ -191,7 +191,7 @@ router.post("/notifications", verifyJWT, (req, res) => {
       .limit(maxLimit)
       .then(() => console.log("ดูการแจ้งเตือนแล้ว"))
 
-      console.log(notifications)
+      // console.log(notifications)
       return res.status(200).json({ notifications });
     })
     .catch((err) => {

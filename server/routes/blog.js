@@ -569,26 +569,23 @@ router.post("/get-replies", (req, res) => {
 
 // Edit Tag API
 router.post("/edit-tag", async (req, res) => {
-  const { blog_id, old_tag, new_tag } = req.body;
+  const { old_tag, new_tag } = req.body;
 
   try {
-    const blog = await Blog.findOne({ blog_id }).populate(
-      "author",
-      "fullname username profile_picture"
+    const result = await Blog.updateMany(
+      { tags: old_tag },
+      { $set: { 
+          "tags.$[elem]": new_tag
+        } 
+      },
+      { arrayFilters: [{ "elem": old_tag }] }
     );
 
-    if (!blog) {
-      return res.status(404).json({ error: "Blog not found" });
+    if (result.nModified === 0) {
+      return res.status(404).json({ error: "No blogs found with the given tag" });
     }
 
-    const updatedTags = blog.tags.map((tag) =>
-      tag === old_tag ? new_tag : tag
-    );
-
-    blog.tags = updatedTags;
-    await blog.save();
-
-    return res.status(200).json({ blog });
+    return res.status(200).json({ message: "Tags updated successfully" });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -785,22 +782,19 @@ router.post("/user-written-blog-count", verifyJWT,async (req, res) => {
 
 // Delete Tag API
 router.delete("/deletetag", async (req, res) => {
-  const { blog_id, tag } = req.body;
+  const { tag } = req.body;
 
   try {
-    const blog = await Blog.findOneAndUpdate(
-      { blog_id },
-      { $pull: { tags: tag } },
-      { new: true }
-    )
-      .populate("author", "fullname username profile_picture")
-      .select("topic des content banner activity publishedAt blog_id tags");
+    const result = await Blog.updateMany(
+      { tags: tag }, 
+      { $pull: { tags: tag } }
+    );
 
-    if (!blog) {
-      return res.status(404).json({ error: "Blog not found" });
+    if (result.nModified === 0) {
+      return res.status(404).json({ error: "No blogs found with the given tag" });
     }
 
-    return res.status(200).json({ blog });
+    return res.status(200).json({ message: "Tag deleted successfully from blogs" });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
