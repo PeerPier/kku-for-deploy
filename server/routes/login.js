@@ -4,6 +4,7 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { id } = require("date-fns/locale");
+const Admin = require("../models/admin");
 
 const formDatatoSend = (user) => {
   const access_token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {expiresIn:"7d"});
@@ -14,6 +15,28 @@ const formDatatoSend = (user) => {
     username: user.username,
     fullname: user.fullname,
   };
+};
+
+const isAdmin = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const admin = await Admin.findById(decoded.id);
+
+    if (admin && admin.is_admin) {
+      req.user = admin;
+      next();
+    } else {
+      res.status(403).json({ message: "Access denied" });
+    }
+  } catch (error) {
+    console.error("Error in isAdmin middleware:", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 router.post("/", (req, res) => {
@@ -49,6 +72,10 @@ router.post("/", (req, res) => {
       console.log(err.message);
       return res.status(500).json({ error: err.message });
     });
+});
+
+router.get("/auth",isAdmin,async (req,res)=>{
+  res.send("ok");
 });
 
 module.exports = router;

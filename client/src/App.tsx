@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Outlet } from "react-router-dom";
+import React, { useEffect, useState,ReactNode  } from "react";
+import { BrowserRouter as Router, Routes, Route, Outlet,Navigate } from "react-router-dom";
 import LoginPage from "./Screens/login";
 import RegistPage from "./Screens/register";
 import HomePage from "./Screens/home.page";
@@ -57,11 +57,18 @@ interface UserContextType {
   setNotificationShow: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+interface User {
+  access_token?: string;
+  role?: string;
+  username?: string;
+  _id?: string;
+}
+
 export const UserContext = createContext<UserContextType>({
   userAuth: { access_token: null },
-  setUserAuth: () => {},
+  setUserAuth: () => { },
   NotificationShow: true,
-  setNotificationShow: () => {},
+  setNotificationShow: () => { },
 });
 
 function NavbarLayout() {
@@ -85,9 +92,18 @@ function App() {
       ? setUserAuth(JSON.parse(userInSession))
       : setUserAuth({ access_token: null });
   }, []);
+
+  function PrivateRoute({ children }: { children: ReactNode }) {
+    const user = JSON.parse(sessionStorage.getItem('user') || '{}') as User | null;
   
+    if (!user?.access_token) {
+      return <Navigate to="/admin/login" />;
+    }
+    return <>{children}</>;
+  }
+
   return (
-    <UserContext.Provider value={{ userAuth, setUserAuth,NotificationShow,setNotificationShow  }}>
+    <UserContext.Provider value={{ userAuth, setUserAuth, NotificationShow, setNotificationShow }}>
       <ChatContextProvider>
         <Routes>
           <Route path="/editor" element={<Editor />} />
@@ -106,13 +122,13 @@ function App() {
               <Route path="edit-profile" element={<EditProfile />}></Route>
               <Route path="change-password" element={<ChangPassword />}></Route>
               <Route path="noti-setting" element={<NotiSetting />} />
-              
+
             </Route>
             <Route path="/posts" element={<Post />} />
             <Route path="/writepost" element={<Writepost />} />
             <Route path="/editpost/:id" element={<EditPost />} />
             <Route path="/footer" element={<Footer />} />
-            
+
             <Route path="dashboard" element={<SideNav />}>
               <Route path="blogs" element={<ManageBlogs />} />
               <Route path="notifications" element={<Notifications />} />
@@ -130,7 +146,9 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/admin/register" element={<RegisterAdmin />} />
           <Route path="/admin/login" element={<LoginAdmin type="admin" />} />
-          <Route path="/admin/:adminId" element={<AdminHome />} />
+
+          <Route path="/admin/:adminId" element={<PrivateRoute><AdminHome /></PrivateRoute>}/>
+          
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/account/preference/:id" element={<AccountPreferences />} />

@@ -39,6 +39,7 @@ import "chart.js/auto"; // สำหรับการใช้งาน Chart.j
 import ManageBadwords from "./manage-badwords";
 import GrowthChartAlluser from "./Chart/GrowthChartAlluser";
 import GrowthChartAllblog from "./Chart/GrowthChartAllblog";
+import { useNavigate } from 'react-router-dom';
 
 export interface Report {
   _id: string;
@@ -154,6 +155,37 @@ const AdminHome: React.FC = () => {
     setShowModal(false);
     setSelectedReport(null);
   };
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+    const accessToken = user?.access_token;
+
+    if (!accessToken) {
+      navigate('/admin/login');
+      return;
+    }
+
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/login/auth`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        console.log('Authentication successful:', response.data);
+
+      } catch (error) {
+        sessionStorage.clear();
+        console.error(error);
+        navigate('/admin/login');
+      }
+    };
+
+    fetchData();
+  }, [navigate]);
 
   useEffect(() => {
     const fetchReports = async () => {
