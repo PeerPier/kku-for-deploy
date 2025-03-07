@@ -171,13 +171,17 @@ const UserAuthForm: React.FC<LoginPageProps> = ({ type }) => {
             icon="VscKey"
           />
 
+          <p className="text text-r">
+            <Link to="/forgot-password">ลืมรหัสผ่าน</Link> ในการเข้าสู่ระบบ
+          </p>
+
           <button
             className="btn-dark center"
             style={{ display: "block", margin: "0 auto", marginTop: "3.5rem" }}
             type="submit"
           >
             {type}
-          </button>
+          </button>   
 
           <div className="line-or">
             <hr
