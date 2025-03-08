@@ -137,6 +137,14 @@ main {
   margin-top: 1rem; /* เพิ่มระยะห่างด้านบน */
 }
 
+.text-r {
+  text-align: right !important;
+}
+
+.text-r a:hover{
+  color: #222 !important;
+}
+
 .text a {
   color: #bbb;
   transition: 0.3s;

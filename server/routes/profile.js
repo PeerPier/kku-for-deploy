@@ -173,6 +173,34 @@ router.delete("/edit-profile/delete/:id", async function (req, res, next) {
   }
 });
 
+router.delete("/user/delete/:id", async function (req, res, next) {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const isMatch = await bcrypt.compare(req.body.password, user.password);
+
+    if(isMatch){
+      await Post.deleteMany({ author: req.params.id });
+      await Notification.deleteMany({ user: req.params.id });
+      await Like.deleteMany({ user: req.params.id });
+      await Comment.deleteMany({ blog_author: req.params.id });
+      await Report.deleteMany({
+        $or: [{ post: req.params.id }, { reportedBy: req.params.id }],
+      });
+      await User.findByIdAndDelete(req.params.id);
+      res.json({ message: "User deleted successfully" });
+    }else{
+      throw new Error("Password is Incorrect");
+    };
+  } catch (err) {
+    console.error("Error deleting user and related data: ", err);
+    res.status(500).json({ error: "Error deleting user and related data" });
+  }
+});
+
 router.post("/changepassword/:id", async (req, res) => {
   try {
     const userId = req.params.id;
