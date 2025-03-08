@@ -1,14 +1,15 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../App";
 import { Navigate, NavLink, Outlet } from "react-router-dom";
-import { IoDocumentTextOutline } from "react-icons/io5";
+import { IoDocumentTextOutline, IoRemoveCircleOutline } from "react-icons/io5";
 import { LuFileEdit } from "react-icons/lu";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { LuUser2 } from "react-icons/lu";
 import { SlLock } from "react-icons/sl";
 import { FaBarsStaggered } from "react-icons/fa6";
 import "../misc/blogpage.css";
-import { lookInSession } from "../common/session";
+import { lookInSession, removeFromSession } from "../common/session";
+import DeleteAccountModalUser from "../Screens/DeleteAccount-confirm-user";
 
 
 const SideNav = () => {
@@ -16,26 +17,42 @@ const SideNav = () => {
     userAuth: { new_notification_available },
   } = useContext(UserContext);
 
-  const [access_token, setAccessToken] = useState<string | null>(null); 
+  const [access_token, setAccessToken] = useState<string | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     const userInSession = lookInSession("user");
-    if(userInSession){
+    if (userInSession) {
       console.log(JSON.parse(userInSession).access_token)
       setAccessToken(JSON.parse(userInSession).access_token)
-    }else{
+    } else {
       window.location.href = '/signin'
     }
   }, []);
 
   let page = window.location.pathname.split("/")[2];
-  
+
   let [pageState, setPageState] = useState(page.replace("-", " "));
   let [showSideNav, setShowSideNav] = useState(false);
 
   const activeTabLine = useRef<HTMLHRElement | null>(null);
   const sideBarIconTab = useRef<HTMLButtonElement | null>(null);
   const pageStateTab = useRef<HTMLButtonElement | null>(null);
+
+  const userId = sessionStorage.getItem("userId");
+
+  const {
+    userAuth: { username },
+    setUserAuth,
+  } = useContext(UserContext);
+
+  const handleDeleteSuccess = () => {
+    setShowDeleteModal(false);
+    alert("Your account has been deleted.");
+    removeFromSession("user");
+    setUserAuth({ access_token: null });
+    window.location.href = "/";
+  };
 
   const changePageState = (e: React.MouseEvent<HTMLElement>) => {
     let { offsetWidth, offsetLeft } = e.currentTarget as HTMLElement;
@@ -145,13 +162,13 @@ const SideNav = () => {
             </NavLink>
 
             <NavLink
-  to="/dashboard/reportCheck"  // ✅ path ตรงกับ Route แล้ว
-  onClick={(e) => setPageState(e.currentTarget.innerText)}
-  className="sidebar-link"
->
-  <LuFileEdit />
-  รายงานปัญหา
-</NavLink>
+              to="/dashboard/reportCheck"  // ✅ path ตรงกับ Route แล้ว
+              onClick={(e) => setPageState(e.currentTarget.innerText)}
+              className="sidebar-link"
+            >
+              <LuFileEdit />
+              รายงานปัญหา
+            </NavLink>
 
             <h1
               className="mb-3 mt-4"
@@ -190,9 +207,15 @@ const SideNav = () => {
               onClick={(e) => setPageState(e.currentTarget.innerText)}
               className="sidebar-link"
             >
-             <IoNotificationsOutline />
-             การแจ้งเตือน
+              <IoNotificationsOutline />
+              การแจ้งเตือน
             </NavLink>
+
+            <div className="delete-ac-btn" onClick={() => setShowDeleteModal(true)}>
+            <IoRemoveCircleOutline />
+              <p>ลบบัญชีผู้ใช้</p>
+            </div>
+
           </div>
         </div>
 
@@ -200,6 +223,12 @@ const SideNav = () => {
           <Outlet />
         </div>
       </section>
+      <DeleteAccountModalUser
+          userId={userId}
+          show={showDeleteModal}
+          onClose={() => setShowDeleteModal(false)}
+          onDeleteSuccess={handleDeleteSuccess}
+        />
     </>
   );
 };
