@@ -1,9 +1,8 @@
 import { useContext, useState } from "react";
 import { getDay } from "../common/date";
 import { UserContext } from "../App";
-import toast from "react-hot-toast";
 import CommentField from "./comment-field.component";
-import { FaRegCommentDots } from "react-icons/fa";
+import { FaRegCommentDots, FaEdit, FaTrashAlt } from "react-icons/fa";
 import { BlogContext } from "../Screens/blog.page";
 import axios from "axios";
 import { API_BASE_URL } from "../api/post";
@@ -40,6 +39,9 @@ const CommentCard = ({ index, leftVal, commentData }: CommentCardProps) => {
   } = useContext(UserContext);
 
   const [isReplying, setReplying] = useState(false);
+  const [isEditing, setEditing] = useState(false);
+  const [editedComment, setEditedComment] = useState(comment);
+  const [isDeleting, setDeleting] = useState(false); // State for handling the delete confirmation
 
   const context = useContext(BlogContext);
 
@@ -55,9 +57,55 @@ const CommentCard = ({ index, leftVal, commentData }: CommentCardProps) => {
 
   const handleReplyClick = () => {
     if (!access_token) {
-      return toast.error("เข้าสู่ระบบก่อนจะตอบกลับ");
+      return;
     }
     setReplying((preVal) => !preVal);
+  };
+
+  const handleEditClick = () => {
+    if (!access_token || isEditing || isDeleting) {
+      return; // Disable edit if already editing or deleting
+    }
+    setEditing(true);
+  };
+
+  const handleSaveEdit = () => {
+    axios
+      .post(API_BASE_URL + "/update-comment", { _id, comment: editedComment })
+      .then(() => {
+        setEditing(false);
+        // Update the comment in the context
+        commentArr[index].comment = editedComment;
+        setBlog({ ...blog, comments: { results: commentArr } });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleDeleteClick = () => {
+    if (!access_token || isEditing || isDeleting) {
+      return; // Disable delete if already editing or deleting
+    }
+    setDeleting(true); // Show the delete confirmation
+  };
+
+  const confirmDelete = () => {
+    axios
+      .post(API_BASE_URL + "/delete-comment", { _id })
+      .then(() => {
+        // Remove the comment from the context
+        commentArr.splice(index, 1);
+        setBlog({ ...blog, comments: { results: commentArr } });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    setDeleting(false); // Hide the delete confirmation
+  };
+
+  const cancelDelete = () => {
+    setDeleting(false); // Hide the delete confirmation if cancelled
   };
 
   const removeCommentsCards = (startingPoint: number) => {
@@ -133,7 +181,90 @@ const CommentCard = ({ index, leftVal, commentData }: CommentCardProps) => {
           </p>
         </div>
 
-        <p className="m-0 ml-3">{comment}</p>
+        {isEditing ? (
+          <div>
+            <textarea
+              value={editedComment}
+              onChange={(e) => setEditedComment(e.target.value)}
+              rows={3}
+              className="form-control"
+              style={{
+                padding: "10px",
+                borderRadius: "0.375rem",
+                border: "1px solid #ccc",
+              }}
+            />
+            <div className="d-flex gap-2 mt-2">
+              <button
+                className="btn btn-primary flex-fill"
+                onClick={handleSaveEdit}
+                style={{
+                  backgroundColor: "black", // พื้นหลังสีดำ
+                  color: "white", // ตัวอักษรเป็นสีขาว
+                  border: "1px solid black", // ขอบปุ่มสีดำ
+                  borderRadius: "30px", // ขอบโค้ง
+                  padding: "0.65rem 0.75rem", // การปรับขนาดปุ่ม
+                  fontWeight: 500, // ตัวอักษรหนาขึ้นเล็กน้อย
+                  cursor: "pointer", // แสดงเคอร์เซอร์เป็นมือเมื่อชี้ไปที่ปุ่ม
+                }}
+              >
+                บันทึกการแก้ไข
+              </button>
+              <button
+                className="btn btn-secondary flex-fill"
+                onClick={() => {
+                  setEditedComment(comment); // ยกเลิกการแก้ไข
+                  setEditing(false); // ปิดโหมดการแก้ไข
+                }}
+                style={{
+                  borderRadius: "30px", // ขอบโค้ง
+                  padding: "0.65rem 0.75rem", // การปรับขนาดปุ่ม
+                  fontWeight: 500, // ตัวอักษรหนาขึ้นเล็กน้อย
+                  cursor: "pointer", // แสดงเคอร์เซอร์เป็นมือเมื่อชี้ไปที่ปุ่ม
+                }}
+              >
+                ยกเลิก
+              </button>
+            </div>
+          </div>
+        ) : (
+          <p className="m-0 ml-3">{comment}</p>
+        )}
+
+        {/* Confirm delete button moved here */}
+        {isDeleting && (
+          <div className="mt-3 mb-3">
+            <div className="d-flex gap-2">
+              <button
+                style={{
+                  backgroundColor: "black", // พื้นหลังสีดำ
+                  color: "white", // ตัวอักษรเป็นสีขาว
+                  border: "1px solid black", // ขอบปุ่มสีดำ
+                  borderRadius: "30px", // ขอบโค้ง
+                  padding: "0.65rem 0.75rem", // การปรับขนาดปุ่ม
+                  fontWeight: 500, // ตัวอักษรหนาขึ้นเล็กน้อย
+                  cursor: "pointer", // แสดงเคอร์เซอร์เป็นมือเมื่อชี้ไปที่ปุ่ม
+                }}
+                className="btn btn-danger flex-fill"
+                onClick={confirmDelete}
+              >
+                ยืนยันการลบ
+              </button>
+              <button
+                className="btn btn-secondary flex-fill"
+                onClick={cancelDelete}
+                style={{
+                  borderRadius: "30px", // ขอบโค้ง
+                  padding: "0.65rem 0.75rem", // การปรับขนาดปุ่ม
+                  fontWeight: 500, // ตัวอักษรหนาขึ้นเล็กน้อย
+                  cursor: "pointer", // แสดงเคอร์เซอร์เป็นมือเมื่อชี้ไปที่ปุ่ม
+                }}
+              >
+                ยกเลิก
+              </button>
+            </div>
+          </div>
+        )}
 
         <div
           className="d-flex gap-3 align-items-center mt-2"
@@ -156,8 +287,23 @@ const CommentCard = ({ index, leftVal, commentData }: CommentCardProps) => {
           <button
             className="text-decoration-underline"
             onClick={handleReplyClick}
+            disabled={isEditing || isDeleting} // Disable if editing or deleting
           >
             ตอบกลับ
+          </button>
+          <button
+            className="text-decoration-underline"
+            onClick={handleEditClick}
+            disabled={isEditing || isDeleting} // Disable if editing or deleting
+          >
+            แก้ไข
+          </button>
+          <button
+            className="text-decoration-underline"
+            onClick={handleDeleteClick}
+            disabled={isEditing || isDeleting} // Disable if editing or deleting
+          >
+            ลบ
           </button>
         </div>
 
