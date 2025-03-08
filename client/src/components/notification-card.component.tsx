@@ -168,7 +168,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
           </h1>
           {type === "reply" ? (
             <div className="p-3 rounded mt-3" style={{ background: "#f0f0f0" }}>
-              <p className="m-0">{replied_on_comment.comment}</p>
+              <p className="m-0">{replied_on_comment ? replied_on_comment.comment : "การตอบกลับถูกลบแล้ว"}</p>
             </div>
           ) : type!=="delete"&&type!=="follow"? (
             <Link
@@ -200,7 +200,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
 
       {type === "comment" ? (
         <p className="m-0 ms-5 ps-3 my-2" style={{ fontSize: "18px" }}>
-          {comment.comment}
+          {comment ? comment.comment : "ความคิดเห็นถูกลบแล้ว"}
         </p>
       ) : (
         ""
@@ -208,7 +208,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
 
       <div className="ms-5 ps-3 mt-3 d-flex gap-4" style={{ color: "#494949" }}>
         <p className="m-0">{getDay(createdAt || "null")}</p>
-        {type === "comment"? (
+        {type === "comment" && comment? (
           <>
             {!reply ? (
               <button

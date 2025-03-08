@@ -111,7 +111,7 @@
   background-color: rgba(128, 128, 128, 0.352);
 }
 
-.sidebar-link {
+.sidebar-link,.delete-ac-btn{
   display: flex;
   gap: 1rem;
   align-items: center;
@@ -120,12 +120,25 @@
   color: #494949;
   text-decoration: none;
 }
-
-.sidebar-link:hover {
-  color: #000;
+.delete-ac-btn{
+  color: black;
+  padding-left: 1.5rem;
+  margin-left: -1.5rem;
+  cursor: pointer;
+}
+.delete-ac-btn p{
+  color: #494949;
+  margin-bottom: unset !important;
 }
 
-.sidebar-link.active {
+.sidebar-link:hover{
+  color: #000;
+}
+.delete-ac-btn:hover{
+  background-color: #ff01346c;
+}
+
+.sidebar-link.active{
   color: black;
   border-right: 2px solid black;
   padding-left: 1.5rem;

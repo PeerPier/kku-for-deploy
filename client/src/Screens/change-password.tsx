@@ -5,6 +5,7 @@ import { useContext, useRef } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 import { UserContext } from "../App";
+import { Link } from "react-router-dom";
 
 const ChangPassword = () => {
   let {
@@ -102,7 +103,9 @@ const ChangPassword = () => {
             placeholder="ยืนยันรหัสผ่านใหม่"
             icon="SlLockOpen"
           />
-
+          <p className="text text-r">
+            หรือ <Link to="/forgot-password">เปลี่ยนรหัสผ่าน</Link> ผ่านอีเมล
+          </p>
           <button className="btn-dark px-5" type="submit">
             เปลี่ยนรหัสผ่าน
           </button>
