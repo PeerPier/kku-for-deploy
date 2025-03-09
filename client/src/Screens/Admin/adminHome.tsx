@@ -15,7 +15,7 @@ import {
   fetchAllUser,
   fetchUser,
   fetchUsersAPI,
-  fetchViews,
+  fetchViews
 } from "../../api/adminProfile";
 import { LuView } from "react-icons/lu";
 import { PiUsersThreeFill } from "react-icons/pi";
@@ -39,7 +39,7 @@ import "chart.js/auto"; // สำหรับการใช้งาน Chart.j
 import ManageBadwords from "./manage-badwords";
 import GrowthChartAlluser from "./Chart/GrowthChartAlluser";
 import GrowthChartAllblog from "./Chart/GrowthChartAllblog";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 export interface Report {
   _id: string;
@@ -106,7 +106,7 @@ const transformData = (data: any[]): MonthData[] => {
     { month: "September", publishedAt: 0 },
     { month: "October", publishedAt: 0 },
     { month: "November", publishedAt: 0 },
-    { month: "December", publishedAt: 0 },
+    { month: "December", publishedAt: 0 }
   ];
 
   // Iterate over the input data
@@ -122,6 +122,7 @@ const transformData = (data: any[]): MonthData[] => {
 
 const AdminHome: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const { adminId } = useParams<{ adminId: string }>();
   const API_BASE_URL = process.env.REACT_APP_API_ENDPOINT;
   const adminUsername = sessionStorage.getItem("userId");
   const [selectedChart, setSelectedChart] = useState<"user" | "blog">("user");
@@ -136,8 +137,7 @@ const AdminHome: React.FC = () => {
 
   const [selectedCate, setSelectedCate] = useState<string>("dashboard");
   const [selectedBlog, setSelectedBlog] = useState<string>("blog-all");
-  const [selectedApprove, setSelectedApprove] =
-    useState<string>("blog-success");
+  const [selectedApprove, setSelectedApprove] = useState<string>("blog-success");
 
   const [reports, setReports] = useState<Report[]>([]);
   const [showModal, setShowModal] = useState(false);
@@ -145,6 +145,7 @@ const AdminHome: React.FC = () => {
   const [users, setUsers] = useState<any>([]);
   const [allUsers, setAllUsers] = useState<any>([]);
   const [monthsPost, setMonthsPost] = useState<MonthData[]>([]);
+  const [title, setTitle] = useState("Dashboard"); // เพิ่มเติม: สร้าง state สำหรับเปลี่ยน title ของหน้าเว็บ
 
   const handleShowModal = (report: any) => {
     setSelectedReport(report);
@@ -159,11 +160,11 @@ const AdminHome: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+    const user = JSON.parse(sessionStorage.getItem("user") || "{}");
     const accessToken = user?.access_token;
 
     if (!accessToken) {
-      navigate('/admin/login');
+      navigate("/admin/login");
       return;
     }
 
@@ -171,16 +172,15 @@ const AdminHome: React.FC = () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/login/auth`, {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+            Authorization: `Bearer ${accessToken}`
+          }
         });
 
-        console.log('Authentication successful:', response.data);
-
+        console.log("Authentication successful:", response.data);
       } catch (error) {
         sessionStorage.clear();
         console.error(error);
-        navigate('/admin/login');
+        navigate("/admin/login");
       }
     };
 
@@ -202,9 +202,7 @@ const AdminHome: React.FC = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const responseUser = await axios.get(
-          `${API_BASE_URL}/profile/within24hour`
-        );
+        const responseUser = await axios.get(`${API_BASE_URL}/profile/within24hour`);
         const responseAllUser = await axios.get(`${API_BASE_URL}/profile`);
         setUsers(responseUser.data);
         setAllUsers(responseAllUser.data);
@@ -234,12 +232,8 @@ const AdminHome: React.FC = () => {
       const changeTheme = () => {
         document.body.classList.toggle("dark-theme-variables");
 
-        themToggler
-          ?.querySelector("svg:nth-child(1)")
-          ?.classList.toggle("active");
-        themToggler
-          ?.querySelector("svg:nth-child(2)")
-          ?.classList.toggle("active");
+        themToggler?.querySelector("svg:nth-child(1)")?.classList.toggle("active");
+        themToggler?.querySelector("svg:nth-child(2)")?.classList.toggle("active");
       };
 
       themToggler.addEventListener("click", changeTheme);
@@ -253,6 +247,23 @@ const AdminHome: React.FC = () => {
       };
     }
   }, [selectedCate]);
+
+  // เพิ่มเติม: เมื่อเลือกหมวดหมู่ต่างๆ ค่า selectedCate จะเปลี่ยน และ title ของหน้าเว็บจะเปลี่ยนตามทันที
+  useEffect(() => {
+    if (selectedCate === "dashboard") {
+      setTitle("Dashboard");
+    } else if (selectedCate === "average") {
+      setTitle("จัดการบล็อก");
+    } else if (selectedCate === "manage-q") {
+      setTitle("จัดการคำถาม");
+    } else if (selectedCate === "manage-user") {
+      setTitle("จัดการบัญชีผู้ใช้");
+    } else if (selectedCate === "manage-cate") {
+      setTitle("จัดการหมวดหมู่");
+    } else if (selectedCate === "manage-badwords") {
+      setTitle("จัดการคำหยาบ");
+    }
+  }, [selectedCate, selectedChart]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -276,10 +287,7 @@ const AdminHome: React.FC = () => {
         const blog = await fetchAllUser();
         const User = await fetchUser();
         const view = await fetchViews();
-        const totalViews = view.reduce(
-          (acc: any, post: any) => acc + post.total_reads,
-          0
-        );
+        const totalViews = view.reduce((acc: any, post: any) => acc + post.total_reads, 0);
         setGetUser(User);
         setGetBlog(blog);
         setUserCounter(userCountData);
@@ -333,17 +341,11 @@ const AdminHome: React.FC = () => {
   };
 
   const countVerifiedReports = (reports: Report[]): number => {
-    return reports.reduce(
-      (count, report) => (!report.verified ? count + 1 : count),
-      0
-    );
+    return reports.reduce((count, report) => (!report.verified ? count + 1 : count), 0);
   };
 
   const countNoVerifiedReports = (reports: Report[]): number => {
-    return reports.reduce(
-      (count, report) => (report.verified ? count + 1 : count),
-      0
-    );
+    return reports.reduce((count, report) => (report.verified ? count + 1 : count), 0);
   };
 
   // สถานะเพื่อจัดการการ hover สำหรับ user-all
@@ -360,7 +362,7 @@ const AdminHome: React.FC = () => {
     { month: "September", joinAt: 0 },
     { month: "October", joinAt: 0 },
     { month: "November", joinAt: 0 },
-    { month: "December", joinAt: 0 },
+    { month: "December", joinAt: 0 }
   ]);
 
   useEffect(() => {
@@ -384,16 +386,16 @@ const AdminHome: React.FC = () => {
         data: monthsUser?.map((e) => e.joinAt), // ข้อมูลกราฟ
         borderColor: "rgba(75, 192, 192, 1)",
         backgroundColor: "rgba(75, 192, 192, 0.2)",
-        fill: true,
-      },
-    ],
+        fill: true
+      }
+    ]
   };
   const options = {
     scales: {
       y: {
-        beginAtZero: true,
-      },
-    },
+        beginAtZero: true
+      }
+    }
   };
 
   return (
@@ -484,281 +486,195 @@ const AdminHome: React.FC = () => {
           </div>
         </aside>
 
-        {selectedCate === "dashboard" && (
-          <div className="main1">
-            <h1>Dashboard</h1>
-
-            <div className="date">
-              <input
-                type="date"
-                defaultValue={new Date().toISOString().split("T")[0]}
-              />
-            </div>
-
-            <div className="dashboard-container">
-              <div className="insights">
-                {/* ผู้ใช้ทั้งหมด */}
-                <div
-                  className={`user-all ${
-                    selectedChart === "user" ? "active" : ""
-                  }`}
-                  onClick={() => setSelectedChart("user")}
-                  style={{
-                    position: "relative",
-                    cursor: "pointer",
-                    backgroundColor:
-                      selectedChart === "user" ? "#9fa8f6" : "transparent", // สีพื้นหลังเป็นม่วงเมื่อเลือก
-                    color: selectedChart === "user" ? "white" : "black", // สีข้อความเป็นขาวเมื่อเลือก
-                  }}
-                >
-                  <PiUsersThreeFill className="svg1" />
-                  <div className="middle">
-                    <div className="left">
-                      <h3>ผู้ใช้ทั้งหมด</h3>
-                      <h1>{userCounter}</h1>
-                    </div>
-                  </div>
-                </div>
-
-                {/* โพสต์ทั้งหมด */}
-                <div
-                  className={`blogpost-all ${
-                    selectedChart === "blog" ? "active" : ""
-                  }`}
-                  onClick={() => setSelectedChart("blog")}
-                  style={{
-                    position: "relative",
-                    cursor: "pointer",
-                    backgroundColor:
-                      selectedChart === "blog" ? "#9fa8f6" : "transparent", // สีพื้นหลังเป็นม่วงเมื่อเลือก
-                    color: selectedChart === "blog" ? "white" : "black", // สีข้อความเป็นขาวเมื่อเลือก
-                  }}
-                >
-                  <IoDocumentTextOutline className="svg3" />
-                  <div className="middle">
-                    <div className="left">
-                      <h3>บล็อกทั้งหมด</h3>
-                      <h1>{postCounter}</h1>
-                    </div>
-                  </div>
+        {/* เพิ่มเติม: content-container เเละ header เพื่อจัดให้อยู่ข้างบนตลอดเมื่อเปลี่ยนไปหน้าต่างๆ */}
+        <div className="content-container">
+          <div
+            className="header-profile-admin"
+            style={{
+              marginBottom: "0"
+            }}
+          >
+            <div className="header-content">
+              <div className="title-container">
+                {/* Dynamic title */}
+                <h1>{title}</h1>
+                <div className="date">
+                  <input type="date" defaultValue={new Date().toISOString().split("T")[0]} />
                 </div>
               </div>
+              {/* Profile and theme section */}
+              <div className="profile-theme">
+                <button id="menu-btn">
+                  <RxHamburgerMenu />
+                </button>
+                <div className="theme-toggler">
+                  <MdLightMode className="active" />
+                  <MdDarkMode />
+                </div>
 
-              {/* แสดงกราฟด้านล่าง */}
-              <div className="chart-container">
-                {selectedChart === "user" && (
-                  <GrowthChartAlluser data={getUser} />
-                )}
-                {selectedChart === "blog" && (
-                  <GrowthChartAllblog data={getBlog} />
+                {adminProfile && (
+                  <div
+                    className="profile"
+                    onClick={() => {
+                      navigate(`/admin/${adminId}/profile`);
+                    }}
+                  >
+                    <div className="info">
+                      <p>
+                        Hello, <b>{adminUsername}</b>
+                      </p>
+                      <small className="text-muted1">{adminUsername}</small>
+                    </div>
+                    <div className="profile-photo">
+                      <img src={Pro} alt="Profile" />
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
           </div>
-        )}
-        {selectedCate === "dashboard" && (
-          <div className="right">
-            <div className="top">
-              <button id="menu-btn">
-                <RxHamburgerMenu />
-              </button>
-              <div className="theme-toggler">
-                <MdLightMode className="active" />
-                <MdDarkMode />
-              </div>
 
-              {adminProfile && (
-                <div className="profile">
-                  <div className="info">
-                    <p>
-                      Hello, <b>{adminUsername}</b>
-                    </p>
-                    <small className="text-muted1">{adminUsername}</small>
-                  </div>
-                  <div className="profile-photo">
-                    <img src={Pro} alt="" />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {selectedCate === "average" && (
-          <div className="average">
+          {selectedCate === "dashboard" && (
             <div className="main1">
-              <h1>จัดการบล็อก</h1>
-              <div className="insights">
-                <div
-                  className="blogpost-all"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleTableSelection("blog-all");
-                  }}
-                >
-                  <IoDocumentTextOutline className="svg3" />
-                  <div className="middle">
-                    <div className="left">
-                      <h3>บล็อกที่รายงานทั้งหมด</h3>
-                      <h1>{reports.length}</h1>
+              <div className="dashboard-container">
+                <div className="insights">
+                  {/* ผู้ใช้ทั้งหมด */}
+                  <div
+                    className={`user-all ${selectedChart === "user" ? "active" : ""}`}
+                    onClick={() => setSelectedChart("user")}
+                    style={{
+                      position: "relative",
+                      cursor: "pointer",
+                      backgroundColor: selectedChart === "user" ? "#9fa8f6" : "transparent",
+                      color: selectedChart === "user" ? "white" : "black"
+                    }}
+                  >
+                    <PiUsersThreeFill className="svg1" />
+                    <div className="middle">
+                      <div className="left">
+                        <h3>ผู้ใช้ทั้งหมด</h3>
+                        <h1>{userCounter}</h1>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div
-                  className="view-all"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleTableSelection("blog-wait");
-                  }}
-                >
-                  <IoIosTime className="svg2" />
-                  <div className="middle">
-                    <div className="left">
-                      <h3>รอตรวจสอบ</h3>
-                      <h1>{countVerifiedReports(reports)}</h1>
+
+                  {/* โพสต์ทั้งหมด */}
+                  <div
+                    className={`blogpost-all ${selectedChart === "blog" ? "active" : ""}`}
+                    onClick={() => setSelectedChart("blog")}
+                    style={{
+                      position: "relative",
+                      cursor: "pointer",
+                      backgroundColor: selectedChart === "blog" ? "#9fa8f6" : "transparent",
+                      color: selectedChart === "blog" ? "white" : "black"
+                    }}
+                  >
+                    <IoDocumentTextOutline className="svg3" />
+                    <div className="middle">
+                      <div className="left">
+                        <h3>บล็อกทั้งหมด</h3>
+                        <h1>{postCounter}</h1>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <div
-                  className="user-all"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleTableSelection("blog-success");
-                  }}
-                >
-                  <PiUsersThreeFill className="svg1" />
-                  <div className="middle">
-                    <div className="left">
-                      <h3>ตรวจสอบแล้ว</h3>
-                      <h1>{countNoVerifiedReports(reports)}</h1>
-                    </div>
-                  </div>
+                {/* แสดงกราฟด้านล่าง */}
+                <div className="chart-container">
+                  {selectedChart === "user" && <GrowthChartAlluser data={getUser} />}
+                  {selectedChart === "blog" && <GrowthChartAllblog data={getBlog} />}
                 </div>
               </div>
+            </div>
+          )}
+          {selectedCate === "average" && (
+            <div className="average">
+              <div className="main1">
+                <div className="insights">
+                  <div
+                    className="blogpost-all"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleTableSelection("blog-all");
+                    }}
+                  >
+                    <IoDocumentTextOutline className="svg3" />
+                    <div className="middle">
+                      <div className="left">
+                        <h3>บล็อกที่รายงานทั้งหมด</h3>
+                        <h1>{reports.length}</h1>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    className="view-all"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleTableSelection("blog-wait");
+                    }}
+                  >
+                    <IoIosTime className="svg2" />
+                    <div className="middle">
+                      <div className="left">
+                        <h3>รอตรวจสอบ</h3>
+                        <h1>{countVerifiedReports(reports)}</h1>
+                      </div>
+                    </div>
+                  </div>
 
-              <h2
-                style={{
-                  fontSize: "1.8rem",
-                  fontWeight: "800",
-                  marginTop: "2rem",
-                }}
-              >
-                รายการ
-              </h2>
-              {selectedBlog === "blog-all" && (
-                <div
-                  className="recent-order"
-                  style={{
-                    overflowY: "auto", // เพิ่ม scrollbar เมื่อเนื้อหามากเกินไป
-                    maxHeight: "400px", // กำหนดความสูงสูงสุดของ div
-                    margin: "0",
-                    borderRadius: "2rem",
-                  }}
-                >
-                  <table>
-                    <thead className="pt-5">
-                      <tr>
-                        <th>ผู้รายงาน</th>
-                        <th>วันที่</th>
-                        <th>หัวข้อการรายงาน</th>
-                        <th>สถานะ</th>
-                        <th>รายละเอียด</th>
-                      </tr>
-                    </thead>
-                    {adminProfile && (
-                      <tbody>
-                        {reports.length > 0 ? (
-                          reports.map((report) => (
-                            <tr key={report._id}>
-                              <td>
-                                {report.reportedBy
-                                  ? report.reportedBy.fullname
-                                  : ""}
-                              </td>
-                              <td>
-                                {new Date(
-                                  report.createdAt
-                                ).toLocaleDateString()}
-                              </td>
-                              <td>{report.reason || "No Title"}</td>
-                              <td className="warning">
-                                {report.status == "Approved"
-                                  ? "อนุมัติ"
-                                  : report.status == "Pending"
-                                  ? "รอดำเนินการ"
-                                  : report.status == "Cancel"
-                                  ? "โพสต์ถูกลบ/ยกเลิกรายงาน"
-                                  : "ปฏิเสธ"}
-                              </td>
-                              <td className="primary">
-                                <Button
-                                  variant="info"
-                                  onClick={() => handleShowModal(report)}
-                                  disabled={report.status !== "Pending"}
-                                >
-                                  รายละเอียด
-                                </Button>
-                              </td>
-                            </tr>
-                          ))
-                        ) : (
-                          <tr>
-                            <td colSpan={5}>ไม่มีการรายงาน</td>
-                          </tr>
-                        )}
-                      </tbody>
-                    )}
-                  </table>
-
-                  {/* Report Details Modal */}
-                  {selectedReport && (
-                    <ReportDetailsModal
-                      showModal={showModal}
-                      handleClose={handleCloseModal}
-                      report={selectedReport}
-                      refreshReports={refreshReports}
-                    />
-                  )}
+                  <div
+                    className="user-all"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleTableSelection("blog-success");
+                    }}
+                  >
+                    <PiUsersThreeFill className="svg1" />
+                    <div className="middle">
+                      <div className="left">
+                        <h3>ตรวจสอบแล้ว</h3>
+                        <h1>{countNoVerifiedReports(reports)}</h1>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              )}
 
-              {selectedBlog === "blog-wait" && (
-                <div
-                  className="recent-order"
+                <h2
                   style={{
-                    overflowY: "scroll",
-                    maxHeight: "400px",
-                    margin: "0",
-                    borderRadius: "2rem",
+                    fontSize: "1.8rem",
+                    fontWeight: "800",
+                    marginTop: "2rem"
                   }}
                 >
-                  <table>
-                    <thead className="pt-5">
-                      <tr>
-                        <th>ผู้รายงาน</th>
-                        <th>วันที่</th>
-                        <th>หัวข้อการรายงาน</th>
-                        <th>สถานะ</th>
-                        <th>รายละเอียด</th>
-                      </tr>
-                    </thead>
-                    {adminProfile && (
-                      <tbody>
-                        {reports.length > 0 ? (
-                          reports.map((report) =>
-                            !report.verified ? (
+                  รายการ
+                </h2>
+                {selectedBlog === "blog-all" && (
+                  <div
+                    className="recent-order"
+                    style={{
+                      overflowY: "auto", // เพิ่ม scrollbar เมื่อเนื้อหามากเกินไป
+                      maxHeight: "400px", // กำหนดความสูงสูงสุดของ div
+                      margin: "0",
+                      borderRadius: "2rem"
+                    }}
+                  >
+                    <table>
+                      <thead className="pt-5">
+                        <tr>
+                          <th>ผู้รายงาน</th>
+                          <th>วันที่</th>
+                          <th>หัวข้อการรายงาน</th>
+                          <th>สถานะ</th>
+                          <th>รายละเอียด</th>
+                        </tr>
+                      </thead>
+                      {adminProfile && (
+                        <tbody>
+                          {reports.length > 0 ? (
+                            reports.map((report) => (
                               <tr key={report._id}>
-                                <td>
-                                  {report.reportedBy
-                                    ? report.reportedBy.fullname
-                                    : ""}
-                                </td>
-                                <td>
-                                  {new Date(
-                                    report.createdAt
-                                  ).toLocaleDateString()}
-                                </td>
+                                <td>{report.reportedBy ? report.reportedBy.fullname : ""}</td>
+                                <td>{new Date(report.createdAt).toLocaleDateString()}</td>
                                 <td>{report.reason || "No Title"}</td>
                                 <td className="warning">
                                   {report.status == "Approved"
@@ -773,92 +689,216 @@ const AdminHome: React.FC = () => {
                                   <Button
                                     variant="info"
                                     onClick={() => handleShowModal(report)}
-                                    disabled={report.verified ? true : false}
+                                    disabled={report.status !== "Pending"}
                                   >
                                     รายละเอียด
                                   </Button>
                                 </td>
                               </tr>
-                            ) : (
-                              <></>
-                            )
-                          )
-                        ) : (
-                          <tr>
-                            <td colSpan={5}>ไม่มีการรายงาน</td>
-                          </tr>
-                        )}
-                      </tbody>
-                    )}
-                  </table>
-                  {/* Report Details Modal */}
-                  {selectedReport && (
-                    <ReportDetailsModal
-                      showModal={showModal}
-                      handleClose={handleCloseModal}
-                      report={selectedReport}
-                      refreshReports={refreshReports}
-                    />
-                  )}
-                </div>
-              )}
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan={5}>ไม่มีการรายงาน</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      )}
+                    </table>
 
-              {selectedBlog === "blog-success" && (
-                <div
-                  className="recent-order"
-                  style={{
-                    overflowY: "scroll",
-                    maxHeight: "400px",
-                    margin: "0",
-                    borderRadius: "2rem",
-                  }}
-                >
+                    {/* Report Details Modal */}
+                    {selectedReport && (
+                      <ReportDetailsModal
+                        showModal={showModal}
+                        handleClose={handleCloseModal}
+                        report={selectedReport}
+                        refreshReports={refreshReports}
+                      />
+                    )}
+                  </div>
+                )}
+
+                {selectedBlog === "blog-wait" && (
                   <div
-                    className="selectBlogCate"
+                    className="recent-order"
                     style={{
-                      marginLeft: "2rem",
-                      position: "fixed",
+                      overflowY: "scroll",
+                      maxHeight: "400px",
+                      margin: "0",
+                      borderRadius: "2rem"
                     }}
                   >
-                    <Form>
-                      {["radio"].map((type) => (
-                        <div key={`inline-${type}`}>
-                          <Form.Check
-                            inline
-                            label="Approve"
-                            style={{ color: "#41f1b6" }}
-                            name="group1"
-                            type="radio"
-                            id={`inline-${type}-1`}
-                            onChange={() => setSelectedApprove("blog-success")}
-                            checked={selectedApprove === "blog-success"}
-                          />
-                          <Form.Check
-                            inline
-                            label="Decline"
-                            style={{ color: "#ff7782" }}
-                            name="group1"
-                            type="radio"
-                            id={`inline-${type}-2`}
-                            onChange={() => setSelectedApprove("blog-decline")}
-                            checked={selectedApprove === "blog-decline"}
-                          />
-                          <Form.Check
-                            inline
-                            label="Cancel"
-                            style={{ color: "#ff7782" }}
-                            name="group1"
-                            type="radio"
-                            id={`inline-${type}-3`}
-                            onChange={() => setSelectedApprove("blog-cancel")}
-                            checked={selectedApprove === "blog-cancel"}
-                          />
-                        </div>
-                      ))}
-                    </Form>
+                    <table>
+                      <thead className="pt-5">
+                        <tr>
+                          <th>ผู้รายงาน</th>
+                          <th>วันที่</th>
+                          <th>หัวข้อการรายงาน</th>
+                          <th>สถานะ</th>
+                          <th>รายละเอียด</th>
+                        </tr>
+                      </thead>
+                      {adminProfile && (
+                        <tbody>
+                          {reports.length > 0 ? (
+                            reports.map((report) =>
+                              !report.verified ? (
+                                <tr key={report._id}>
+                                  <td>{report.reportedBy ? report.reportedBy.fullname : ""}</td>
+                                  <td>{new Date(report.createdAt).toLocaleDateString()}</td>
+                                  <td>{report.reason || "No Title"}</td>
+                                  <td className="warning">
+                                    {report.status == "Approved"
+                                      ? "อนุมัติ"
+                                      : report.status == "Pending"
+                                      ? "รอดำเนินการ"
+                                      : report.status == "Cancel"
+                                      ? "โพสต์ถูกลบ/ยกเลิกรายงาน"
+                                      : "ปฏิเสธ"}
+                                  </td>
+                                  <td className="primary">
+                                    <Button
+                                      variant="info"
+                                      onClick={() => handleShowModal(report)}
+                                      disabled={report.verified ? true : false}
+                                    >
+                                      รายละเอียด
+                                    </Button>
+                                  </td>
+                                </tr>
+                              ) : (
+                                <></>
+                              )
+                            )
+                          ) : (
+                            <tr>
+                              <td colSpan={5}>ไม่มีการรายงาน</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      )}
+                    </table>
+                    {/* Report Details Modal */}
+                    {selectedReport && (
+                      <ReportDetailsModal
+                        showModal={showModal}
+                        handleClose={handleCloseModal}
+                        report={selectedReport}
+                        refreshReports={refreshReports}
+                      />
+                    )}
                   </div>
-                  <div>
-                    {selectedApprove === "blog-success" && (
+                )}
+
+                {selectedBlog === "blog-success" && (
+                  <div
+                    className="recent-order"
+                    style={{
+                      overflowY: "scroll",
+                      maxHeight: "400px",
+                      margin: "0",
+                      borderRadius: "2rem"
+                    }}
+                  >
+                    <div
+                      className="selectBlogCate"
+                      style={{
+                        marginLeft: "2rem",
+                        position: "fixed"
+                      }}
+                    >
+                      <Form>
+                        {["radio"].map((type) => (
+                          <div key={`inline-${type}`}>
+                            <Form.Check
+                              inline
+                              label="Approve"
+                              style={{ color: "#41f1b6" }}
+                              name="group1"
+                              type="radio"
+                              id={`inline-${type}-1`}
+                              onChange={() => setSelectedApprove("blog-success")}
+                              checked={selectedApprove === "blog-success"}
+                            />
+                            <Form.Check
+                              inline
+                              label="Decline"
+                              style={{ color: "#ff7782" }}
+                              name="group1"
+                              type="radio"
+                              id={`inline-${type}-2`}
+                              onChange={() => setSelectedApprove("blog-decline")}
+                              checked={selectedApprove === "blog-decline"}
+                            />
+                            <Form.Check
+                              inline
+                              label="Cancel"
+                              style={{ color: "#ff7782" }}
+                              name="group1"
+                              type="radio"
+                              id={`inline-${type}-3`}
+                              onChange={() => setSelectedApprove("blog-cancel")}
+                              checked={selectedApprove === "blog-cancel"}
+                            />
+                          </div>
+                        ))}
+                      </Form>
+                    </div>
+                    <div>
+                      {selectedApprove === "blog-success" && (
+                        <table>
+                          <thead className="pt-5">
+                            <tr>
+                              <th>ผู้รายงาน</th>
+                              <th>วันที่</th>
+                              <th>หัวข้อการรายงาน</th>
+                              <th>สถานะ</th>
+                              <th>รายละเอียด</th>
+                            </tr>
+                          </thead>
+                          {adminProfile && (
+                            <tbody>
+                              {reports.length > 0 ? (
+                                reports.map((report) =>
+                                  report.verified && report.status === "Approved" ? (
+                                    <tr key={report._id}>
+                                      <td>{report.reportedBy ? report.reportedBy.fullname : ""}</td>
+                                      <td>{new Date(report.createdAt).toLocaleDateString()}</td>
+                                      <td>{report.reason || "No Title"}</td>
+                                      <td className="warning">
+                                        {report.status == "Approved"
+                                          ? "อนุมัติ"
+                                          : report.status == "Pending"
+                                          ? "รอดำเนินการ"
+                                          : report.status == "Cancel"
+                                          ? "โพสต์ถูกลบ/ยกเลิกรายงาน"
+                                          : "ปฏิเสธ"}
+                                      </td>
+                                      <td className="primary">
+                                        <Button
+                                          variant="info"
+                                          onClick={() => handleShowModal(report)}
+                                          disabled={report.verified ? true : false}
+                                        >
+                                          รายละเอียด
+                                        </Button>
+                                      </td>
+                                    </tr>
+                                  ) : (
+                                    <></>
+                                  )
+                                )
+                              ) : (
+                                <tr>
+                                  <td colSpan={5}>ไม่มีการรายงาน</td>
+                                </tr>
+                              )}
+                            </tbody>
+                          )}
+                        </table>
+                      )}
+                    </div>
+
+                    {selectedApprove === "blog-decline" && (
                       <table>
                         <thead className="pt-5">
                           <tr>
@@ -873,36 +913,62 @@ const AdminHome: React.FC = () => {
                           <tbody>
                             {reports.length > 0 ? (
                               reports.map((report) =>
-                                report.verified &&
-                                report.status === "Approved" ? (
+                                report.status === "Declined" ? (
                                   <tr key={report._id}>
-                                    <td>
-                                      {report.reportedBy
-                                        ? report.reportedBy.fullname
-                                        : ""}
-                                    </td>
-                                    <td>
-                                      {new Date(
-                                        report.createdAt
-                                      ).toLocaleDateString()}
-                                    </td>
+                                    <td>{report.reportedBy ? report.reportedBy.fullname : ""}</td>
+                                    <td>{new Date(report.createdAt).toLocaleDateString()}</td>
                                     <td>{report.reason || "No Title"}</td>
-                                    <td className="warning">
-                                      {report.status == "Approved"
-                                        ? "อนุมัติ"
-                                        : report.status == "Pending"
-                                        ? "รอดำเนินการ"
-                                        : report.status == "Cancel"
-                                        ? "โพสต์ถูกลบ/ยกเลิกรายงาน"
-                                        : "ปฏิเสธ"}
-                                    </td>
+                                    <td className="warning">ปฏิเสธ</td>
                                     <td className="primary">
                                       <Button
                                         variant="info"
                                         onClick={() => handleShowModal(report)}
-                                        disabled={
-                                          report.verified ? true : false
-                                        }
+                                        disabled={report.verified ? true : false}
+                                      >
+                                        รายละเอียด
+                                      </Button>
+                                    </td>
+                                  </tr>
+                                ) : (
+                                  <></>
+                                )
+                              )
+                            ) : (
+                              <tr>
+                                <td colSpan={5}>ไม่มีการรายงาน</td>
+                              </tr>
+                            )}
+                          </tbody>
+                        )}
+                      </table>
+                    )}
+
+                    {selectedApprove === "blog-cancel" && (
+                      <table>
+                        <thead className="pt-5">
+                          <tr>
+                            <th>ผู้รายงาน</th>
+                            <th>วันที่</th>
+                            <th>หัวข้อการรายงาน</th>
+                            <th>สถานะ</th>
+                            <th>รายละเอียด</th>
+                          </tr>
+                        </thead>
+                        {adminProfile && (
+                          <tbody>
+                            {reports.length > 0 ? (
+                              reports.map((report) =>
+                                report.status === "Cancel" ? (
+                                  <tr key={report._id}>
+                                    <td>{report.reportedBy ? report.reportedBy.fullname : ""}</td>
+                                    <td>{new Date(report.createdAt).toLocaleDateString()}</td>
+                                    <td>{report.reason || "No Title"}</td>
+                                    <td className="warning">โพสต์ถูกลบ/ยกเลิกรายงาน</td>
+                                    <td className="primary">
+                                      <Button
+                                        variant="info"
+                                        onClick={() => handleShowModal(report)}
+                                        disabled={report.verified ? true : false}
                                       >
                                         รายละเอียด
                                       </Button>
@@ -922,265 +988,15 @@ const AdminHome: React.FC = () => {
                       </table>
                     )}
                   </div>
-
-                  {selectedApprove === "blog-decline" && (
-                    <table>
-                      <thead className="pt-5">
-                        <tr>
-                          <th>ผู้รายงาน</th>
-                          <th>วันที่</th>
-                          <th>หัวข้อการรายงาน</th>
-                          <th>สถานะ</th>
-                          <th>รายละเอียด</th>
-                        </tr>
-                      </thead>
-                      {adminProfile && (
-                        <tbody>
-                          {reports.length > 0 ? (
-                            reports.map((report) =>
-                              report.status === "Declined" ? (
-                                <tr key={report._id}>
-                                  <td>
-                                    {report.reportedBy
-                                      ? report.reportedBy.fullname
-                                      : ""}
-                                  </td>
-                                  <td>
-                                    {new Date(
-                                      report.createdAt
-                                    ).toLocaleDateString()}
-                                  </td>
-                                  <td>{report.reason || "No Title"}</td>
-                                  <td className="warning">ปฏิเสธ</td>
-                                  <td className="primary">
-                                    <Button
-                                      variant="info"
-                                      onClick={() => handleShowModal(report)}
-                                      disabled={report.verified ? true : false}
-                                    >
-                                      รายละเอียด
-                                    </Button>
-                                  </td>
-                                </tr>
-                              ) : (
-                                <></>
-                              )
-                            )
-                          ) : (
-                            <tr>
-                              <td colSpan={5}>ไม่มีการรายงาน</td>
-                            </tr>
-                          )}
-                        </tbody>
-                      )}
-                    </table>
-                  )}
-
-                  {selectedApprove === "blog-cancel" && (
-                    <table>
-                      <thead className="pt-5">
-                        <tr>
-                          <th>ผู้รายงาน</th>
-                          <th>วันที่</th>
-                          <th>หัวข้อการรายงาน</th>
-                          <th>สถานะ</th>
-                          <th>รายละเอียด</th>
-                        </tr>
-                      </thead>
-                      {adminProfile && (
-                        <tbody>
-                          {reports.length > 0 ? (
-                            reports.map((report) =>
-                              report.status === "Cancel" ? (
-                                <tr key={report._id}>
-                                  <td>
-                                    {report.reportedBy
-                                      ? report.reportedBy.fullname
-                                      : ""}
-                                  </td>
-                                  <td>
-                                    {new Date(
-                                      report.createdAt
-                                    ).toLocaleDateString()}
-                                  </td>
-                                  <td>{report.reason || "No Title"}</td>
-                                  <td className="warning">
-                                    โพสต์ถูกลบ/ยกเลิกรายงาน
-                                  </td>
-                                  <td className="primary">
-                                    <Button
-                                      variant="info"
-                                      onClick={() => handleShowModal(report)}
-                                      disabled={report.verified ? true : false}
-                                    >
-                                      รายละเอียด
-                                    </Button>
-                                  </td>
-                                </tr>
-                              ) : (
-                                <></>
-                              )
-                            )
-                          ) : (
-                            <tr>
-                              <td colSpan={5}>ไม่มีการรายงาน</td>
-                            </tr>
-                          )}
-                        </tbody>
-                      )}
-                    </table>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {selectedCate === "average" && (
-          <div className="right">
-            <div className="top">
-              <button id="menu-btn">
-                <RxHamburgerMenu />
-              </button>
-              <div className="theme-toggler">
-                <MdLightMode className="active" />
-                <MdDarkMode />
+                )}
               </div>
-
-              {adminProfile && (
-                <div className="profile">
-                  <div className="info">
-                    <p>
-                      Hello, <b>{adminUsername}</b>
-                    </p>
-                    <small className="text-muted1">{adminUsername}</small>
-                  </div>
-                  <div className="profile-photo">
-                    <img src={Pro} alt="" />
-                  </div>
-                </div>
-              )}
             </div>
-          </div>
-        )}
-        {selectedCate === "manage-user" && (
-          <ManageUser users={users} allUsers={allUsers} />
-        )}
-        {selectedCate === "manage-user" && (
-          <div className="right">
-            <div className="top">
-              <button id="menu-btn">
-                <RxHamburgerMenu />
-              </button>
-              <div className="theme-toggler">
-                <MdLightMode className="active" />
-                <MdDarkMode />
-              </div>
-
-              {adminProfile && (
-                <div className="profile">
-                  <div className="info">
-                    <p>
-                      Hello, <b>{adminUsername}</b>
-                    </p>
-                    <small className="text-muted1">{adminUsername}</small>
-                  </div>
-                  <div className="profile-photo">
-                    <img src={Pro} alt="" />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {selectedCate === "manage-q" && <ManageQ />}
-
-        {selectedCate === "manage-q" && (
-          <div className="right">
-            <div className="top">
-              <button id="menu-btn">
-                <RxHamburgerMenu />
-              </button>
-              <div className="theme-toggler">
-                <MdLightMode className="active" />
-                <MdDarkMode />
-              </div>
-
-              {adminProfile && (
-                <div className="profile">
-                  <div className="info">
-                    <p>
-                      Hello, <b>{adminUsername}</b>
-                    </p>
-                    <small className="text-muted1">{adminUsername}</small>
-                  </div>
-                  <div className="profile-photo">
-                    <img src={Pro} alt="" />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {selectedCate === "manage-cate" && <ManageCate blogsData={getBlog} />}
-        {selectedCate === "manage-cate" && (
-          <div className="right">
-            <div className="top">
-              <button id="menu-btn">
-                <RxHamburgerMenu />
-              </button>
-              <div className="theme-toggler">
-                <MdLightMode className="active" />
-                <MdDarkMode />
-              </div>
-
-              {adminProfile && (
-                <div className="profile">
-                  <div className="info">
-                    <p>
-                      Hello, <b>{adminUsername}</b>
-                    </p>
-                    <small className="text-muted1">{adminUsername}</small>
-                  </div>
-                  <div className="profile-photo">
-                    <img src={Pro} alt="" />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {selectedCate === "manage-badwords" && <ManageBadwords />}
-        {selectedCate === "manage-badwords" && (
-          <div className="right">
-            <div className="top">
-              <button id="menu-btn">
-                <RxHamburgerMenu />
-              </button>
-              <div className="theme-toggler">
-                <MdLightMode className="active" />
-                <MdDarkMode />
-              </div>
-
-              {adminProfile && (
-                <div className="profile">
-                  <div className="info">
-                    <p>
-                      Hello, <b>{adminUsername}</b>
-                    </p>
-                    <small className="text-muted1">{adminUsername}</small>
-                  </div>
-                  <div className="profile-photo">
-                    <img src={Pro} alt="" />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+          )}
+          {selectedCate === "manage-user" && <ManageUser users={users} allUsers={allUsers} />}
+          {selectedCate === "manage-q" && <ManageQ />}
+          {selectedCate === "manage-cate" && <ManageCate blogsData={getBlog} />}
+          {selectedCate === "manage-badwords" && <ManageBadwords />}
+        </div>
       </div>
     </div>
   );

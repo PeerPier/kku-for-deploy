@@ -69,7 +69,7 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
   const togglePasswordVisibility = (userId: string) => {
     setPasswordVisibility((prev) => ({
       ...prev,
-      [userId]: !prev[userId],
+      [userId]: !prev[userId]
     }));
   };
 
@@ -90,8 +90,7 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
 
   // กำหนดรายชื่อผู้ใช้ที่จะนำไปค้นหา:
   // หาก fetchUserData มีข้อมูลให้ใช้ fetchUserData ถ้าไม่มีให้ใช้ allUsers
-  const userList =
-    fetchUserData && fetchUserData.length > 0 ? fetchUserData : allUsers;
+  const userList = fetchUserData && fetchUserData.length > 0 ? fetchUserData : allUsers;
 
   // คำนวณรายชื่อผู้ใช้ที่ค้นหา (filtered) ตาม searchKeyword (ค้นหาจาก fullname และ email)
   const filteredUsers = useMemo(() => {
@@ -106,8 +105,6 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
   return (
     <div className="manageUser">
       <div className="main1">
-        <h1>จัดการบัญชีผู้ใช้</h1>
-
         <div className="insights">
           <div className="user-all">
             <PiUsersThreeFill className="svg1" />
@@ -133,7 +130,8 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
         <div className="recent-order" style={{ marginTop: "1.5rem" }}>
           <h2>รายการ</h2>
           {/* ช่องค้นหาผู้ใช้ */}
-          <div className="search-user" style={{ marginBottom: "20px" }}>
+          {/* เพิ่มเติม: เเก้ Css search-user , input */}
+          <div className="search-user">
             <input
               type="text"
               placeholder="ค้นหาผู้ใช้..."
@@ -141,13 +139,12 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
               onChange={(e) => setSearchKeyword(e.target.value)}
               style={{
                 width: "96%",
-                margin: "2%",
+                margin: "3px 3px",
                 padding: "10px 15px",
-                marginTop: "20px",
                 fontSize: "16px",
                 border: "none",
                 borderRadius: "10px",
-                backgroundColor: "white",
+                backgroundColor: "white"
               }}
             />
           </div>
@@ -158,8 +155,7 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
               style={{
                 marginTop: "0.5rem",
                 overflowY: "scroll",
-                maxHeight: "380px",
-                
+                maxHeight: "380px"
               }}
             >
               <table>
@@ -181,22 +177,16 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
                         <td>{u.fullname}</td>
                         <td>{u.email}</td>
                         <td className="warning">
-                          <span>
-                            {passwordVisibility[u._id] ? u.password : "*****"}
-                          </span>
+                          <span>{passwordVisibility[u._id] ? u.password : "*****"}</span>
                           <button
                             onClick={() => togglePasswordVisibility(u._id)}
                             style={{
                               border: "none",
                               background: "none",
-                              cursor: "pointer",
+                              cursor: "pointer"
                             }}
                           >
-                            {passwordVisibility[u._id] ? (
-                              <AiFillEyeInvisible />
-                            ) : (
-                              <AiFillEye />
-                            )}
+                            {passwordVisibility[u._id] ? <AiFillEyeInvisible /> : <AiFillEye />}
                           </button>
                         </td>
                         <td className="primary">
@@ -204,7 +194,7 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
                             onClick={() => handleEditUser(u)}
                             style={{
                               backgroundColor: "#f3b15a",
-                              border: "none",
+                              border: "none"
                             }}
                           >
                             แก้ไข
@@ -215,7 +205,7 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
                             onClick={() => handleDeleteUser(u._id)}
                             style={{
                               backgroundColor: "#f26665",
-                              border: "none",
+                              border: "none"
                             }}
                           >
                             ลบ
@@ -245,9 +235,10 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
         style={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "center"
         }}
-      centered>
+        centered
+      >
         <Modal.Header closeButton>
           <Modal.Title>แก้ไขบัญชีผู้ใช้</Modal.Title>
         </Modal.Header>
@@ -264,11 +255,7 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
 
             <Form.Group controlId="formEmail">
               <Form.Label>อีเมล</Form.Label>
-              <Form.Control
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <Form.Control type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
             </Form.Group>
           </Form>
         </Modal.Body>
@@ -276,7 +263,14 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
           <Button variant="secondary" onClick={handleModalClose}>
             ปิด
           </Button>
-          <Button style={{ backgroundColor: "#7380ec", borderColor: "#7380ec", color: "white" }}onClick={handleUpdateUser}>
+          <Button
+            style={{
+              backgroundColor: "#7380ec",
+              borderColor: "#7380ec",
+              color: "white"
+            }}
+            onClick={handleUpdateUser}
+          >
             บันทึกการเปลี่ยนแปลง
           </Button>
         </Modal.Footer>
