@@ -18,31 +18,28 @@ const uri = process.env.ATLAS_URI;
 app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 app.use(
-  cors({
-    origin: ["https://kku-client.vercel.app", "http://localhost:3000"],
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
+    cors({
+        origin: ["https://kku-client.vercel.app", "http://localhost:3000"],
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"]
+    })
 );
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccountKey),
+    credential: admin.credential.cert(serviceAccountKey)
 });
 app.use(cookieParser());
 app.use(express.json());
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(
-      null,
-      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
-    );
-  },
+    destination: (req, file, cb) => {
+        cb(null, "uploads/");
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+        cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname));
+    }
 });
 
 const upload = multer({ storage: storage });
@@ -90,176 +87,172 @@ app.use("/uploads", express.static("uploads"));
 app.use("/create-blog", BlogCreated);
 app.use("/views", viewsRouter);
 app.use("/token", token);
-app.use("/badword",badword);
+app.use("/badword", badword);
 
 const generateUsername = async (email) => {
-  const { nanoid } = await import("nanoid");
-  let username = email.split("@")[0];
+    const { nanoid } = await import("nanoid");
+    let username = email.split("@")[0];
 
-  const isUsernameNotUnique = await User.exists({ username }).then(
-    (result) => result
-  );
+    const isUsernameNotUnique = await User.exists({ username }).then((result) => result);
 
-  if (isUsernameNotUnique) {
-    username += nanoid().substring(0, 5);
-  }
+    if (isUsernameNotUnique) {
+        username += nanoid().substring(0, 5);
+    }
 
-  return username;
+    return username;
 };
 
 const formDatatoSend = (user) => {
-  const access_token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-  return {
-    access_token,
-    _id: user._id,
-    profile_picture: user.profile_picture,
-    username: user.username,
-    fullname: user.fullname,
-  };
+    const access_token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+    return {
+        access_token,
+        _id: user._id,
+        profile_picture: user.profile_picture,
+        username: user.username,
+        fullname: user.fullname
+    };
 };
 
 module.exports = formDatatoSend;
 
 app.post("/google-auth", async (req, res) => {
-  const { access_token } = req.body;
+    const { access_token } = req.body;
 
-  if (!access_token) {
-    return res.status(400).json({ error: "Token is required" });
-  }
-
-  try {
-    const decodedUser = await getAuth().verifyIdToken(access_token);
-    const { email, name, picture } = decodedUser;
-    const profilePicture = picture.replace("s96-c", "s384-c");
-
-    let user = await User.findOne({ email }).select(
-      "fullname username profile_picture google_auth"
-    );
-
-    if (user) {
-      if (!user.google_auth) {
-        return res.status(403).json({
-          error:
-            "อีเมลนี้ได้ลงทะเบียนโดยไม่ใช้ Google แล้ว กรุณาเข้าสู่ระบบด้วยรหัสผ่านเพื่อเข้าถึงบัญชี",
-        });
-      }
-    } else {
-      const username = await generateUsername(email);
-
-      user = new User({
-        fullname: name,
-        email,
-        username,
-        google_auth: true,
-      });
-
-      user = await user.save();
+    if (!access_token) {
+        return res.status(400).json({ error: "Token is required" });
     }
 
-    return res.status(200).json(formDatatoSend(user));
-  } catch (err) {
-    console.error("Authentication error:", err);
-    if (!res.headersSent) {
-      return res.status(500).json({
-        error:
-          "ล้มเหลวในการรับรองความถูกต้องของคุณกับ Google ลองใช้บัญชี Google อื่น",
-      });
+    try {
+        const decodedUser = await getAuth().verifyIdToken(access_token);
+        const { email, name, picture } = decodedUser;
+        const profilePicture = picture.replace("s96-c", "s384-c");
+
+        let user = await User.findOne({ email }).select(
+            "fullname username profile_picture google_auth"
+        );
+
+        if (user) {
+            if (!user.google_auth) {
+                return res.status(403).json({
+                    error: "อีเมลนี้ได้ลงทะเบียนโดยไม่ใช้ Google แล้ว กรุณาเข้าสู่ระบบด้วยรหัสผ่านเพื่อเข้าถึงบัญชี"
+                });
+            }
+        } else {
+            const username = await generateUsername(email);
+
+            user = new User({
+                fullname: name,
+                email,
+                username,
+                google_auth: true
+            });
+
+            user = await user.save();
+        }
+
+        return res.status(200).json(formDatatoSend(user));
+    } catch (err) {
+        console.error("Authentication error:", err);
+        if (!res.headersSent) {
+            return res.status(500).json({
+                error: "ล้มเหลวในการรับรองความถูกต้องของคุณกับ Google ลองใช้บัญชี Google อื่น"
+            });
+        }
     }
-  }
 });
 
 app.post("/get-upload-picture", upload.single("file"), (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ error: "No file uploaded" });
-    }
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: "No file uploaded" });
+        }
 
-    return res.status(200).json({
-      message: "File uploaded successfully",
-      filename: req.file.filename,
-    });
-  } catch (err) {
-    console.log(err.message);
-    return res.status(500).json({ error: err.message });
-  }
+        return res.status(200).json({
+            message: "File uploaded successfully",
+            filename: req.file.filename
+        });
+    } catch (err) {
+        console.log(err.message);
+        return res.status(500).json({ error: err.message });
+    }
 });
 
 app.post("/search-blogs", (req, res) => {
-  const { tag, author, query, page, limit, eliminate_blog } = req.body;
-  let findQuery = { tags: tag, draft: false };
+    const { tag, author, query, page, limit, eliminate_blog } = req.body;
+    let findQuery = { tags: tag, draft: false };
 
-  if (tag) {
-    const lowerCaseTag = tag.toLowerCase();
-    findQuery = {
-      tags: lowerCaseTag,
-      draft: false,
-      blog_id: { $ne: eliminate_blog },
-    };
-  } else if (query) {
-    findQuery = { draft: false, topic: new RegExp(query, "i") };
-  } else if (author) {
-    findQuery = { author, draft: false };
-  }
-  const maxLimit = limit ? limit : 2;
+    if (tag) {
+        const lowerCaseTag = tag.toLowerCase();
+        findQuery = {
+            tags: lowerCaseTag,
+            draft: false,
+            blog_id: { $ne: eliminate_blog }
+        };
+    } else if (query) {
+        findQuery = { draft: false, topic: new RegExp(query, "i") };
+    } else if (author) {
+        findQuery = { author, draft: false };
+    }
+    const maxLimit = limit ? limit : 2;
 
-  Post.find(findQuery)
-    .populate("author", "profile_picture username fullname -_id")
-    .sort({ publishedAt: -1 })
-    .select("blog_id topic des banner activity tags publishedAt -_id")
-    .skip((page - 1) * maxLimit)
-    .limit(maxLimit)
-    .then((blogs) => {
-      return res.status(200).json({ blogs });
-    })
-    .catch((err) => {
-      return res.status(500).json({ error: err.message });
-    });
+    Post.find(findQuery)
+        .populate("author", "profile_picture username fullname -_id")
+        .sort({ publishedAt: -1 })
+        .select("blog_id topic des banner activity tags publishedAt -_id")
+        .skip((page - 1) * maxLimit)
+        .limit(maxLimit)
+        .then((blogs) => {
+            return res.status(200).json({ blogs });
+        })
+        .catch((err) => {
+            return res.status(500).json({ error: err.message });
+        });
 });
 
 app.post("/search-blogs-count", (req, res) => {
-  const { tag, query, author } = req.body;
-  let findQuery;
+    const { tag, query, author } = req.body;
+    let findQuery;
 
-  if (tag) {
-    const lowerCaseTag = tag.toLowerCase();
-    findQuery = { tags: lowerCaseTag, draft: false };
-  } else if (query) {
-    findQuery = { draft: false, topic: new RegExp(query, "i") };
-  } else if (author) {
-    findQuery = { author, draft: false };
-  }
+    if (tag) {
+        const lowerCaseTag = tag.toLowerCase();
+        findQuery = { tags: lowerCaseTag, draft: false };
+    } else if (query) {
+        findQuery = { draft: false, topic: new RegExp(query, "i") };
+    } else if (author) {
+        findQuery = { author, draft: false };
+    }
 
-  Post.countDocuments(findQuery)
-    .then((count) => {
-      return res.status(200).json({ totalDocs: count });
-    })
-    .catch((err) => {
-      console.log(err.message);
-      return res.status(500).json({ error: err.message });
-    });
+    Post.countDocuments(findQuery)
+        .then((count) => {
+            return res.status(200).json({ totalDocs: count });
+        })
+        .catch((err) => {
+            console.log(err.message);
+            return res.status(500).json({ error: err.message });
+        });
 });
 
 app.post("/search-users", (req, res) => {
-  let { query } = req.body;
+    let { query } = req.body;
 
-  User.find({ username: new RegExp(query, "i") })
-    .limit(50)
-    .select("fullname username profile_picture -_id")
-    .then((users) => {
-      return res.status(200).json({ users });
-    })
-    .catch((err) => {
-      return res.status(500).json({ error: err.message });
-    });
+    User.find({ username: new RegExp(query, "i") })
+        .limit(50)
+        .select("fullname username profile_picture -_id")
+        .then((users) => {
+            return res.status(200).json({ users });
+        })
+        .catch((err) => {
+            return res.status(500).json({ error: err.message });
+        });
 });
 
 console.log("MONGO CONNECT");
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+    console.log(`Server is running on port ${port}`);
 });
 mongoose
-  .connect(uri)
-  .then(() => {
-    console.log("MongoDB connection established");
-  })
-  .catch((error) => console.log("MongoDB connection failed: ", error.message));
+    .connect(uri)
+    .then(() => {
+        console.log("MongoDB connection established");
+    })
+    .catch((error) => console.log("MongoDB connection failed: ", error.message));

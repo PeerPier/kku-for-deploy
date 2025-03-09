@@ -7,6 +7,8 @@ import { MdLightMode, MdDarkMode } from "react-icons/md";
 import Pro from "../../pic/start1.jpg";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
+import InputBox from "../../components/input.component";
 
 export interface Report {
     _id: string;
@@ -59,6 +61,46 @@ interface AdminData {
     lastname: string;
     email: string;
     tel: string;
+    username: string; // เพิ่ม username
+}
+
+interface PasswordFormData {
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+}
+
+interface LoginLog {
+    _id: string;
+    adminId: {
+        username: string;
+        email: string;
+    };
+    loginTime: string;
+}
+
+interface AdminListData {
+    _id: string;
+    username: string;
+    email: string;
+    firstname: string;
+    lastname: string;
+    tel: string;
+}
+
+interface ConfirmationModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onConfirm: () => void;
+    title: string;
+    message: string;
+}
+
+interface EditAdminModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    admin: AdminListData;
+    onSave: (updatedData: AdminListData) => void;
 }
 
 const AdminProfile: React.FC = () => {
@@ -68,15 +110,30 @@ const AdminProfile: React.FC = () => {
     const [adminProfile, setAdminProfile] = useState<any>(true);
     const [selectedCate, setSelectedCate] = useState<string>("admin-profile"); // เพิ่มเติม: สร้าง selectedCate สำหรับเปลี่ยน cate ของหน้าเว็บ เปลี่ยนให้ defualt เป็น admin-profile
     const [showModal, setShowModal] = useState(false);
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
     const [title, setTitle] = useState("admin-profile"); // เพิ่มเติม: สร้าง state สำหรับเปลี่ยน title ของหน้าเว็บ เปลี่ยนให้ defualt เป็น profile
     const [activeTab, setActiveTab] = useState("login-history");
     const [adminData, setAdminData] = useState<AdminData>({
         firstname: "",
         lastname: "",
         email: "",
-        tel: ""
+        tel: "",
+        username: "" // เพิ่ม username field
     });
     const [isEditing, setIsEditing] = useState(false);
+    const [passwordData, setPasswordData] = useState<PasswordFormData>({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: ""
+    });
+    const [loginLogs, setLoginLogs] = useState<LoginLog[]>([]);
+    const [admins, setAdmins] = useState<AdminListData[]>([]);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [adminToDelete, setAdminToDelete] = useState<string>("");
+    const [showEditConfirm, setShowEditConfirm] = useState(false);
+    const [adminToEdit, setAdminToEdit] = useState<string>("");
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [selectedAdmin, setSelectedAdmin] = useState<AdminListData | null>(null);
 
     const handleShowModal = (report: any) => {
         setShowModal(true);
@@ -91,6 +148,10 @@ const AdminProfile: React.FC = () => {
     };
 
     const navigate = useNavigate();
+
+    const resetPasswordModal = () => {
+        setShowPasswordModal(true);
+    };
 
     useEffect(() => {
         const user = JSON.parse(sessionStorage.getItem("user") || "{}");
@@ -175,6 +236,63 @@ const AdminProfile: React.FC = () => {
         fetchAdminData();
     }, [adminId, API_BASE_URL]);
 
+    useEffect(() => {
+        const fetchLoginHistory = async () => {
+            try {
+                const user = JSON.parse(sessionStorage.getItem("user") || "{}");
+                const response = await axios.get(`${API_BASE_URL}/admin/get-login-history`, {
+                    headers: {
+                        Authorization: `Bearer ${user.access_token}`
+                    }
+                });
+                setLoginLogs(response.data);
+            } catch (error) {
+                console.error("Error fetching login history:", error);
+                toast.error("ไม่สามารถดึงข้อมูลประวัติการเข้าสู่ระบบได้");
+            }
+        };
+
+        if (activeTab === "login-history") {
+            fetchLoginHistory();
+        }
+    }, [activeTab, API_BASE_URL]);
+
+    const fetchAdmins = async () => {
+        try {
+            const user = JSON.parse(sessionStorage.getItem("user") || "{}");
+            const response = await axios.get(`${API_BASE_URL}/admin/all-admins`, {
+                headers: {
+                    Authorization: `Bearer ${user.access_token}`
+                }
+            });
+            setAdmins(response.data);
+        } catch (error) {
+            console.error("Error fetching admins:", error);
+            toast.error("ไม่สามารถดึงข้อมูลแอดมินได้");
+        }
+    };
+
+    useEffect(() => {
+        if (activeTab === "edit-admin-profile") {
+            fetchAdmins();
+        }
+    }, [activeTab]);
+
+    const handleDeleteAdmin = async (adminId: string) => {
+        try {
+            const user = JSON.parse(sessionStorage.getItem("user") || "{}");
+            await axios.delete(`${API_BASE_URL}/admin/users/${adminId}`, {
+                headers: {
+                    Authorization: `Bearer ${user.access_token}`
+                }
+            });
+            toast.success("ลบแอดมินสำเร็จ");
+            fetchAdmins();
+        } catch (error) {
+            toast.error("ไม่สามารถลบแอดมินได้");
+        }
+    };
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setAdminData((prev) => ({
@@ -192,7 +310,7 @@ const AdminProfile: React.FC = () => {
                 throw new Error("No authentication token found");
             }
 
-            const response = await axios.put(`${API_BASE_URL}/admin/${adminId}`, adminData, {
+            const response = await axios.put(`${API_BASE_URL}/admin/users/${adminId}`, adminData, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`
@@ -201,16 +319,190 @@ const AdminProfile: React.FC = () => {
 
             if (response.status === 200) {
                 setIsEditing(false);
-                alert("Profile updated successfully");
+                toast.success("แก้ไขข้อมูลสำเร็จ");
             }
         } catch (error: any) {
             console.error("Error updating admin data:", error);
-            alert(error.response?.data?.message || "Failed to update profile");
+            toast.error(error.response?.data?.message || "เกิดข้อผิดพลาดในการแก้ไขข้อมูล");
+        }
+    };
+
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPasswordData((prev) => ({
+            ...prev,
+            [e.target.name]: e.target.value
+        }));
+    };
+
+    const handlePasswordSubmit = async () => {
+        try {
+            if (passwordData.newPassword !== passwordData.confirmPassword) {
+                toast.error("รหัสผ่านใหม่และยืนยันรหัสผ่านไม่ตรงกัน");
+                return;
+            }
+
+            const user = JSON.parse(sessionStorage.getItem("user") || "{}");
+            const response = await axios.put(
+                `${API_BASE_URL}/admin/change-password/${adminId}`,
+                {
+                    currentPassword: passwordData.currentPassword,
+                    newPassword: passwordData.newPassword
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${user.access_token}`
+                    }
+                }
+            );
+
+            if (response.status === 200) {
+                toast.success("เปลี่ยนรหัสผ่านสำเร็จ");
+                setShowPasswordModal(false);
+                setPasswordData({
+                    currentPassword: "",
+                    newPassword: "",
+                    confirmPassword: ""
+                });
+            }
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "เกิดข้อผิดพลาดในการเปลี่ยนรหัสผ่าน");
+        }
+    };
+
+    const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
+        isOpen,
+        onClose,
+        onConfirm,
+        title,
+        message
+    }) => {
+        if (!isOpen) return null;
+
+        return (
+            <div className="confirmation-modal">
+                <div className="modal-content">
+                    <h2>{title}</h2>
+                    <p>{message}</p>
+                    <div className="modal-actions">
+                        <button className="cancel-btn" onClick={onClose}>
+                            ยกเลิก
+                        </button>
+                        <button className="confirm-btn" onClick={onConfirm}>
+                            ยืนยัน
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const EditAdminModal: React.FC<EditAdminModalProps> = ({ isOpen, onClose, admin, onSave }) => {
+        const [editData, setEditData] = useState({ ...admin });
+
+        if (!isOpen) return null;
+
+        return (
+            <div className="confirmation-modal">
+                <div className="modal-content">
+                    <h2>แก้ไขข้อมูลแอดมิน</h2>
+                    <div className="edit-form">
+                        <div className="input-group">
+                            <label>ชื่อผู้ใช้</label>
+                            <input
+                                type="text"
+                                value={editData.username}
+                                onChange={(e) =>
+                                    setEditData({ ...editData, username: e.target.value })
+                                }
+                                className="form-input"
+                            />
+                        </div>
+                        <div className="input-group">
+                            <label>อีเมล</label>
+                            <input
+                                type="email"
+                                value={editData.email}
+                                onChange={(e) =>
+                                    setEditData({ ...editData, email: e.target.value })
+                                }
+                            />
+                        </div>
+                        <div className="input-group">
+                            <label>ชื่อ</label>
+                            <input
+                                type="text"
+                                value={editData.firstname}
+                                onChange={(e) =>
+                                    setEditData({ ...editData, firstname: e.target.value })
+                                }
+                            />
+                        </div>
+                        <div className="input-group">
+                            <label>นามสกุล</label>
+                            <input
+                                type="text"
+                                value={editData.lastname}
+                                onChange={(e) =>
+                                    setEditData({ ...editData, lastname: e.target.value })
+                                }
+                            />
+                        </div>
+                        <div className="input-group">
+                            <label>เบอร์โทร</label>
+                            <input
+                                type="tel"
+                                value={editData.tel}
+                                onChange={(e) => setEditData({ ...editData, tel: e.target.value })}
+                            />
+                        </div>
+                    </div>
+                    <div className="modal-actions">
+                        <button className="cancel-btn" onClick={onClose}>
+                            ยกเลิก
+                        </button>
+                        <button
+                            className="confirm-btn"
+                            onClick={() => {
+                                onSave(editData);
+                                onClose();
+                            }}
+                        >
+                            บันทึก
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const handleEditClick = (admin: AdminListData) => {
+        setSelectedAdmin(admin);
+        setShowEditModal(true);
+    };
+
+    const handleDeleteClick = (adminId: string) => {
+        setAdminToDelete(adminId);
+        setShowDeleteConfirm(true);
+    };
+
+    const handleSaveEdit = async (updatedData: AdminListData) => {
+        try {
+            const user = JSON.parse(sessionStorage.getItem("user") || "{}");
+            await axios.put(`${API_BASE_URL}/admin/users/${updatedData._id}`, updatedData, {
+                headers: {
+                    Authorization: `Bearer ${user.access_token}`
+                }
+            });
+            toast.success("แก้ไขข้อมูลสำเร็จ");
+            fetchAdmins();
+        } catch (error) {
+            toast.error("ไม่สามารถแก้ไขข้อมูลได้");
         }
     };
 
     return (
         <div className="adminProfile">
+            <Toaster position="top-center" />
             <div className="admin-dashboard-container">
                 <div className="main-content">
                     <div className="header">
@@ -342,7 +634,9 @@ const AdminProfile: React.FC = () => {
                                                 </button>
                                                 <button
                                                     className="change-password-btn"
-                                                    onClick={() => {}}
+                                                    onClick={() => {
+                                                        resetPasswordModal();
+                                                    }}
                                                 >
                                                     เปลี่ยนรหัสผ่าน
                                                 </button>
@@ -388,42 +682,22 @@ const AdminProfile: React.FC = () => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>10/14/2024</td>
-                                                    <td>chalita sakaeww</td>
-                                                    <td>chalita.sak@gmail.com</td>
-                                                    <td>20.00.32</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>10/15/2024</td>
-                                                    <td>chalita sakaew</td>
-                                                    <td>chalita.sak@kkumail.com</td>
-                                                    <td>20.00.32</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>10/15/2024</td>
-                                                    <td>peer</td>
-                                                    <td>pzgpl2@gmail.com</td>
-                                                    <td>20.00.32</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>10/18/2024</td>
-                                                    <td>teerawut sungkagaro</td>
-                                                    <td>trwfs00@mailinator.com</td>
-                                                    <td>20.00.32</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>10/18/2024</td>
-                                                    <td>teerawut sungkagaro</td>
-                                                    <td>trw.designstyle@gmail.com</td>
-                                                    <td>20.00.32</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>10/19/2024</td>
-                                                    <td>dog</td>
-                                                    <td>dog@gmail.com</td>
-                                                    <td>20.00.32</td>
-                                                </tr>
+                                                {loginLogs.map((log) => (
+                                                    <tr key={log._id}>
+                                                        <td>
+                                                            {new Date(
+                                                                log.loginTime
+                                                            ).toLocaleDateString("th-TH")}
+                                                        </td>
+                                                        <td>{log.adminId.username}</td>
+                                                        <td>{log.adminId.email}</td>
+                                                        <td>
+                                                            {new Date(
+                                                                log.loginTime
+                                                            ).toLocaleTimeString("th-TH")}
+                                                        </td>
+                                                    </tr>
+                                                ))}
                                             </tbody>
                                         </table>
                                     </div>
@@ -434,25 +708,44 @@ const AdminProfile: React.FC = () => {
                                         <table>
                                             <thead>
                                                 <tr>
-                                                    <th>วันที่</th>
-                                                    <th>ชื่อบัญชีผู้ใช้</th>
+                                                    <th>ชื่อผู้ใช้</th>
                                                     <th>อีเมล</th>
-                                                    <th>เวลาที่เข้าสู่ระบบ</th>
+                                                    <th>ชื่อ</th>
+                                                    <th>นามสกุล</th>
+                                                    <th>เบอร์โทร</th>
+                                                    <th></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>10/14/2024</td>
-                                                    <td>chalita sakaeww</td>
-                                                    <td>chalita.sak@gmail.com</td>
-                                                    <td>20.00.32</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>10/15/2024</td>
-                                                    <td>chalita sakaew</td>
-                                                    <td>chalita.sak@kkumail.com</td>
-                                                    <td>20.00.32</td>
-                                                </tr>
+                                                {admins.map((admin) => (
+                                                    <tr key={admin._id}>
+                                                        <td>{admin.username}</td>
+                                                        <td>{admin.email}</td>
+                                                        <td>{admin.firstname}</td>
+                                                        <td>{admin.lastname}</td>
+                                                        <td>{admin.tel}</td>
+                                                        <td>
+                                                            <div className="action-buttons-cell">
+                                                                <button
+                                                                    className="edit-btn"
+                                                                    onClick={() =>
+                                                                        handleEditClick(admin)
+                                                                    }
+                                                                >
+                                                                    แก้ไข
+                                                                </button>
+                                                                <button
+                                                                    className="delete-btn"
+                                                                    onClick={() =>
+                                                                        handleDeleteClick(admin._id)
+                                                                    }
+                                                                >
+                                                                    ลบ
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))}
                                             </tbody>
                                         </table>
                                     </div>
@@ -462,6 +755,96 @@ const AdminProfile: React.FC = () => {
                     </div>
                 </div>
             </div>
+
+            {showPasswordModal && (
+                <div className="password-modal">
+                    <div className="modal-content">
+                        <form
+                            className="m-3"
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                handlePasswordSubmit();
+                            }}
+                        >
+                            <div className="modal-header">
+                                <h1 className="topic-ChangePass fs-5">เปลี่ยนรหัสผ่าน</h1>
+                                <button type="button" onClick={() => setShowPasswordModal(false)}>
+                                    &times;
+                                </button>
+                            </div>
+
+                            <div className="inputChangpassword">
+                                <div className="input-group">
+                                    <InputBox
+                                        type="password"
+                                        name="currentPassword"
+                                        className="profile-edit-input"
+                                        placeholder="รหัสผ่านปัจจุบัน"
+                                        value={passwordData.currentPassword}
+                                        onChange={handlePasswordChange}
+                                    />
+                                </div>
+
+                                <div className="input-group">
+                                    <InputBox
+                                        type="password"
+                                        name="newPassword"
+                                        className="profile-edit-input"
+                                        placeholder="รหัสผ่านใหม่"
+                                        value={passwordData.newPassword}
+                                        onChange={handlePasswordChange}
+                                    />
+                                </div>
+
+                                <div className="input-group">
+                                    <InputBox
+                                        type="password"
+                                        name="confirmPassword"
+                                        className="profile-edit-input"
+                                        placeholder="ยืนยันรหัสผ่านใหม่"
+                                        value={passwordData.confirmPassword}
+                                        onChange={handlePasswordChange}
+                                    />
+                                </div>
+                                <button className="btn-dark px-5" type="submit">
+                                    เปลี่ยนรหัสผ่าน
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            <ConfirmationModal
+                isOpen={showDeleteConfirm}
+                onClose={() => setShowDeleteConfirm(false)}
+                onConfirm={() => {
+                    handleDeleteAdmin(adminToDelete);
+                    setShowDeleteConfirm(false);
+                }}
+                title="ยืนยันการลบแอดมิน"
+                message="คุณแน่ใจหรือไม่ที่จะลบแอดมินคนนี้?"
+            />
+
+            <ConfirmationModal
+                isOpen={showEditConfirm}
+                onClose={() => setShowEditConfirm(false)}
+                onConfirm={() => {
+                    navigate(`/admin/edit/${adminToEdit}`);
+                    setShowEditConfirm(false);
+                }}
+                title="ยืนยันการแก้ไขแอดมิน"
+                message="คุณต้องการแก้ไขข้อมูลแอดมินคนนี้ใช่หรือไม่?"
+            />
+
+            {selectedAdmin && (
+                <EditAdminModal
+                    isOpen={showEditModal}
+                    onClose={() => setShowEditModal(false)}
+                    admin={selectedAdmin}
+                    onSave={handleSaveEdit}
+                />
+            )}
         </div>
     );
 };
