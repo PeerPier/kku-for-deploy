@@ -188,6 +188,7 @@
     display: flex;
     justify-content: space-between;
     align-items: start;
+    margin-top: 1rem;
 }
 
 .adminProfile .title-container {
