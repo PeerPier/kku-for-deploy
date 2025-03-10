@@ -1,5 +1,5 @@
-import React, { useEffect, useState,ReactNode  } from "react";
-import { BrowserRouter as Router, Routes, Route, Outlet,Navigate } from "react-router-dom";
+import React, { useEffect, useState, ReactNode } from "react";
+import { BrowserRouter as Router, Routes, Route, Outlet, Navigate } from "react-router-dom";
 import LoginPage from "./Screens/login";
 import RegistPage from "./Screens/register";
 import HomePage from "./Screens/home.page";
@@ -33,6 +33,7 @@ import ProfilePage from "./Screens/ProfilePage";
 import BlogPage from "./Screens/blog.page";
 import DashboardUser from "./Screens/DashboardUser";
 import LoginAdmin from "./Screens/Admin/adminLogin";
+import ProfileAdmin from "./Screens/Admin/adminProfile";
 import AccountPreferences from "./Screens/AccountPreferences";
 // import ForgotPassword from './Screens/Admin/ForgotPassword';
 // import VerifyOTP from "./Screens/Admin/VerifyOTP";
@@ -68,9 +69,9 @@ interface User {
 
 export const UserContext = createContext<UserContextType>({
   userAuth: { access_token: null },
-  setUserAuth: () => { },
+  setUserAuth: () => {},
   NotificationShow: true,
-  setNotificationShow: () => { },
+  setNotificationShow: () => {}
 });
 
 function NavbarLayout() {
@@ -90,14 +91,12 @@ function App() {
 
   useEffect(() => {
     const userInSession = lookInSession("user");
-    userInSession
-      ? setUserAuth(JSON.parse(userInSession))
-      : setUserAuth({ access_token: null });
+    userInSession ? setUserAuth(JSON.parse(userInSession)) : setUserAuth({ access_token: null });
   }, []);
 
   function PrivateRoute({ children }: { children: ReactNode }) {
-    const user = JSON.parse(sessionStorage.getItem('user') || '{}') as User | null;
-  
+    const user = JSON.parse(sessionStorage.getItem("user") || "{}") as User | null;
+
     if (!user?.access_token) {
       return <Navigate to="/admin/login" />;
     }
@@ -124,7 +123,6 @@ function App() {
               <Route path="edit-profile" element={<EditProfile />}></Route>
               <Route path="change-password" element={<ChangPassword />}></Route>
               <Route path="noti-setting" element={<NotiSetting />} />
-
             </Route>
             <Route path="/posts" element={<Post />} />
             <Route path="/writepost" element={<Writepost />} />
@@ -148,9 +146,26 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/admin/register" element={<RegisterAdmin />} />
           <Route path="/admin/login" element={<LoginAdmin type="admin" />} />
+          <Route path="/admin/" element={<RegisterAdmin />} />
 
-          <Route path="/admin/:adminId" element={<PrivateRoute><AdminHome /></PrivateRoute>}/>
-          
+          {/* เพ่ิ่มเติม: route profile admin */}
+          <Route
+            path="/admin/:adminId/profile"
+            element={
+              <PrivateRoute>
+                <ProfileAdmin />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/:adminId"
+            element={
+              <PrivateRoute>
+                <AdminHome />
+              </PrivateRoute>
+            }
+          />
+
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/forgot-password-user" element={<ForgotPasswordUser />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />

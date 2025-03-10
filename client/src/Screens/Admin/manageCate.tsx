@@ -47,8 +47,7 @@ const ManageCate: React.FC<{ blogsData: Blog[] }> = ({ blogsData }) => {
   const [searchKeyword, setSearchKeyword] = useState("");
 
   useEffect(() => {
-    const tagCountMap: { [tag: string]: { count: number; banner: string } } =
-      {};
+    const tagCountMap: { [tag: string]: { count: number; banner: string } } = {};
 
     // กำหนดให้ blogs เป็น array ว่างถ้า getBlog หรือ blogsData ยังไม่มีค่า
     const blogs = getBlog || blogsData || [];
@@ -63,13 +62,11 @@ const ManageCate: React.FC<{ blogsData: Blog[] }> = ({ blogsData }) => {
       });
     });
 
-    const formattedTags = Object.entries(tagCountMap).map(
-      ([tag, { count, banner }]) => ({
-        tags: tag,
-        count,
-        banner,
-      })
-    );
+    const formattedTags = Object.entries(tagCountMap).map(([tag, { count, banner }]) => ({
+      tags: tag,
+      count,
+      banner
+    }));
 
     setUniqueTags(formattedTags);
   }, [blogsData, getBlog]);
@@ -84,17 +81,14 @@ const ManageCate: React.FC<{ blogsData: Blog[] }> = ({ blogsData }) => {
   const handleEditTag = async () => {
     if (selectedTag) {
       try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_ENDPOINT}/create-blog/edit-tag`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              old_tag: selectedTag.tags,
-              new_tag: newTag,
-            }),
-          }
-        );
+        const response = await fetch(`${process.env.REACT_APP_API_ENDPOINT}/create-blog/edit-tag`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            old_tag: selectedTag.tags,
+            new_tag: newTag
+          })
+        });
 
         if (!response.ok) throw new Error("Failed to edit tag");
         setShowEditModal(false);
@@ -114,7 +108,7 @@ const ManageCate: React.FC<{ blogsData: Blog[] }> = ({ blogsData }) => {
           {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ tag: selectedTag.tags }),
+            body: JSON.stringify({ tag: selectedTag.tags })
           }
         );
 
@@ -131,7 +125,6 @@ const ManageCate: React.FC<{ blogsData: Blog[] }> = ({ blogsData }) => {
   return (
     <div className="manageUser">
       <div className="main1">
-        <h1>จัดการหมวดหมู่</h1>
         <div className="insights">
           <div className="user-all">
             <MdCategory className="svg1" />
@@ -150,7 +143,8 @@ const ManageCate: React.FC<{ blogsData: Blog[] }> = ({ blogsData }) => {
 
           <div className="right">
             {/* ช่องค้นหา */}
-            <div className="search-cate" style={{ marginBottom: "20px" }}>
+            {/* เพิ่มเติม: เเก้ Css search-cate , input */}
+            <div className="search-cate">
               <input
                 type="text"
                 placeholder="ค้นหาหมวดหมู่..."
@@ -158,12 +152,12 @@ const ManageCate: React.FC<{ blogsData: Blog[] }> = ({ blogsData }) => {
                 onChange={(e) => setSearchKeyword(e.target.value)}
                 style={{
                   width: "96%",
-                  margin: "2%",
+                  margin: "3px 3px",
                   padding: "10px 15px",
-                  marginTop: "20px",
                   fontSize: "16px",
+                  border: "none",
                   borderRadius: "10px",
-                  backgroundColor: "white",
+                  backgroundColor: "white"
                 }}
               />
             </div>
@@ -172,15 +166,11 @@ const ManageCate: React.FC<{ blogsData: Blog[] }> = ({ blogsData }) => {
               style={{
                 marginTop: "0.5rem",
                 overflowY: "scroll",
-                maxHeight: "400px",
+                maxHeight: "400px"
               }}
             >
               {filteredTags.map(({ tags, count, banner }: any) => (
-                <div
-                  className="item"
-                  key={tags}
-                  style={{ margin: "20px 10px" }}
-                >
+                <div className="item" key={tags} style={{ margin: "20px 10px" }}>
                   <div className="right">
                     <div className="info">
                       <h3>
@@ -213,20 +203,14 @@ const ManageCate: React.FC<{ blogsData: Blog[] }> = ({ blogsData }) => {
                 </div>
               ))}
               {filteredTags.length === 0 && (
-                <p style={{ textAlign: "center", marginTop: "20px" }}>
-                  ไม่พบหมวดหมู่ที่ค้นหา
-                </p>
+                <p style={{ textAlign: "center", marginTop: "20px" }}>ไม่พบหมวดหมู่ที่ค้นหา</p>
               )}
             </div>
           </div>
         </div>
 
         {/* Modal สำหรับแก้ไข */}
-        <Modal
-          show={showEditModal}
-          onHide={() => setShowEditModal(false)}
-          centered
-        >
+        <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
           <Modal.Header closeButton>
             <Modal.Title>แก้ไขหมวดหมู่</Modal.Title>
           </Modal.Header>
@@ -244,32 +228,28 @@ const ManageCate: React.FC<{ blogsData: Blog[] }> = ({ blogsData }) => {
               ยกเลิก
             </Button>
             <Button
-  style={{ backgroundColor: "#7380ec", borderColor: "#7380ec", color: "white" }}
-  onClick={handleEditTag}
->
-  บันทึก
-</Button>
+              style={{
+                backgroundColor: "#7380ec",
+                borderColor: "#7380ec",
+                color: "white"
+              }}
+              onClick={handleEditTag}
+            >
+              บันทึก
+            </Button>
           </Modal.Footer>
         </Modal>
 
         {/* Modal สำหรับลบ */}
-        <Modal
-          show={showDeleteModal}
-          onHide={() => setShowDeleteModal(false)}
-          centered
-        >
+        <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
           <Modal.Header closeButton>
             <Modal.Title>ยืนยันการลบ</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            คุณแน่ใจว่าต้องการลบหมวดหมู่นี้:{" "}
-            <strong>{selectedTag?.tags}</strong>?
+            คุณแน่ใจว่าต้องการลบหมวดหมู่นี้: <strong>{selectedTag?.tags}</strong>?
           </Modal.Body>
           <Modal.Footer>
-            <Button
-              variant="secondary"
-              onClick={() => setShowDeleteModal(false)}
-            >
+            <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
               ยกเลิก
             </Button>
             <Button variant="danger" onClick={handleDeleteTag}>

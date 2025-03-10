@@ -31,11 +31,11 @@ const CommentCard = ({ index, leftVal, commentData }: CommentCardProps) => {
     comment,
     _id,
     commentedAt,
-    children = [],
+    children = []
   } = commentData;
 
   let {
-    userAuth: { access_token },
+    userAuth: { access_token }
   } = useContext(UserContext);
 
   const [isReplying, setReplying] = useState(false);
@@ -52,7 +52,7 @@ const CommentCard = ({ index, leftVal, commentData }: CommentCardProps) => {
   let {
     blog,
     blog: { comments, comments: { results: commentArr } = { results: [] } },
-    setBlog,
+    setBlog
   } = context;
 
   const handleReplyClick = () => {
@@ -110,9 +110,7 @@ const CommentCard = ({ index, leftVal, commentData }: CommentCardProps) => {
 
   const removeCommentsCards = (startingPoint: number) => {
     if (commentArr[startingPoint]) {
-      while (
-        commentArr[startingPoint].childrenLevel > commentData.childrenLevel
-      ) {
+      while (commentArr[startingPoint].childrenLevel > commentData.childrenLevel) {
         commentArr.splice(startingPoint, 1);
 
         if (!commentArr[startingPoint]) {
@@ -153,10 +151,7 @@ const CommentCard = ({ index, leftVal, commentData }: CommentCardProps) => {
 
   return (
     <div className="w-100" style={{ paddingLeft: `${leftVal * 10}px` }}>
-      <div
-        className="my-3 p-3"
-        style={{ borderRadius: "0.375rem", border: "1px solid #f0f0f0" }}
-      >
+      <div className="my-3 p-3" style={{ borderRadius: "0.375rem", border: "1px solid #f0f0f0" }}>
         <div className="d-flex gap-3 align-items-center mb-4">
           <img
             src={profile_picture}
@@ -171,7 +166,7 @@ const CommentCard = ({ index, leftVal, commentData }: CommentCardProps) => {
               display: "-webkit-box",
               WebkitBoxOrient: "vertical",
               WebkitLineClamp: "1",
-              overflow: "hidden",
+              overflow: "hidden"
             }}
           >
             {fullname} @{username}
@@ -191,7 +186,7 @@ const CommentCard = ({ index, leftVal, commentData }: CommentCardProps) => {
               style={{
                 padding: "10px",
                 borderRadius: "0.375rem",
-                border: "1px solid #ccc",
+                border: "1px solid #ccc"
               }}
             />
             <div className="d-flex gap-2 mt-2">
@@ -205,7 +200,7 @@ const CommentCard = ({ index, leftVal, commentData }: CommentCardProps) => {
                   borderRadius: "30px", // ขอบโค้ง
                   padding: "0.65rem 0.75rem", // การปรับขนาดปุ่ม
                   fontWeight: 500, // ตัวอักษรหนาขึ้นเล็กน้อย
-                  cursor: "pointer", // แสดงเคอร์เซอร์เป็นมือเมื่อชี้ไปที่ปุ่ม
+                  cursor: "pointer" // แสดงเคอร์เซอร์เป็นมือเมื่อชี้ไปที่ปุ่ม
                 }}
               >
                 บันทึกการแก้ไข
@@ -220,7 +215,7 @@ const CommentCard = ({ index, leftVal, commentData }: CommentCardProps) => {
                   borderRadius: "30px", // ขอบโค้ง
                   padding: "0.65rem 0.75rem", // การปรับขนาดปุ่ม
                   fontWeight: 500, // ตัวอักษรหนาขึ้นเล็กน้อย
-                  cursor: "pointer", // แสดงเคอร์เซอร์เป็นมือเมื่อชี้ไปที่ปุ่ม
+                  cursor: "pointer" // แสดงเคอร์เซอร์เป็นมือเมื่อชี้ไปที่ปุ่ม
                 }}
               >
                 ยกเลิก
@@ -243,7 +238,7 @@ const CommentCard = ({ index, leftVal, commentData }: CommentCardProps) => {
                   borderRadius: "30px", // ขอบโค้ง
                   padding: "0.65rem 0.75rem", // การปรับขนาดปุ่ม
                   fontWeight: 500, // ตัวอักษรหนาขึ้นเล็กน้อย
-                  cursor: "pointer", // แสดงเคอร์เซอร์เป็นมือเมื่อชี้ไปที่ปุ่ม
+                  cursor: "pointer" // แสดงเคอร์เซอร์เป็นมือเมื่อชี้ไปที่ปุ่ม
                 }}
                 className="btn btn-danger flex-fill"
                 onClick={confirmDelete}
@@ -257,7 +252,7 @@ const CommentCard = ({ index, leftVal, commentData }: CommentCardProps) => {
                   borderRadius: "30px", // ขอบโค้ง
                   padding: "0.65rem 0.75rem", // การปรับขนาดปุ่ม
                   fontWeight: 500, // ตัวอักษรหนาขึ้นเล็กน้อย
-                  cursor: "pointer", // แสดงเคอร์เซอร์เป็นมือเมื่อชี้ไปที่ปุ่ม
+                  cursor: "pointer" // แสดงเคอร์เซอร์เป็นมือเมื่อชี้ไปที่ปุ่ม
                 }}
               >
                 ยกเลิก
@@ -266,10 +261,7 @@ const CommentCard = ({ index, leftVal, commentData }: CommentCardProps) => {
           </div>
         )}
 
-        <div
-          className="d-flex gap-3 align-items-center mt-2"
-          onClick={hideReplies}
-        >
+        <div className="d-flex gap-3 align-items-center mt-2" onClick={hideReplies}>
           {commentData.isReplyingLoaded ? (
             <button className="p-2 px-3 d-flex align-items-center gap-2 text-hide">
               <FaRegCommentDots />
