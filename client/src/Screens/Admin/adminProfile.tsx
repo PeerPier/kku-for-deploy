@@ -386,7 +386,7 @@ const AdminProfile: React.FC = () => {
         if (!isOpen) return null;
 
         return (
-            <div className="confirmation-modal">
+            <div className="admin-acp confirmation-modal">
                 <div className="modal-content">
                     <h2>{title}</h2>
                     <p>{message}</p>
@@ -409,7 +409,7 @@ const AdminProfile: React.FC = () => {
         if (!isOpen) return null;
 
         return (
-            <div className="confirmation-modal">
+            <div className="admin-acp confirmation-modal">
                 <div className="modal-content">
                     <h2>แก้ไขข้อมูลแอดมิน</h2>
                     <div className="edit-form">
@@ -495,7 +495,7 @@ const AdminProfile: React.FC = () => {
         if (!isOpen) return null;
 
         return (
-            <div className="confirmation-modal">
+            <div className="admin-acp confirmation-modal">
                 <div className="modal-content">
                     <h2>เพิ่มแอดมิน</h2>
                     <div className="edit-form">
@@ -887,7 +887,7 @@ const AdminProfile: React.FC = () => {
             </div>
 
             {showPasswordModal && (
-                <div className="password-modal">
+                <div className="admin-acp password-modal">
                     <div className="modal-content">
                         <form
                             className="m-3"
