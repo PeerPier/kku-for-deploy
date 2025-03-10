@@ -956,7 +956,7 @@ body {
     text-decoration: none;
 }
 
-.btn-dark {
+.password-modal .inputChangpassword .btn-dark {
     background: var(--color-dark);
     color: white;
     border: none;
@@ -967,7 +967,7 @@ body {
     font-weight: 500;
 }
 
-.btn-dark:hover {
+.password-modal .inputChangpassword .btn-dark:hover {
     opacity: 0.9;
 }
 
