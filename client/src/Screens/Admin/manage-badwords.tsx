@@ -18,6 +18,7 @@ const ManageBadwords: React.FC = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [groupToDelete, setGroupToDelete] = useState<string | null>(null);
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [langFilter, setLangFilter] = useState("");
 
   useEffect(() => {
     const loadBadwordGroups = async () => {
@@ -155,29 +156,85 @@ const ManageBadwords: React.FC = () => {
             <span>เพิ่มรายการคำหยาบ</span>
           </div>
         </div>
+        <div className="bw-filter-buttons">
+          <Button
+            variant={langFilter === "" ? "primary" : "outline-primary"}
+            onClick={() => {
+              setFilteredBadwordGroups(badwordGroups);
+              setLangFilter("");
+              setSearchKeyword("");
+            }}
+            style={{
+              backgroundColor: langFilter === "" ? "#363949" : "white",
+              color: langFilter === "" ? "white" : "#363949",
+            }}
+          >
+            ทั้งหมด
+          </Button>
+          <Button
+            variant={langFilter === "TH" ? "primary" : "outline-primary"}
+            onClick={() => {
+              setFilteredBadwordGroups(
+                badwordGroups.filter((group) =>
+                  group.words.some((word: string) => /[ก-๙]/.test(word))
+                )
+              );
+              setLangFilter("TH");
+              setSearchKeyword("");
+            }}
+            style={{
+              backgroundColor: langFilter === "TH" ? "#363949" : "white",
+              color: langFilter === "TH" ? "white" : "#363949",
+            }}
+          >
+            TH
+          </Button>
+          <Button
+            variant={langFilter === "EN" ? "primary" : "outline-primary"}
+            onClick={() => {
+              setFilteredBadwordGroups(
+                badwordGroups.filter((group) =>
+                  group.words.some((word: string) => /[a-zA-Z]/.test(word))
+                )
+              );
+              setLangFilter("EN");
+              setSearchKeyword("");
+            }}
+            style={{
+              backgroundColor: langFilter === "EN" ? "#363949" : "white",
+              color: langFilter === "EN" ? "white" : "#363949",
+            }}
+          >
+            EN
+          </Button>
+        </div>
 
         <div className="recent-order" style={{ marginTop: "1.5rem" }}>
           <h2>รายการ</h2>
           {/* ช่องค้นหา */}
-          <div className="search-bar-badwords">
-            <input
-              type="text"
-              placeholder="ค้นหาคำหยาบ..."
-              value={searchKeyword}
-              onChange={handleSearch}
-              className="form-control"
-              style={{
-                width: "100%",
-                padding: "10px 15px",
-                marginTop: "40px",
-                fontSize: "16px",
-                border: "none",
-                borderRadius: "10px",
-                backgroundColor: "white",
-                
-              }}
-            />
-          </div>
+          {
+            langFilter == "" ?
+              <div className="search-bar-badwords">
+                <input
+                  type="text"
+                  placeholder="ค้นหาคำหยาบ..."
+                  value={searchKeyword}
+                  onChange={handleSearch}
+                  className="form-control"
+                  style={{
+                    width: "100%",
+                    padding: "10px 15px",
+                    marginTop: "40px",
+                    fontSize: "16px",
+                    border: "none",
+                    borderRadius: "10px",
+                    backgroundColor: "white",
+
+                  }}
+                />
+              </div>
+              : null
+          }
           <div className="right">
             <div className="activity-analytics" style={{ marginTop: "0.5rem" }}>
               {filteredBadwordGroups.length === 0 ? (
@@ -219,6 +276,7 @@ const ManageBadwords: React.FC = () => {
             </div>
           </div>
         </div>
+
       </div>
 
       <Modal show={showAddModal} onHide={() => setShowAddModal(false)} centered>
