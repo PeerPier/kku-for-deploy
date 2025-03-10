@@ -21,8 +21,7 @@ loadBadWordsFromDB();
 async function BadWordScanner(input) {
     for (const key in input) {
         if (input.hasOwnProperty(key)) {
-            const value = input[key].toLowerCase();
-            console.log(value)
+            const value = typeof input[key] === 'string' ? input[key].toLowerCase() : input[key];
             if (typeof value === "object" && value !== null) {
                 if (Array.isArray(value)) {
                     for (const item of value) {
