@@ -4,7 +4,6 @@ const router = express.Router()
 
 router.get("/check/:token", async (req, res) => {
   const { token } = req.params
-
   if (!token) {
     return res.status(400).json({ success: false, message: "Invalid token" })
   }

@@ -172,7 +172,7 @@ const UserAuthForm: React.FC<LoginPageProps> = ({ type }) => {
           />
 
           <p className="text text-r">
-            <Link to="/forgot-password">ลืมรหัสผ่าน</Link> ในการเข้าสู่ระบบ
+            <Link to="/forgot-password-user">ลืมรหัสผ่าน</Link> ในการเข้าสู่ระบบ
           </p>
 
           <button

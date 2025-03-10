@@ -48,7 +48,8 @@ router.get("/:id",verifyJWT,async (req, res) => {
 router.post("/", verifyJWT, async (req, res) => {
   try {
     const { words } = req.body;
-    const newGroup = new BadWordGroup({ words });
+    const lowerCaseWords = words.map(word => word.toLowerCase());
+    const newGroup = new BadWordGroup({ words:lowerCaseWords });
     await newGroup.save();
     await loadBadWordsFromDB();
     res.status(201).json(newGroup);
@@ -61,9 +62,10 @@ router.post("/", verifyJWT, async (req, res) => {
 router.put("/:id", verifyJWT, async (req, res) => {
   try {
     const { words } = req.body;
+    const lowerCaseWords = words.map(word => word.toLowerCase());
     const updatedGroup = await BadWordGroup.findByIdAndUpdate(
       req.params.id,
-      { words },
+      { words:lowerCaseWords },
       { new: true }
     );
 
@@ -82,9 +84,10 @@ router.put("/:id", verifyJWT, async (req, res) => {
 router.patch("/:id/add", verifyJWT, async (req, res) => {
   try {
     const { words } = req.body;
+    const lowerCaseWords = words.map(word => word.toLowerCase());
     const updatedGroup = await BadWordGroup.findByIdAndUpdate(
       req.params.id,
-      { $push: { words: { $each: words } } },
+      { $push: { words: { $each: lowerCaseWords } } },
       { new: true }
     );
 

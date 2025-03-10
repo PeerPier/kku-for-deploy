@@ -104,7 +104,7 @@ const ChangPassword = () => {
             icon="SlLockOpen"
           />
           <p className="text text-r">
-            หรือ <Link to="/forgot-password">เปลี่ยนรหัสผ่าน</Link> ผ่านอีเมล
+           หรือ <Link to="/forgot-password-user">เปลี่ยนรหัสผ่าน</Link> ผ่านอีเมล
           </p>
           <button className="btn-dark px-5" type="submit">
             เปลี่ยนรหัสผ่าน
