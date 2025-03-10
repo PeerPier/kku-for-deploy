@@ -71,7 +71,11 @@ const CommentCard = ({ index, leftVal, commentData }: CommentCardProps) => {
 
   const handleSaveEdit = () => {
     axios
-      .post(API_BASE_URL + "/update-comment", { _id, comment: editedComment })
+      .patch(API_BASE_URL + "/create-blog/update-comment", { _id, comment: editedComment }, {
+        headers: {
+          Authorization: `Bearer ${access_token}`
+        }
+      })
       .then(() => {
         setEditing(false);
         // Update the comment in the context
@@ -92,11 +96,21 @@ const CommentCard = ({ index, leftVal, commentData }: CommentCardProps) => {
 
   const confirmDelete = () => {
     axios
-      .post(API_BASE_URL + "/delete-comment", { _id })
-      .then(() => {
+      .post(API_BASE_URL + "/create-blog/delete-comment", { _id }, {
+        headers: {
+          Authorization: `Bearer ${access_token}`
+        }
+      })
+      .then((res) => {
         // Remove the comment from the context
         commentArr.splice(index, 1);
-        setBlog({ ...blog, comments: { results: commentArr } });
+        const updatedActivity = blog.activity
+          ? { 
+              ...blog.activity, 
+              total_comments: (blog.activity.total_comments || 0) - res.data.totalCommentsToDelete 
+            }
+          : { total_comments: 0 };
+        setBlog({ ...blog, comments: { results: commentArr }, activity: updatedActivity });
       })
       .catch((err) => {
         console.log(err);

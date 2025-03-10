@@ -139,7 +139,7 @@ const CommentsContainer = () => {
         <NoDataMessage message="ไม่มีความคิดเห็น" />
       )}
 
-      {totalParentComments > totalParentCommentsLoaded ? (
+      {totalParentComments > totalParentCommentsLoaded && commentsArr && commentsArr.length ? (
         <button
           onClick={loadmoreComments}
           className="p-2 px-3 d-flex align-items-center gap-2 btn-loadmore"

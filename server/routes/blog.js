@@ -520,6 +520,96 @@ router.post("/add-comment", verifyJWT, async (req, res) => {
     });
 });
 
+router.patch("/update-comment", verifyJWT, async (req, res) => {
+  try {
+    await BadWordScanner(req.body);
+  } catch (err) {
+    return res.status(403).json({ error: `${err}`, details: err });
+  }
+
+  let user_id = req.user;
+  let { _id, comment } = req.body;
+
+  if (!comment.length) {
+    return res.status(403).json({ error: "เขียนอะไรบางอย่างเพื่อแก้ไขความคิดเห็น" });
+  }
+
+  try {
+    const updatedComment = await Comment.findOneAndUpdate(
+      { _id: _id, commented_by: user_id },
+      { comment },
+      { new: true }
+    );
+
+    if (!updatedComment) {
+      return res.status(404).json({ error: "Comment not found or unauthorized" });
+    }
+
+    return res.status(200).json({ message: "Comment updated successfully", updatedComment });
+  } catch (error) {
+    console.error("Error updating comment:", error);
+    return res.status(500).json({ error: "Error updating comment." });
+  }
+});
+
+router.post("/delete-comment", verifyJWT, async (req, res) => {
+  let user_id = req.user;
+  let { _id } = req.body;
+
+  try {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    const comment = await Comment.findOne({ _id, commented_by: user_id }).session(session);
+
+    if (!comment) {
+      await session.abortTransaction();
+      return res.status(404).json({ error: "Comment not found or unauthorized" });
+    }
+
+    const deleteCommentAndChildren = async (commentId) => {
+      const commentToDelete = await Comment.findById(commentId).session(session);
+      let count = 1;
+
+      if (commentToDelete) {
+        const children = commentToDelete.children || [];
+        for (const childId of children) {
+          count += await deleteCommentAndChildren(childId);
+        }
+        await Comment.findByIdAndDelete(commentId).session(session);
+      }
+
+      return count;
+    };
+
+    const totalCommentsToDelete = await deleteCommentAndChildren(comment._id);
+
+    await Blog.findOneAndUpdate(
+      { _id: comment.blog_id },
+      { 
+        $pull: { comments: comment._id },
+        $inc: { "activity.total_comments": -totalCommentsToDelete }
+      }).session(session);
+
+    if (comment.isReply) {
+      await Comment.findOneAndUpdate(
+        { _id: comment.parent },
+        { $pull: { children: comment._id } }
+      ).session(session);
+    }
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return res.status(200).json({ message: "Comment and its replies deleted successfully",totalCommentsToDelete });
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+    return res.status(500).json({ error: "Error deleting comment." });
+  }
+});
+
+
+
 router.post("/get-blog-comments", (req, res) => {
   let { blog_id, skip } = req.body;
 

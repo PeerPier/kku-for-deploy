@@ -477,7 +477,8 @@ const BlogPage = () => {
                   </div>
                 ))
               ) : (
-                <p>No content available</p>
+                // <p>No content available</p>
+                null
               )}
             </div>
 
