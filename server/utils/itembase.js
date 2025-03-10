@@ -6,14 +6,14 @@ function jaccardSimilarity(setA, setB) {
     const union = new Set([...setA, ...setB]);  
     return intersection.size / union.size; 
 }
-
+//ฟังก์ชัน recommend และการตรวจสอบรูปแบบ userId
 async function recommend(userId, topN = 3) {
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
         console.error("Invalid userId format");
         return [];
     }
-
+    //การรวบรวมโพสต์ที่ผู้ใช้โต้ตอบ
     const user = await User.findById(userId, 'viewed_posts liked_posts saved_posts').lean();
     if (!user) return [];  
 
@@ -23,6 +23,7 @@ async function recommend(userId, topN = 3) {
         ...user.saved_posts
     ]);
 
+    //รวบรวมข้อมูลการโต้ตอบของผู้ใช้ทุกคนกับโพสต์
     const postInteractions = {};
     const userCollection = await User.aggregate([
         { $project: { 
@@ -36,10 +37,12 @@ async function recommend(userId, topN = 3) {
         }}
     ]);
 
+    //สร้างข้อมูลการโต้ตอบของโพสต์
     userCollection.forEach(post => {
         postInteractions[post._id] = new Set(post.users.map(userId => userId.toString()));
     });
 
+    //คำนวณ Jaccard Similarity สำหรับโพสต์ทั้งหมด
     const postIds = Object.keys(postInteractions);
     const similarities = {};
 
@@ -51,7 +54,8 @@ async function recommend(userId, topN = 3) {
             similarities[`${postA}-${postB}`] = similarity;
         }
     }
-
+    
+    //คำนวณคะแนนการแนะนำสำหรับโพสต์
     const recommendationScores = {};
     Object.keys(similarities).forEach(pair => {
         const [postA, postB] = pair.split("-");

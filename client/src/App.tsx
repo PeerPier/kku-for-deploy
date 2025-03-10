@@ -13,6 +13,7 @@ import Category from "./Screens/category";
 import Footer from "./Navbar/footer";
 import ForgotPassword from "./Screens/ForgotPassword";
 import ResetPassword from "./Screens/ResetPassword";
+import ResetPasswordUser from "./Screens/ResetPasswordUser";
 import Post from "./Screens/post";
 import Chat from "./Screens/chat";
 import { ChatContextProvider } from "./Screens/ChatContext";
@@ -43,6 +44,7 @@ import Notifications from "./Screens/notifications.page";
 import ManageBlogs from "./Screens/manageblogs";
 import ReportCheck from "./Screens/reportCheck";
 import NotiSetting from "./Screens/noti-setting";
+import ForgotPasswordUser from "./Screens/ForgotPasswordUser";
 
 interface UserContextType {
   userAuth: {
@@ -165,7 +167,9 @@ function App() {
           />
 
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/forgot-password-user" element={<ForgotPasswordUser />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/reset-password-user/:token" element={<ResetPasswordUser />} />
           <Route path="/account/preference/:id" element={<AccountPreferences />} />
           {/* <Route path="/forgot-password" element={<ForgotPassword />} />
              <Route path="/verify-otp" element={<VerifyOTP />} /> */}
