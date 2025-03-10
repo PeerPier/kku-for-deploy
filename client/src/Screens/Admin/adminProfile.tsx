@@ -103,6 +103,12 @@ interface EditAdminModalProps {
     onSave: (updatedData: AdminListData) => void;
 }
 
+interface AddAdminModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onSave: (adminData: Omit<AdminListData, "_id"> & { password: string }) => void;
+}
+
 const AdminProfile: React.FC = () => {
     const { adminId } = useParams<{ adminId: string }>();
     const API_BASE_URL = process.env.REACT_APP_API_ENDPOINT;
@@ -134,6 +140,7 @@ const AdminProfile: React.FC = () => {
     const [adminToEdit, setAdminToEdit] = useState<string>("");
     const [showEditModal, setShowEditModal] = useState(false);
     const [selectedAdmin, setSelectedAdmin] = useState<AdminListData | null>(null);
+    const [showAddModal, setShowAddModal] = useState(false);
 
     const handleShowModal = (report: any) => {
         setShowModal(true);
@@ -475,6 +482,103 @@ const AdminProfile: React.FC = () => {
         );
     };
 
+    const AddAdminModal: React.FC<AddAdminModalProps> = ({ isOpen, onClose, onSave }) => {
+        const [newAdmin, setNewAdmin] = useState({
+            username: "",
+            email: "",
+            firstname: "",
+            lastname: "",
+            tel: "",
+            password: ""
+        });
+
+        if (!isOpen) return null;
+
+        return (
+            <div className="confirmation-modal">
+                <div className="modal-content">
+                    <h2>เพิ่มแอดมิน</h2>
+                    <div className="edit-form">
+                        <div className="input-group">
+                            <label>ชื่อผู้ใช้</label>
+                            <input
+                                type="text"
+                                value={newAdmin.username}
+                                onChange={(e) =>
+                                    setNewAdmin({ ...newAdmin, username: e.target.value })
+                                }
+                                className="form-input"
+                            />
+                        </div>
+                        <div className="input-group">
+                            <label>รหัสผ่าน</label>
+                            <input
+                                type="password"
+                                value={newAdmin.password}
+                                onChange={(e) =>
+                                    setNewAdmin({ ...newAdmin, password: e.target.value })
+                                }
+                                className="form-input"
+                            />
+                        </div>
+                        <div className="input-group">
+                            <label>อีเมล</label>
+                            <input
+                                type="email"
+                                value={newAdmin.email}
+                                onChange={(e) =>
+                                    setNewAdmin({ ...newAdmin, email: e.target.value })
+                                }
+                            />
+                        </div>
+                        <div className="input-group">
+                            <label>ชื่อ</label>
+                            <input
+                                type="text"
+                                value={newAdmin.firstname}
+                                onChange={(e) =>
+                                    setNewAdmin({ ...newAdmin, firstname: e.target.value })
+                                }
+                            />
+                        </div>
+                        <div className="input-group">
+                            <label>นามสกุล</label>
+                            <input
+                                type="text"
+                                value={newAdmin.lastname}
+                                onChange={(e) =>
+                                    setNewAdmin({ ...newAdmin, lastname: e.target.value })
+                                }
+                            />
+                        </div>
+                        <div className="input-group">
+                            <label>เบอร์โทร</label>
+                            <input
+                                type="tel"
+                                value={newAdmin.tel}
+                                onChange={(e) => setNewAdmin({ ...newAdmin, tel: e.target.value })}
+                            />
+                        </div>
+                    </div>
+                    <div className="modal-actions">
+                        <button className="cancel-btn" onClick={onClose}>
+                            ยกเลิก
+                        </button>
+                        <button
+                            className="confirm-btn"
+                            onClick={() => {
+                                onSave(newAdmin);
+                                onClose();
+                            }}
+                        >
+                            บันทึก
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     const handleEditClick = (admin: AdminListData) => {
         setSelectedAdmin(admin);
         setShowEditModal(true);
@@ -498,6 +602,25 @@ const AdminProfile: React.FC = () => {
         } catch (error) {
             toast.error("ไม่สามารถแก้ไขข้อมูลได้");
         }
+    };
+
+    const handleAddAdmin = async (adminData: Omit<AdminListData, "_id"> & { password: string }) => {
+        try {
+            const user = JSON.parse(sessionStorage.getItem("user") || "{}");
+            await axios.post(`${API_BASE_URL}/admin/register`, adminData, {
+                headers: {
+                    Authorization: `Bearer ${user.access_token}`
+                }
+            });
+            toast.success("เพิ่มแอดมินสำเร็จ");
+            fetchAdmins();
+        } catch (error) {
+            toast.error("ไม่สามารถเพิ่มแอดมินได้");
+        }
+    };
+
+    const addAdmin = () => {
+        setShowAddModal(true);
     };
 
     return (
@@ -713,7 +836,14 @@ const AdminProfile: React.FC = () => {
                                                     <th>ชื่อ</th>
                                                     <th>นามสกุล</th>
                                                     <th>เบอร์โทร</th>
-                                                    <th></th>
+                                                    <th>
+                                                        <button
+                                                            className="add-admin-btn"
+                                                            onClick={addAdmin}
+                                                        >
+                                                            เพิ่มแอดมิน
+                                                        </button>
+                                                    </th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -845,6 +975,12 @@ const AdminProfile: React.FC = () => {
                     onSave={handleSaveEdit}
                 />
             )}
+
+            <AddAdminModal
+                isOpen={showAddModal}
+                onClose={() => setShowAddModal(false)}
+                onSave={handleAddAdmin}
+            />
         </div>
     );
 };

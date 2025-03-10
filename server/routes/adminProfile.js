@@ -316,4 +316,48 @@ router.put("/change-password/:id", async (req, res) => {
     }
 });
 
+router.post("/register", isAdmin, async (req, res) => {
+    try {
+        const { email, password, username, firstname, lastname, tel } = req.body;
+
+        if (!email || !password || !username || !firstname || !lastname) {
+            return res.status(400).json({ message: "กรุณากรอกข้อมูลให้ครบ" });
+        }
+
+        const existingEmail = await Admin.findOne({ email });
+        if (existingEmail) {
+            return res.status(400).json({ message: "อีเมลนี้มีผู้ใช้งานแล้ว" });
+        }
+
+        const existingUsername = await Admin.findOne({ username });
+        if (existingUsername) {
+            return res.status(400).json({ message: "ชื่อผู้ใช้นี้มีผู้ใช้งานแล้ว" });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const newAdmin = await Admin.create({
+            email,
+            password: hashedPassword,
+            username,
+            firstname,
+            lastname,
+            tel: tel || "",
+            is_admin: true
+        });
+
+        const adminWithoutPassword = { ...newAdmin.toObject() };
+        delete adminWithoutPassword.password;
+
+        res.status(201).json(adminWithoutPassword);
+    } catch (error) {
+        console.error("Error creating admin:", error);
+        res.status(500).json({
+            message: "เกิดข้อผิดพลาดในการเพิ่มแอดมิน",
+            error: error.message
+        });
+    }
+});
+
 module.exports = router;
