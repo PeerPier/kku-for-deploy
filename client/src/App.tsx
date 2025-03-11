@@ -45,6 +45,8 @@ import ManageBlogs from "./Screens/manageblogs";
 import ReportCheck from "./Screens/reportCheck";
 import NotiSetting from "./Screens/noti-setting";
 import ForgotPasswordUser from "./Screens/ForgotPasswordUser";
+import axios from "axios";
+import { API_BASE_URL } from "./api/post";
 
 interface UserContextType {
   userAuth: {
@@ -93,6 +95,43 @@ function App() {
     const userInSession = lookInSession("user");
     userInSession ? setUserAuth(JSON.parse(userInSession)) : setUserAuth({ access_token: null });
   }, []);
+
+  useEffect(() => {
+    const fetchNotificationStatus = async () => {
+      try {
+        const storedUser = sessionStorage.getItem("user");
+        if (!storedUser) {
+          console.error("No user data found in sessionStorage");
+          return;
+        }
+
+        const { access_token } = JSON.parse(storedUser);
+        if (!access_token) {
+          console.error("No access token found");
+          return;
+        }
+
+        const { data } = await axios.post(
+          `${API_BASE_URL}/profile/notification-status`,
+          {},
+          {
+            headers: { Authorization: `Bearer ${access_token}` },
+          }
+        );
+
+        if (data.success) {
+          setNotificationShow(data.notification_enable);
+        } else {
+          console.error("Failed to fetch notification settings");
+        }
+      } catch (error) {
+        console.error("Error fetching notification status:", error);
+      }
+    };
+
+    fetchNotificationStatus();
+  }, [setNotificationShow]); 
+
 
   function PrivateRoute({ children }: { children: ReactNode }) {
     const user = JSON.parse(sessionStorage.getItem("user") || "{}") as User | null;
