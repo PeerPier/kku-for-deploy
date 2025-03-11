@@ -33,8 +33,9 @@ function Navbar() {
           );
 
           if (response.status === 200) {
-            setNotifications(response.data);
-            console.log(response.data);
+            let dataFilter = response.data.filter((n:any) => n.user && n.user._id !== userId || n.type == 'delete');
+            // console.log("Debug", dataFilter);
+            setNotifications(dataFilter);
           } else {
             console.error("Failed to fetch notifications:", response.data);
           }
