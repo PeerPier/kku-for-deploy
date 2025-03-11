@@ -16,6 +16,7 @@ interface CommentCardProps {
       profile_picture: string;
       fullname: string;
       username: string;
+      _id?: string;
     };
     commentedAt?: string;
     _id?: string;
@@ -27,7 +28,7 @@ interface CommentCardProps {
 
 const CommentCard = ({ index, leftVal, commentData }: CommentCardProps) => {
   let {
-    commented_by: { profile_picture, fullname, username },
+    commented_by: { profile_picture, fullname, username, _id: commentedById },
     comment,
     _id,
     commentedAt,
@@ -54,7 +55,6 @@ const CommentCard = ({ index, leftVal, commentData }: CommentCardProps) => {
     blog: { comments, comments: { results: commentArr } = { results: [] } },
     setBlog
   } = context;
-
   const handleReplyClick = () => {
     if (!access_token) {
       return;
@@ -105,10 +105,10 @@ const CommentCard = ({ index, leftVal, commentData }: CommentCardProps) => {
         // Remove the comment from the context
         commentArr.splice(index, 1);
         const updatedActivity = blog.activity
-          ? { 
-              ...blog.activity, 
-              total_comments: (blog.activity.total_comments || 0) - res.data.totalCommentsToDelete 
-            }
+          ? {
+            ...blog.activity,
+            total_comments: (blog.activity.total_comments || 0) - res.data.totalCommentsToDelete
+          }
           : { total_comments: 0 };
         setBlog({ ...blog, comments: { results: commentArr }, activity: updatedActivity });
       })
@@ -148,7 +148,6 @@ const CommentCard = ({ index, leftVal, commentData }: CommentCardProps) => {
         .post(API_BASE_URL + "/create-blog/get-replies", { _id, skip })
         .then(({ data: { replies } }) => {
           commentData.isReplyingLoaded = true;
-
           for (let i = 0; i < replies.length; i++) {
             replies[i].childrenLevel = commentData.childrenLevel + 1;
 
@@ -297,20 +296,26 @@ const CommentCard = ({ index, leftVal, commentData }: CommentCardProps) => {
           >
             ตอบกลับ
           </button>
-          <button
-            className="text-decoration-underline"
-            onClick={handleEditClick}
-            disabled={isEditing || isDeleting} // Disable if editing or deleting
-          >
-            แก้ไข
-          </button>
-          <button
-            className="text-decoration-underline"
-            onClick={handleDeleteClick}
-            disabled={isEditing || isDeleting} // Disable if editing or deleting
-          >
-            ลบ
-          </button>
+
+          {commentData.commented_by._id == sessionStorage.getItem("userId") ?
+            <>
+              <button
+                className="text-decoration-underline"
+                onClick={handleEditClick}
+                disabled={isEditing || isDeleting}
+              >
+                แก้ไข
+              </button>
+              <button
+                className="text-decoration-underline"
+                onClick={handleDeleteClick}
+                disabled={isEditing || isDeleting}
+              >
+                ลบ
+              </button>
+            </>
+            : null}
+
         </div>
 
         {isReplying ? (
