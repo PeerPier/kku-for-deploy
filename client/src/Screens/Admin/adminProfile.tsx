@@ -624,7 +624,7 @@ const AdminProfile: React.FC = () => {
     };
 
     return (
-        <div className="adminProfile">
+        <div className="adminProfile adminHome">
             <Toaster position="top-center" />
             <div className="admin-dashboard-container">
                 <div className="main-content">

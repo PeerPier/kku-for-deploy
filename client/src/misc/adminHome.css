@@ -228,6 +228,36 @@
   align-items: center;
   justify-content: space-between;
 }
+.adminHome .profile-theme {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.adminHome .theme-toggler {
+  background: var(--color-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 1.6rem;
+  width: 4.2rem;
+  cursor: pointer;
+  border-radius: 0.4rem;
+}
+
+.adminHome .theme-toggler svg {
+  font-size: 1.2rem;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.adminHome .theme-toggler svg.active {
+  background: #7380ec;
+  color: white;
+  border-radius: 0.4rem;
+}
 .adminHome .main1 .insights h3 {
   margin: 1rem 0 0.6rem;
   font-size: 1rem;

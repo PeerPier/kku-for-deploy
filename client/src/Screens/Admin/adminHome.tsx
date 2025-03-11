@@ -399,7 +399,7 @@ const AdminHome: React.FC = () => {
   };
 
   return (
-    <div className="adminHome">
+    <div className="adminHome adminProfile">
       <div className="contain">
         <aside>
           <div className="top">
