@@ -171,7 +171,7 @@ const ManageCate: React.FC<{ blogsData: Blog[] }> = ({ blogsData }) => {
               style={{
                 marginTop: "0.5rem",
                 overflowY: "scroll",
-                maxHeight: "400px"
+                maxHeight: "300px"
               }}
             >
               {filteredTags.map(({ tags, count, banner }: any) => (

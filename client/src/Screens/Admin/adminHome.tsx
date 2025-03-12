@@ -532,14 +532,16 @@ const AdminHome: React.FC = () => {
                     onClick={() => {
                       navigate(`/admin/${adminId}/profile`);
                     }}
-                    
                   >
                     <div className="info">
                       <p style={{ fontSize: "14px", marginTop: "30px" }}>
                         Hello, <b>{adminUsername}</b>
                       </p>
                     </div>
-                    <div className="profile-photo"style={{ marginTop: "15px" }}>
+                    <div
+                      className="profile-photo"
+                      style={{ marginTop: "15px" }}
+                    >
                       <img src={Pro} alt="Profile" />
                     </div>
                   </div>
@@ -683,27 +685,26 @@ const AdminHome: React.FC = () => {
                   </div>
                 </div>
 
-                <h2
-                  style={{
-                    fontSize: "1.8rem",
-                    fontWeight: "800",
-                    marginTop: "2rem",
-                  }}
-                >
-                  รายการ
-                </h2>
                 {selectedBlog === "blog-all" && (
                   <div
                     className="recent-order"
                     style={{
                       overflowY: "auto", // เพิ่ม scrollbar เมื่อเนื้อหามากเกินไป
                       maxHeight: "400px", // กำหนดความสูงสูงสุดของ div
-                      margin: "0",
+                      marginTop: "10px",
                       borderRadius: "2rem",
                     }}
                   >
                     <table>
-                      <thead className="pt-5">
+                      <thead
+                        style={{
+                          position: "sticky",
+                          top: 0,
+                          backgroundColor: "#fff",
+                          zIndex: 1,
+                        }}
+                        className="pt-5"
+                      >
                         <tr>
                           <th>ผู้รายงาน</th>
                           <th>วันที่</th>
@@ -712,6 +713,7 @@ const AdminHome: React.FC = () => {
                           <th>รายละเอียด</th>
                         </tr>
                       </thead>
+
                       {adminProfile && (
                         <tbody>
                           {reports.length > 0 ? (
@@ -728,15 +730,29 @@ const AdminHome: React.FC = () => {
                                   ).toLocaleDateString()}
                                 </td>
                                 <td>{report.reason || "No Title"}</td>
-                                <td className="warning">
-                                  {report.status == "Approved"
-                                    ? "อนุมัติ"
-                                    : report.status == "Pending"
-                                    ? "รอดำเนินการ"
-                                    : report.status == "Cancel"
-                                    ? "โพสต์ถูกลบ/ยกเลิกรายงาน"
-                                    : "ปฏิเสธ"}
-                                </td>
+                                <td
+  className="warning"
+  style={{
+    color:
+      report.status === "Approved"
+        ? "#44ab89"
+        : report.status === "Pending"
+        ? "black"
+        : report.status === "Cancel"
+        ? "orange"
+        : "#ff7782",
+  }}
+>
+  {report.status === "Approved"
+    ? "อนุญาติให้อยู่บนเว็บไซต์"
+    : report.status === "Pending"
+    ? "รอดำเนินการ"
+    : report.status === "Cancel"
+    ? "ผู้ใช้ลบบล็อกหรือยกเลิกรายงาน"
+    : "ไม่อนุญาติให้อยู่บนเว็บไซต์"}
+</td>
+
+
                                 <td className="primary">
                                   <Button
                                     variant="info"
@@ -806,15 +822,29 @@ const AdminHome: React.FC = () => {
                                     ).toLocaleDateString()}
                                   </td>
                                   <td>{report.reason || "No Title"}</td>
-                                  <td className="warning">
-                                    {report.status == "Approved"
-                                      ? "อนุมัติ"
-                                      : report.status == "Pending"
-                                      ? "รอดำเนินการ"
-                                      : report.status == "Cancel"
-                                      ? "โพสต์ถูกลบ/ยกเลิกรายงาน"
-                                      : "ปฏิเสธ"}
-                                  </td>
+                                  <td
+  className="warning"
+  style={{
+    color:
+      report.status === "Approved"
+        ? "#44ab89"
+        : report.status === "Pending"
+        ? "black"
+        : report.status === "Cancel"
+        ? "orange"
+        : "#ff7782",
+  }}
+>
+  {report.status === "Approved"
+    ? "อนุญาติให้อยู่บนเว็บไซต์"
+    : report.status === "Pending"
+    ? "รอดำเนินการ"
+    : report.status === "Cancel"
+    ? "ผู้ใช้ลบบล็อกหรือยกเลิกรายงาน"
+    : "ไม่อนุญาติให้อยู่บนเว็บไซต์"}
+</td>
+
+
                                   <td className="primary">
                                     <Button
                                       variant="info"
@@ -937,15 +967,29 @@ const AdminHome: React.FC = () => {
                                         ).toLocaleDateString()}
                                       </td>
                                       <td>{report.reason || "No Title"}</td>
-                                      <td className="warning">
-                                        {report.status == "Approved"
-                                          ? "อนุมัติ"
-                                          : report.status == "Pending"
-                                          ? "รอดำเนินการ"
-                                          : report.status == "Cancel"
-                                          ? "โพสต์ถูกลบ/ยกเลิกรายงาน"
-                                          : "ปฏิเสธ"}
-                                      </td>
+                                      <td
+  className="warning"
+  style={{
+    color:
+      report.status === "Approved"
+        ? "#44ab89"
+        : report.status === "Pending"
+        ? "black"
+        : report.status === "Cancel"
+        ? "orange"
+        : "#ff7782",
+  }}
+>
+  {report.status === "Approved"
+    ? "อนุญาติให้อยู่บนเว็บไซต์"
+    : report.status === "Pending"
+    ? "รอดำเนินการ"
+    : report.status === "Cancel"
+    ? "ผู้ใช้ลบบล็อกหรือยกเลิกรายงาน"
+    : "ไม่อนุญาติให้อยู่บนเว็บไซต์"}
+</td>
+
+
                                       <td className="primary">
                                         <Button
                                           variant="info"

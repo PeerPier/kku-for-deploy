@@ -147,96 +147,140 @@ const ManageBadwords: React.FC = () => {
       <div className="main1">
         <h1>จัดการคำหยาบ</h1>
 
-        <div
-          className="add-q add-badwords"
-          onClick={() => setShowAddModal(true)}
-        >
-          <div>
-            <IoMdAdd />
-            <span>เพิ่มรายการคำหยาบ</span>
-          </div>
-        </div>
-        <div className="bw-filter-buttons">
-          <Button
-            variant={langFilter === "" ? "primary" : "outline-primary"}
-            onClick={() => {
-              setFilteredBadwordGroups(badwordGroups);
-              setLangFilter("");
-              setSearchKeyword("");
-            }}
-            style={{
-              backgroundColor: langFilter === "" ? "#363949" : "white",
-              color: langFilter === "" ? "white" : "#363949",
-            }}
-          >
-            ทั้งหมด
-          </Button>
-          <Button
-            variant={langFilter === "TH" ? "primary" : "outline-primary"}
-            onClick={() => {
-              setFilteredBadwordGroups(
-                badwordGroups.filter((group) =>
-                  group.words.some((word: string) => /[ก-๙]/.test(word))
-                )
-              );
-              setLangFilter("TH");
-              setSearchKeyword("");
-            }}
-            style={{
-              backgroundColor: langFilter === "TH" ? "#363949" : "white",
-              color: langFilter === "TH" ? "white" : "#363949",
-            }}
-          >
-            TH
-          </Button>
-          <Button
-            variant={langFilter === "EN" ? "primary" : "outline-primary"}
-            onClick={() => {
-              setFilteredBadwordGroups(
-                badwordGroups.filter((group) =>
-                  group.words.some((word: string) => /[a-zA-Z]/.test(word))
-                )
-              );
-              setLangFilter("EN");
-              setSearchKeyword("");
-            }}
-            style={{
-              backgroundColor: langFilter === "EN" ? "#363949" : "white",
-              color: langFilter === "EN" ? "white" : "#363949",
-            }}
-          >
-            EN
-          </Button>
-        </div>
-
         <div className="recent-order" style={{ marginTop: "1.5rem" }}>
-          <h2>รายการ</h2>
-          {/* ช่องค้นหา */}
-          {
-            langFilter == "" ?
-              <div className="search-bar-badwords">
-                <input
-                  type="text"
-                  placeholder="ค้นหาคำหยาบ..."
-                  value={searchKeyword}
-                  onChange={handleSearch}
-                  className="form-control"
-                  style={{
-                    width: "100%",
-                    padding: "10px 15px",
-                    marginTop: "40px",
-                    fontSize: "16px",
-                    border: "none",
-                    borderRadius: "10px",
-                    backgroundColor: "white",
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <h2 style={{marginLeft:"2px"}}>รายการ</h2>
 
-                  }}
-                />
+            {/* ปุ่ม filter และปุ่มเพิ่ม */}
+            <div
+              className="bw-filter-buttons"
+              style={{
+                display: "flex",
+                gap: "10px",
+                alignItems: "center",
+              }}
+            >
+              <Button
+                variant={langFilter === "" ? "primary" : "outline-primary"}
+                onClick={() => {
+                  setFilteredBadwordGroups(badwordGroups);
+                  setLangFilter("");
+                  setSearchKeyword("");
+                }}
+                style={{
+                  backgroundColor: langFilter === "" ? "#363949" : "white",
+                  color: langFilter === "" ? "white" : "#363949",
+                  padding: "5px 10px",
+                  borderRadius: "5px",
+                  fontSize: "14px",
+                  border: langFilter === "" ? "none" : "1px solid #363949",
+                }}
+              >
+                ทั้งหมด
+              </Button>
+              <Button
+                variant={langFilter === "TH" ? "primary" : "outline-primary"}
+                onClick={() => {
+                  setFilteredBadwordGroups(
+                    badwordGroups.filter((group) =>
+                      group.words.some((word: string) => /[ก-๙]/.test(word))
+                    )
+                  );
+                  setLangFilter("TH");
+                  setSearchKeyword("");
+                }}
+                style={{
+                  backgroundColor: langFilter === "TH" ? "#363949" : "white",
+                  color: langFilter === "TH" ? "white" : "#363949",
+                  padding: "5px 10px",
+                  borderRadius: "5px",
+                  fontSize: "14px",
+                  border: langFilter === "TH" ? "none" : "1px solid #363949",
+                }}
+              >
+                TH
+              </Button>
+              <Button
+                variant={langFilter === "EN" ? "primary" : "outline-primary"}
+                onClick={() => {
+                  setFilteredBadwordGroups(
+                    badwordGroups.filter((group) =>
+                      group.words.some((word: string) => /[a-zA-Z]/.test(word))
+                    )
+                  );
+                  setLangFilter("EN");
+                  setSearchKeyword("");
+                }}
+                style={{
+                  backgroundColor: langFilter === "EN" ? "#363949" : "white",
+                  color: langFilter === "EN" ? "white" : "#363949",
+                  padding: "5px 10px",
+                  borderRadius: "5px",
+                  fontSize: "14px",
+                  border: langFilter === "EN" ? "none" : "1px solid #363949",
+                }}
+              >
+                EN
+              </Button>
+
+              <div
+                className="add-q add-badwords"
+                onClick={() => setShowAddModal(true)}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  backgroundColor: "#363949",
+                  color: "#fff",
+                  padding: "5px 10px",
+                  borderRadius: "5px",
+                  fontSize: "14px",
+                }}
+              >
+                <IoMdAdd />
+                <span style={{ marginLeft: "5px" }}>เพิ่มรายการคำหยาบ</span>
               </div>
-              : null
-          }
+            </div>
+          </div>
+
+          {/* ช่องค้นหา */}
+          {langFilter == "" ? (
+            <div className="search-bar-badwords">
+              <input
+                type="text"
+                placeholder="ค้นหาคำหยาบ..."
+                value={searchKeyword}
+                onChange={handleSearch}
+                className="form-control"
+                style={{
+                  width: "100%",
+                  padding: "10px 15px",
+                  marginTop: "0px",
+                  fontSize: "16px",
+                  border: "none",
+                  borderRadius: "10px",
+                  backgroundColor: "white",
+                }}
+              />
+            </div>
+          ) : null}
+
           <div className="right">
-            <div className="activity-analytics" style={{ marginTop: "0.5rem" }}>
+            <div
+              className="activity-analytics"
+              style={{
+                marginTop: "0px",
+                height: "450px", // ความสูง 400px
+                overflowY: "auto", // แสดงแถบเลื่อน
+                padding: "0.5%",
+              }}
+            >
               {filteredBadwordGroups.length === 0 ? (
                 <p
                   style={{
@@ -276,9 +320,9 @@ const ManageBadwords: React.FC = () => {
             </div>
           </div>
         </div>
-
       </div>
 
+      {/* Modal สำหรับเพิ่มคำหยาบ */}
       <Modal show={showAddModal} onHide={() => setShowAddModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>เพิ่มรายการคำหยาบ</Modal.Title>
@@ -308,6 +352,7 @@ const ManageBadwords: React.FC = () => {
         </Modal.Footer>
       </Modal>
 
+      {/* Modal สำหรับแก้ไขคำหยาบ */}
       <Modal
         show={showEditModal}
         onHide={() => setShowEditModal(false)}
@@ -341,6 +386,7 @@ const ManageBadwords: React.FC = () => {
         </Modal.Footer>
       </Modal>
 
+      {/* Modal สำหรับยืนยันการลบ */}
       <Modal
         show={showConfirmModal}
         onHide={() => setShowConfirmModal(false)}
@@ -359,14 +405,14 @@ const ManageBadwords: React.FC = () => {
           </Button>
           <Button
             variant="danger"
-            onClick={async () => {
+            onClick={() => {
               if (groupToDelete) {
-                await handleDeleteBadWords(groupToDelete);
+                handleDeleteBadWords(groupToDelete);
                 setShowConfirmModal(false);
               }
             }}
           >
-            ยืนยัน
+            ลบ
           </Button>
         </Modal.Footer>
       </Modal>

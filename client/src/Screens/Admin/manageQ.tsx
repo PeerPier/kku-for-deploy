@@ -105,15 +105,36 @@ const ManageQ: React.FC = () => {
     <div className="manageUser">
       <div className="main1">
         <h1>จัดการคำถาม</h1>
-        <div className="add-q" onClick={() => setShowAddModal(true)}>
-          <div>
-            <IoMdAdd />
-            <span>เพิ่มคำถาม</span>
-          </div>
-        </div>
+        
 
         <div className="recent-order" style={{ marginTop: "1.5rem" }}>
-          <h2>รายการ</h2>
+        <div
+  style={{
+    display: "flex", // ใช้ flexbox เพื่อจัดตำแหน่ง
+    justifyContent: "space-between", // ให้เนื้อหาทั้งหมดอยู่ห่างกัน
+    alignItems: "center", // จัดให้อยู่กลางในแนวตั้ง
+    marginBottom: "20px", // เพิ่มระยะห่างด้านล่าง
+  }}
+>
+<h2 style={{marginLeft:"2px"}}>รายการ</h2>
+  <div
+    className="add-q"
+    onClick={() => setShowAddModal(true)}
+    style={{
+      display: "flex",
+      alignItems: "center", // จัดให้อยู่กลางในแนวตั้ง
+      backgroundColor: "#363949", // สีพื้นหลังของปุ่ม
+      color: "white", // สีข้อความ
+      padding: "5px 10px", // ขนาด padding ของปุ่ม
+      borderRadius: "5px", // มุมโค้งของปุ่ม
+      cursor: "pointer", // เปลี่ยนเคอร์เซอร์เป็น pointer เมื่อ hover
+    }}
+  >
+    <IoMdAdd style={{ marginRight: "5px" }} /> {/* ระยะห่างจากไอคอน */}
+    <span>เพิ่มคำถาม</span>
+  </div>
+</div>
+
           <div className="right">
             <div className="activity-analytics" style={{ marginTop: "0.5rem" }}>
               {questions.map(
@@ -147,36 +168,41 @@ const ManageQ: React.FC = () => {
           </div>
         </div>
       </div>
-      <Modal show={showAddModal} onHide={() => setShowAddModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>เพิ่มคำถาม</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div>
-            <input
-              type="text"
-              placeholder="Topic"
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
-              className="form-control"
-            />
-            <textarea
-              placeholder="Answer"
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              className="form-control mt-2"
-            />
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowAddModal(false)}>
-            ยกเลิก
-          </Button>
-          <Button style={{ backgroundColor: "#7380ec", borderColor: "#7380ec", color: "white" }} onClick={handleAddQuestion}>
-            บันทึก
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <Modal show={showAddModal} onHide={() => setShowAddModal(false)} centered size="lg">
+  <Modal.Header closeButton>
+    <Modal.Title>เพิ่มคำถาม</Modal.Title>
+  </Modal.Header>
+  <Modal.Body style={{ minHeight: '400px' }}>
+    <div>
+      <input
+        type="text"
+        placeholder="Topic"
+        value={topic}
+        onChange={(e) => setTopic(e.target.value)}
+        className="form-control"
+      />
+      <textarea
+        placeholder="Answer"
+        value={answer}
+        onChange={(e) => setAnswer(e.target.value)}
+        className="form-control mt-2"
+        style={{ minHeight: '400px' }}
+      />
+    </div>
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setShowAddModal(false)}>
+      ยกเลิก
+    </Button>
+    <Button
+      style={{ backgroundColor: "#7380ec", borderColor: "#7380ec", color: "white" }}
+      onClick={handleAddQuestion}
+    >
+      บันทึก
+    </Button>
+  </Modal.Footer>
+</Modal>
+
       <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>แก้ไขคำถามที่พบบ่อย</Modal.Title>
