@@ -42,7 +42,22 @@ const BlogEditor = () => {
     blog: { topic, banner, content, tags, des },
     setBlog,
     textEditor,
+    setTextEditor,
+    setEditorState,
   } = editorContext;
+
+  useEffect(() => {
+    if (!textEditor?.isReady) {
+      setTextEditor(
+        new EditorJS({
+          holder: "textEditor",
+          data: Array.isArray(content) ? content[0] : content,
+          tools: tools,
+          placeholder: "มาเขียนเรื่องราวสุดเจ๋งกันเถอะ!",
+        })
+      );
+    }
+  }, []);
 
   const handleBannerUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const img = e.target.files?.[0];
@@ -104,40 +119,42 @@ const BlogEditor = () => {
     let loadingToast = toast.loading("กำลังบันทึกฉบับร่าง...");
     target.classList.add("disable");
 
-    let blogObj = {
-      topic,
-      banner,
-      des,
-      content,
-      tags,
-      draft: true,
-      visibility
-    };
-
-    axios
-      .post(
-        API_URL + "/create-blog",
-        { ...blogObj, id: blog_id },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        }
-      )
-      .then(() => {
-        (e.target as HTMLButtonElement).classList.remove("disable");
-
-        toast.dismiss(loadingToast);
-        toast.success("บันทึกแล้ว");
-
-        setTimeout(() => {
-          navigate("/dashboard/blogs?tab=draft");
-        }, 500);
-      }).catch(err => {
-        toast.dismiss(loadingToast);
-        toast.error(err.response.data.error);
-        target.classList.remove("disable");
-      })
+    if (textEditor?.isReady) {
+      textEditor.save().then(async (content) => {
+        let blogObj = {
+          topic,
+          banner,
+          des,
+          content,
+          tags,
+          draft: true,
+          visibility
+        };
+        axios
+        .post(
+          API_URL + "/create-blog",
+          { ...blogObj, id: blog_id },
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          }
+        )
+        .then(() => {
+          (e.target as HTMLButtonElement).classList.remove("disable");
+  
+          toast.dismiss(loadingToast);
+          toast.success("บันทึกแล้ว");
+  
+          setTimeout(() => {
+            navigate("/dashboard/blogs?tab=draft");
+          }, 500);
+        }).catch(err => {
+          toast.dismiss(loadingToast);
+          toast.error(err.response.data.error);
+          target.classList.remove("disable");
+        })   
+      })}
   };
 
   const handleBlogTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -173,6 +190,20 @@ const BlogEditor = () => {
     if (!topic.length) {
       return toast.error("เขียนชื่อบล็อกก่อนเผยแพร่");
     }
+
+    if (textEditor?.isReady) {
+      textEditor
+        .save()
+        .then((data) => {
+          if (data.blocks.length) {
+            setBlog({ ...blog, content: data });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
     if (!des.length || des.length > characterLimit) {
       return toast.error(`เขียนรายละเอียดเกี่ยวกับบล็อกของคุณภายใน ${characterLimit} ตัวอักษรก่อนเผยแพร่`);
     }
@@ -183,39 +214,42 @@ const BlogEditor = () => {
     let loadingToast = toast.loading("กำลังเผยแพร่...");
     target.classList.add("disable");
 
-    let blogObj = {
-      topic,
-      banner,
-      des,
-      content,
-      tags,
-      draft: false,
-      visibility
-    };
-
-    axios
-      .post(
-        API_URL + "/create-blog",
-        { ...blogObj, id: blog_id },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        }
-      )
-      .then(() => {
-        target.classList.remove("disable");
-        toast.dismiss(loadingToast);
-        toast.success("เผยแพร่แล้ว");
-        setTimeout(() => {
-          navigate("/");
-        }, 500);
-      })
-      .catch(({ response }) => {
-        target.classList.remove("disable");
-        toast.dismiss(loadingToast);
-        return toast.error(response.data.error);
+    if (textEditor?.isReady) {
+      textEditor.save().then(async (content) => {
+        let blogObj = {
+          topic,
+          banner,
+          des,
+          content,
+          tags,
+          draft: false,
+          visibility
+        };
+        axios
+        .post(
+          API_URL + "/create-blog",
+          { ...blogObj, id: blog_id },
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          }
+        )
+        .then(() => {
+          target.classList.remove("disable");
+          toast.dismiss(loadingToast);
+          toast.success("เผยแพร่แล้ว");
+          setTimeout(() => {
+            navigate("/");
+          }, 500);
+        })
+        .catch(({ response }) => {
+          target.classList.remove("disable");
+          toast.dismiss(loadingToast);
+          return toast.error(response.data.error);
+        });
       });
+    };
   };
 
   return (
@@ -262,6 +296,7 @@ const BlogEditor = () => {
             <hr className="w-100 my-1" style={{ opacity: "0.1" }} />
 
           </div>
+          <div id="textEditor"></div>
         </section>
         <section className="section-publish">
 
@@ -287,7 +322,7 @@ const BlogEditor = () => {
               className="textarea-input-box input-box"
               onChange={handleBlogDesChange}
               onKeyDown={handleTitleKeyDown}
-              placeholder="มาเขียนเรื่องราวสุดเจ๋งกันเถอะ!"
+              placeholder="รายละเอียด"
             />
 
             <p className="p-characters">
