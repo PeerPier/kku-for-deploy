@@ -28,14 +28,10 @@ const UserNavigationPanel = () => {
         <Link to={`/user/${userId}`} className="link pl-8 ">
           โปรไฟล์
         </Link>
-
-        <Link to={`/dashboard/blogs/statistics`} className="link pl-8 ">
-          สถิติการเข้าชม
-        </Link>
         <Link to={`/settings/edit-profile`} className="link pl-8">
           แก้ไขโปรไฟล์
         </Link>
-        <Link to={`/account/preference/${userId}`} className="link pl-8">
+        <Link to={`/settings/change-password`} className="link pl-8">
           ตั้งค่าบัญชีผู้ใช้
         </Link>
         <Link to={`/helpcentre`} className="link pl-8">

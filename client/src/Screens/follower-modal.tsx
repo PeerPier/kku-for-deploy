@@ -76,9 +76,7 @@ export function FollowerModal({ userProfile }: any) {
       });
       if (!response.ok) {
         const statusText = response.statusText || "Unknown Error";
-        throw new Error(
-          `Server returned ${response.status} ${statusText} for ${API_BASE_URL_DELETE}`
-        );
+        throw new Error(`Server returned ${response.status} ${statusText} for ${API_BASE_URL_DELETE}`);
       }
       const res = await response.json();
       setIsFollowerModal(false);
@@ -106,71 +104,75 @@ export function FollowerModal({ userProfile }: any) {
         aria-labelledby="example-modal-sizes-title-sm"
       >
         <Modal.Header closeButton>
-          <Modal.Title id="example-modal-sizes-title-sm">กำลังติดตาม</Modal.Title>
+          <Modal.Title id="example-modal-sizes-title-sm">ผู้ติดตาม</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {currentUser?.followers?.map((c: any) => (
-            <div
-              key={c + "s"}
-              style={{
-                display: "flex",
-                gap: "1rem",
-                padding: "0.5rem",
-                alignItems: "center",
-                justifyContent: "space-between"
-              }}
-            >
-              <div className="d-flex justify-content-start">
-                <a href={`/user/${c._id}`} style={{ textDecoration: "none" }}>
-                  <p
-                    style={{
-                      padding: "0 10px 0 10px",
-                      margin: 0,
-                      color: "black"
-                    }}
-                  >
-                    {c.fullname}
-                  </p>
-                </a>
+          {currentUser?.followers?.length > 0 ? (
+            currentUser.followers.map((c: any) => (
+              <div
+                key={c + "s"}
+                style={{
+                  display: "flex",
+                  gap: "1rem",
+                  padding: "0.5rem",
+                  alignItems: "center",
+                  justifyContent: "space-between"
+                }}
+              >
+                <div className="d-flex justify-content-start">
+                  <a href={`/user/${c._id}`} style={{ textDecoration: "none" }}>
+                    <p
+                      style={{
+                        padding: "0 10px 0 10px",
+                        margin: 0,
+                        color: "black"
+                      }}
+                    >
+                      {c.fullname}
+                    </p>
+                  </a>
+                </div>
+                <div className="d-flex justify-content-end">
+                  {sessionStorage.getItem("userId") === c._id ? (
+                    <Button
+                      style={{
+                        backgroundColor: "black",
+                        color: "white",
+                        border: "none"
+                      }}
+                      disabled
+                    >
+                      คุณ
+                    </Button>
+                  ) : CheckFollower?.some((follower: any) => follower === c._id) ? (
+                    <Button
+                      style={{
+                        backgroundColor: "gray",
+                        color: "white",
+                        border: "none"
+                      }}
+                      onClick={() => handleUnfollow(c)}
+                    >
+                      ติดตามแล้ว
+                    </Button>
+                  ) : (
+                    <Button
+                      style={{
+                        backgroundColor: "black",
+                        color: "white",
+                        border: "none"
+                      }}
+                      onClick={() => handleFollow(c)}
+                    >
+                      ติดตาม
+                    </Button>
+                  )}
+                </div>
               </div>
-              <div className="d-flex justify-content-end">
-                {sessionStorage.getItem("userId") === c._id ? (
-                  <Button
-                    style={{
-                      backgroundColor: "black",
-                      color: "white",
-                      border: "none"
-                    }}
-                    disabled
-                  >
-                    คุณ
-                  </Button>
-                ) : CheckFollower?.some((follower: any) => follower === c._id) ? (
-                  <Button
-                    style={{
-                      backgroundColor: "gray",
-                      color: "white",
-                      border: "none"
-                    }}
-                    onClick={() => handleUnfollow(c)}
-                  >
-                    ติดตามแล้ว
-                  </Button>
-                ) : (
-                  <Button
-                    style={{
-                      backgroundColor: "black",
-                      color: "white",
-                      border: "none"
-                    }}
-                    onClick={() => handleFollow(c)}
-                  >
-                    ติดตาม
-                  </Button>
-                )}
-              </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p style={{ textAlign: "center", color: "gray" }}>ไม่มีบัญชีที่ติดตาม</p>
+          )}
         </Modal.Body>
       </Modal>
     </>

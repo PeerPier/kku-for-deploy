@@ -77,9 +77,7 @@ export function FollowingModal({ userProfile }: any) {
       });
       if (!response.ok) {
         const statusText = response.statusText || "Unknown Error";
-        throw new Error(
-          `Server returned ${response.status} ${statusText} for ${API_BASE_URL_DELETE}`
-        );
+        throw new Error(`Server returned ${response.status} ${statusText} for ${API_BASE_URL_DELETE}`);
       }
       const res = await response.json();
       setIsFollowingModal(false);
@@ -110,10 +108,10 @@ export function FollowingModal({ userProfile }: any) {
           <Modal.Title id="example-modal-sizes-title-sm">กำลังติดตาม</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {currentUser?.following?.map((c: any) => {
-            return (
+          {currentUser?.following?.length > 0 ? (
+            currentUser.following.map((c: any) => (
               <div
-                key={c + "s"}
+                key={c._id}
                 style={{
                   display: "flex",
                   gap: "1rem",
@@ -128,7 +126,7 @@ export function FollowingModal({ userProfile }: any) {
                     textDecoration: "none"
                   }}
                 >
-                  <p>{c.fullname}</p>
+                  <p style={{ color: "black" }}>{c.fullname}</p>
                 </Link>
                 <div className="d-flex justify-content-end">
                   {sessionStorage.getItem("userId") === c._id ? (
@@ -167,8 +165,10 @@ export function FollowingModal({ userProfile }: any) {
                   )}
                 </div>
               </div>
-            );
-          })}
+            ))
+          ) : (
+            <p style={{ textAlign: "center", color: "gray" }}>ไม่มีบัญชีที่กำลังติดตาม</p>
+          )}
         </Modal.Body>
       </Modal>
     </>
