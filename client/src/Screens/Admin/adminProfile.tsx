@@ -668,7 +668,7 @@ const AdminProfile: React.FC = () => {
                                                 }}
                                             >
                                                 <div className="info" >
-                                                    <p style={{fontSize:"14px" , marginTop:"20px"}}>
+                                                    <p style={{fontSize:"14px" , marginTop:"10px"}}>
                                                         Hello, <b>{adminUsername}</b>
                                                     </p>
                                                     
@@ -769,10 +769,6 @@ const AdminProfile: React.FC = () => {
                             {/* เพิ่มเติม: ส่วนของ tab เลือกว่าจะดูข้อมมูลไหน มี  login history  เเละ   admin profile  */}
                             <div className="profile-tabs">
                                 <div className="tabs">
-                                    {/* 
-                    เพิ่มเติม: สร้าง tab-btn สำหรับเปลี่ยน tab ของหน้าเว็บ 
-                    เมื่อคลิก tab จะเปลี่ยน activeTab ให้เป็นค่าของ tab นั้นๆ
-                  */}
                                     <button
                                         className={`tab-btn ${
                                             activeTab === "login-history" ? "active" : ""
@@ -792,9 +788,19 @@ const AdminProfile: React.FC = () => {
                                 </div>
                                 {/* ตาราง login history */}
                                 {activeTab === "login-history" && (
-                                    <div className="tab-content">
-                                        <table>
-                                            <thead>
+                                    <div className="tab-content" style={{
+                                        display: "inline-block",
+                                        width: "100%", // หรือกำหนดความกว้างตามต้องการ
+                                        maxHeight: "450px", // กำหนดความสูงสูงสุด
+                                        overflowY: "auto", // ทำให้เลื่อนเฉพาะแนวตั้ง
+                                        overflowX: "auto", // ถ้าต้องการให้เลื่อนแนวนอนด้วย
+                                        border: "1px solid #ddd", // เพิ่มเส้นขอบให้ดูชัดขึ้น (เลือกใช้)
+                                      }}>
+                                        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                                            <thead style={{position: "sticky",
+                                            top: "0",background: "#fff", 
+                                            zIndex: 1,}}>
+      
                                                 <tr>
                                                     <th>วันที่</th>
                                                     <th>ชื่อบัญชีผู้ใช้</th>
@@ -825,59 +831,62 @@ const AdminProfile: React.FC = () => {
                                 )}
                                 {/* ตาราง แก้ไข admin profile */}
                                 {activeTab === "edit-admin-profile" && (
-                                    <div className="tab-content">
-                                        <table>
-                                            <thead>
-                                                <tr>
-                                                    <th>ชื่อผู้ใช้</th>
-                                                    <th>อีเมล</th>
-                                                    <th>ชื่อ</th>
-                                                    <th>นามสกุล</th>
-                                                    <th>เบอร์โทร</th>
-                                                    <th>
-                                                        <button
-                                                            className="add-admin-btn"
-                                                            onClick={addAdmin}
-                                                        >
-                                                            เพิ่มแอดมิน
-                                                        </button>
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {admins.map((admin) => (
-                                                    <tr key={admin._id}>
-                                                        <td>{admin.username}</td>
-                                                        <td>{admin.email}</td>
-                                                        <td>{admin.firstname}</td>
-                                                        <td>{admin.lastname}</td>
-                                                        <td>{admin.tel}</td>
-                                                        <td>
-                                                            <div className="action-buttons-cell">
-                                                                <button
-                                                                    className="edit-btn"
-                                                                    onClick={() =>
-                                                                        handleEditClick(admin)
-                                                                    }
-                                                                >
-                                                                    แก้ไข
-                                                                </button>
-                                                                <button
-                                                                    className="delete-btn"
-                                                                    onClick={() =>
-                                                                        handleDeleteClick(admin._id)
-                                                                    }
-                                                                >
-                                                                    ลบ
-                                                                </button>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                )}
+                                    <div className="tab-content"
+                                        style={{display: "inline-block",
+                                        width: "100%", // หรือกำหนดความกว้างตามต้องการ
+                                        maxHeight: "450px", // กำหนดความสูงสูงสุด
+                                        overflowY: "auto", // ทำให้เลื่อนเฉพาะแนวตั้ง
+                                        overflowX: "auto", // ถ้าต้องการให้เลื่อนแนวนอนด้วย
+                                        border: "1px solid #ddd", // เพิ่มเส้นขอบให้ดูชัดขึ้น (เลือกใช้)
+                                         }}
+                                        >
+                            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                                <thead
+                                style={{
+                                position: "sticky",
+                                top: "0",
+                                background: "#fff", // ให้ background เพื่อไม่ให้โปร่งใส
+                                zIndex: 1, // ทำให้ thead อยู่ด้านบนสุด
+                                }}
+                                >
+                                    <tr>
+                                        <th>ชื่อผู้ใช้</th>
+                                        <th>อีเมล</th>
+                                        <th>ชื่อ</th>
+                                        <th>นามสกุล</th>
+                                        <th>เบอร์โทร</th>
+                                        <th>
+                                        <button className="add-admin-btn" onClick={addAdmin}>
+                                            เพิ่มแอดมิน
+                                        </button>
+                                        </th>
+                                    </tr>
+                                                    </thead>
+                                <tbody>
+                                {admins.map((admin) => (
+                                    <tr key={admin._id}>
+                                    <td>{admin.username}</td>
+                                    <td>{admin.email}</td>
+                                    <td>{admin.firstname}</td>
+                                    <td>{admin.lastname}</td>
+                                    <td>{admin.tel}</td>
+                                    <td>
+                                        <div className="action-buttons-cell">
+                                        <button className="edit-btn" onClick={() => handleEditClick(admin)}>
+                                            แก้ไข
+                                        </button>
+                                        <button className="delete-btn" onClick={() => handleDeleteClick(admin._id)}>
+                                            ลบ
+                                        </button>
+                                        </div>
+                                    </td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </table>
+                            </div>
+                            )}
+
                             </div>
                         </div>
                     </div>
