@@ -72,6 +72,7 @@
 .adminHome .top>.logo>img {
   display: block;
   width: 100%;
+  margin-top: -40px; /* ปรับค่านี้ตามต้องการ */
 }
 
 .adminHome .sidebar>a>h3 {
@@ -197,15 +198,15 @@
   margin-left: 1rem;
 }
 
-.adminHome .main1 {
+/* .adminHome .main1 {
   margin-top: 1.4rem;
-}
+} */
 
 .adminHome .main1 .date {
   display: inline-block;
   background: var(--color-light);
   border-radius: 0.4rem;
-  margin-top: 1rem;
+  /* margin-top: 1rem; */
   padding: 0.5rem 1.6rem;
 }
 
@@ -224,7 +225,7 @@
   background: var(--color-white);
   padding: 1.8rem;
   border-radius: 2rem;
-  margin-top: 1rem;
+  /* margin-top: 1rem; */
   box-shadow: 0 2rem 3rem var(--color-light);
   transition: all 300ms ease;
 }
@@ -657,7 +658,11 @@
   .adminHome aside .logo h2 {
     display: none;
   }
-
+  .adminHome .top>.logo>img {
+    display: block;
+    width: 100%;
+    margin-top: -20px; /* ปรับค่านี้ตามต้องการ */
+  }
   .adminHome aside .sidebar h3 {
     display: none;
   }
@@ -727,7 +732,11 @@
   .adminHome aside .logo {
     margin-left: 1rem;
   }
-
+  .adminHome .top>.logo>img {
+    display: block;
+    width: 100%;
+    margin-top: 0px; /* ปรับค่านี้ตามต้องการ */
+  }
   .adminHome aside .logo h2 {
     display: inline;
   }
@@ -813,7 +822,7 @@
   }
 
   .adminHome .content-container {
-    margin-top: 4.6rem;
+    margin-top:0.5rem;
   }
 
   .adminHome .right {

@@ -654,10 +654,10 @@ const AdminProfile: React.FC = () => {
                                         >
                                             <img src={backArrow} alt="" />
                                         </div>
-                                        <div className="theme-toggler">
+                                        {/* <div className="theme-toggler">
                                             <MdLightMode className="active" />
                                             <MdDarkMode />
-                                        </div>
+                                        </div> */}
 
                                         {adminProfile && (
                                             <div
@@ -667,13 +667,11 @@ const AdminProfile: React.FC = () => {
                                                     navigate(`/admin/${adminId}/profile`); // เพิ่มเติม:เมื่อคลิก profile จะไปหน้า profile
                                                 }}
                                             >
-                                                <div className="info">
-                                                    <p>
+                                                <div className="info" >
+                                                    <p style={{fontSize:"14px" , marginTop:"20px"}}>
                                                         Hello, <b>{adminUsername}</b>
                                                     </p>
-                                                    <small className="text-muted1">
-                                                        {adminUsername}
-                                                    </small>
+                                                    
                                                 </div>
                                                 <div className="profile-photo">
                                                     <img src={Pro} alt="Profile" />

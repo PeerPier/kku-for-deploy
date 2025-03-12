@@ -27,7 +27,7 @@ const DeleteAccountModalUser: React.FC<{
       );
 
       if (response.data.message === "User deleted successfully") {
-        setSuccessMessage("Account deleted successfully!");
+        setSuccessMessage("บัญชีของคุณถูกลบเรียบร้อยแล้ว!");
         setErrorMessage("");
         onDeleteSuccess();
         localStorage.removeItem("userId");
@@ -36,26 +36,25 @@ const DeleteAccountModalUser: React.FC<{
         setErrorMessage(response.data.error);
       }
     } catch (error) {
-      setErrorMessage("Error deleting account. Please check your password.");
+      setErrorMessage("เกิดข้อผิดพลาดในการลบบัญชี โปรดตรวจสอบรหัสผ่านของคุณ.");
     }
   };
 
   return (
-    <Modal show={show} onHide={onClose}>
+    <Modal show={show} onHide={onClose} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Delete Account</Modal.Title>
+        <Modal.Title>ลบบัญชีผู้ใช้</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <p>
-          Are you sure you want to delete your account? This action cannot be
-          undone.
+          คุณแน่ใจหรือไม่ที่จะลบบัญชีของคุณ? การกระทำนี้ไม่สามารถยกเลิกได้.
         </p>
         <Form>
           <Form.Group controlId="password">
-            <Form.Label>Enter your password to confirm</Form.Label>
+            <Form.Label>กรุณากรอกรหัสผ่านของคุณเพื่อยืนยัน</Form.Label>
             <Form.Control
               type="password"
-              placeholder="Enter your password"
+              placeholder="กรอกรหัสผ่านของคุณ"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -67,10 +66,10 @@ const DeleteAccountModalUser: React.FC<{
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onClose}>
-          Cancel
+          ยกเลิก
         </Button>
         <Button variant="danger" onClick={handleDeleteAccount}>
-          Delete Account
+          ลบบัญชี
         </Button>
       </Modal.Footer>
     </Modal>

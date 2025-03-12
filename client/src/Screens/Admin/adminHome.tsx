@@ -532,14 +532,14 @@ const AdminHome: React.FC = () => {
                     onClick={() => {
                       navigate(`/admin/${adminId}/profile`);
                     }}
+                    
                   >
                     <div className="info">
-                      <p>
+                      <p style={{ fontSize: "14px", marginTop: "30px" }}>
                         Hello, <b>{adminUsername}</b>
                       </p>
-                      <small className="text-muted1">{adminUsername}</small>
                     </div>
-                    <div className="profile-photo">
+                    <div className="profile-photo"style={{ marginTop: "15px" }}>
                       <img src={Pro} alt="Profile" />
                     </div>
                   </div>

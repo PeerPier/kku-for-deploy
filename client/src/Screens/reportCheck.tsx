@@ -144,108 +144,112 @@ const ReportCheck: React.FC = () => {
         handleClose={handleCloseConfirmCancelModal}
       />
       <div style={{ margin: "2% 2%", fontSize: "14px" }}>
-        <h2>รายงานทั้งหมด</h2>
+        <h4>รายงานปัญหาทั้งหมด</h4>
         <div
           style={{
             maxHeight: "500px",
             overflowY: "auto",
             overflowX: "auto",
-            border: "1px solid #ddd",
+            border: reports.length > 0 ? "1px solid #ddd" : "none", // Conditionally add the border
             borderRadius: "8px",
           }}
         >
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead
-              style={{ position: "sticky", top: 0, backgroundColor: "#fff" }}
-            >
-              <tr>
-                <th style={{ padding: "10px", textAlign: "center" }}>ผู้ที่ถูกรายงานโพสต์</th>
-                <th style={{ padding: "10px", textAlign: "center" }}>เหตุผล</th>
-                <th style={{ padding: "10px", textAlign: "center" }}>สถานะ</th>
-                <th style={{ padding: "10px", textAlign: "center" }}>
-                  วันที่รายงาน
-                </th>
-                <th style={{ padding: "10px", textAlign: "center" }}>
-                  รายละเอียด
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {reports.map((report) => (
-                <tr key={report._id} style={{ borderBottom: "1px solid #ddd" }}>
-                  <td style={{ padding: "10px" }}>
-                    {report.post ? report.post.author.fullname : "โพสต์ถูกลบแล้ว"}
-                  </td>
-                  <td style={{ padding: "10px" }}>{report.reason}</td>
-                  <td style={{ padding: "10px" }}>
-                    {report.status === "Approved" ? "อนุมัติ" : report.status === "Pending" ? "รอดำเนินการ" : report.status === "Cancel" ? "โพสต์ถูกลบ/ยกเลิกรายงาน" : "ปฏิเสธ"}
-                  </td>
-                  <td style={{ padding: "10px" }}>
-                    {new Date(report.createdAt).toLocaleDateString()}
-                  </td>
-                  <td style={{ padding: "10px", textAlign: "center" }}>
-                    {report.post ? (
-                      <button
-                        style={{
-                          marginRight: "10px",
-                          padding: "5px 10px",
-                          backgroundColor: "#4CAF50",
-                          color: "white",
-                          border: "none",
-                          borderRadius: "4px",
-                        }}
-                        onClick={() => handleShowModal(report)}
-                      >
-                        ดูรายละเอียด
-                      </button>
-                    ) : (
-                      <button
-                        style={{
-                          marginRight: "10px",
-                          padding: "5px 10px",
-                          backgroundColor: "#939393",
-                          color: "white",
-                          border: "none",
-                          borderRadius: "4px",
-                        }}
-                        disabled={true}
-                      >
-                        ดูรายละเอียด
-                      </button>
-                    )}
-
-                    {report.status === "Pending" ? (
-                      <button
-                        style={{
-                          padding: "5px 10px",
-                          backgroundColor: "#f44336",
-                          color: "white",
-                          border: "none",
-                          borderRadius: "4px",
-                        }}
-                        onClick={() => handleOpenConfirmCancelModal(report._id)} // Open confirmation modal
-                      >
-                        ยกเลิก
-                      </button>
-                    ) : (
-                      <button
-                        disabled={true}
-                        style={{
-                          padding: "5px 10px",
-                          backgroundColor: "#939393",
-                          color: "white",
-                          border: "none",
-                          borderRadius: "4px",
-                        }}
-                      >
-                        ยกเลิก
-                      </button>
-                    )}
-                  </td>
+          {reports.length === 0 ? (
+            <p style={{ textAlign: "center", padding: "20px" ,fontSize:"20px" , margin:"20%"}}>ไม่มีการรายงาน</p>
+          ) : (
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead
+                style={{ position: "sticky", top: 0, backgroundColor: "#fff" }}
+              >
+                <tr>
+                  <th style={{ padding: "10px", textAlign: "center" }}>ผู้ที่ถูกรายงานโพสต์</th>
+                  <th style={{ padding: "10px", textAlign: "center" }}>เหตุผล</th>
+                  <th style={{ padding: "10px", textAlign: "center" }}>สถานะ</th>
+                  <th style={{ padding: "10px", textAlign: "center" }}>
+                    วันที่รายงาน
+                  </th>
+                  <th style={{ padding: "10px", textAlign: "center" }}>
+                    รายละเอียด
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {reports.map((report) => (
+                  <tr key={report._id} style={{ borderBottom: "1px solid #ddd" }}>
+                    <td style={{ padding: "10px" }}>
+                      {report.post ? report.post.author.fullname : "โพสต์ถูกลบแล้ว"}
+                    </td>
+                    <td style={{ padding: "10px" }}>{report.reason}</td>
+                    <td style={{ padding: "10px" }}>
+                      {report.status === "Approved" ? "อนุมัติ" : report.status === "Pending" ? "รอดำเนินการ" : report.status === "Cancel" ? "โพสต์ถูกลบ/ยกเลิกรายงาน" : "ปฏิเสธ"}
+                    </td>
+                    <td style={{ padding: "10px" }}>
+                      {new Date(report.createdAt).toLocaleDateString()}
+                    </td>
+                    <td style={{ padding: "10px", textAlign: "center" }}>
+                      {report.post ? (
+                        <button
+                          style={{
+                            marginRight: "10px",
+                            padding: "5px 10px",
+                            backgroundColor: "#4CAF50",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "4px",
+                          }}
+                          onClick={() => handleShowModal(report)}
+                        >
+                          ดูรายละเอียด
+                        </button>
+                      ) : (
+                        <button
+                          style={{
+                            marginRight: "10px",
+                            padding: "5px 10px",
+                            backgroundColor: "#939393",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "4px",
+                          }}
+                          disabled={true}
+                        >
+                          ดูรายละเอียด
+                        </button>
+                      )}
+
+                      {report.status === "Pending" ? (
+                        <button
+                          style={{
+                            padding: "5px 10px",
+                            backgroundColor: "#f44336",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "4px",
+                          }}
+                          onClick={() => handleOpenConfirmCancelModal(report._id)} // Open confirmation modal
+                        >
+                          ยกเลิก
+                        </button>
+                      ) : (
+                        <button
+                          disabled={true}
+                          style={{
+                            padding: "5px 10px",
+                            backgroundColor: "#939393",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "4px",
+                          }}
+                        >
+                          ยกเลิก
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </>

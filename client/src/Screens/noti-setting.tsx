@@ -86,22 +86,24 @@ const NotiSettings: React.FC = () => {
       ) : (
         <div
           style={{
-            width: "600px",
+            width: "100%",
             padding: "16px",
             fontFamily: "Arial, sans-serif",
             color: "#333",
+            
           }}
         >
+          <h4 >ตั้งค่าการแจ้งเตือน</h4>
           {[  
             {
               title: "การแจ้งเตือนทั่วไป",
-              subtitle: "Make sound",
+              subtitle: "เมื่อทำการปิดการแจ้งเตือนทั่วไป คุณจะสามารถดูการแจ้งเตือนทั้งหมดได้ตามปกติแต่จะไม่สามารถรับจำนวนหรือข้อความของการแจ้งเตือนที่เข้ามาได้.",
               value: NotificationShow,
               type: "flightUpdates",
             },
             {
               title: "การแจ้งเตือนผ่าน Gmail",
-              subtitle: "No sound",
+              subtitle: "เมื่อทำการปิดการแจ้งเตือนผ่าน Gmail คุณจะไม่ได้รับข้อความแจ้งเตือนใดๆ เกี่ยวกับอีเมลใหม่หรือการเปลี่ยนแปลงที่เกิดขึ้นในบัญชี Gmail ของคุณ.",
               value: executiveProgram,
               type: "executiveProgram",
             },
@@ -114,6 +116,7 @@ const NotiSettings: React.FC = () => {
                 alignItems: "center",
                 padding: "12px 0",
                 borderBottom: index === 0 ? "1px solid #e0e0e0" : "none",
+                fontFamily:"Arial, sans-serif"
               }}
             >
               <div>

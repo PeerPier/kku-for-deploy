@@ -21,9 +21,9 @@ async function ImageNSFWProcessing(file:File) {
           const predictions = await model.classify(img);
 
           const filteredPredictions = predictions.filter((obj) =>
-            (obj.className === "Hentai" && obj.probability > 0.40) || // ตัวเลขพวกนี้คือความน่าจะเป็น สามารถปรับได้ว่าต้องการให้ความน่าจะเป็นมากกว่า 0.XX ถึงจะเข้าข่าย NSFW
-            (obj.className === "Sexy" && obj.probability > 0.55) ||
-            (obj.className === "Porn" && obj.probability > 0.20)
+            (obj.className === "Hentai" && obj.probability > 0.40) || 
+            (obj.className === "Sexy" && obj.probability > 0.90) ||
+            (obj.className === "Porn" && obj.probability > 0.50)
           );          
 
           filteredPredictions.forEach((obj) => {

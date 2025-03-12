@@ -10,7 +10,11 @@ interface UserCount {
   count: number;
 }
 
-function transformUserData(users: any[], mode: string, selectedDate: string): UserCount[] {
+function transformUserData(
+  users: any[],
+  mode: string,
+  selectedDate: string
+): UserCount[] {
   const countData: { [key: string]: number } = {};
 
   if (users && Array.isArray(users)) {
@@ -36,7 +40,9 @@ function transformUserData(users: any[], mode: string, selectedDate: string): Us
 
   return Object.keys(countData)
     .map((key) => ({ label: key, count: countData[key] }))
-    .sort((a, b) => (isNaN(parseInt(a.label)) ? 0 : parseInt(a.label) - parseInt(b.label)));
+    .sort((a, b) =>
+      isNaN(parseInt(a.label)) ? 0 : parseInt(a.label) - parseInt(b.label)
+    );
 }
 
 const GrowthChartUser: React.FC<GrowthChartProps> = ({ data }) => {
@@ -44,7 +50,9 @@ const GrowthChartUser: React.FC<GrowthChartProps> = ({ data }) => {
   const chartInstance = useRef<Chart | null>(null);
   const [charts, setCharts] = useState<UserCount[]>([]);
   const [viewMode, setViewMode] = useState<"monthly" | "yearly">("yearly");
-  const [selectedDate, setSelectedDate] = useState<string>(new Date().getFullYear().toString());
+  const [selectedDate, setSelectedDate] = useState<string>(
+    new Date().getFullYear().toString()
+  );
 
   useEffect(() => {
     const transformedData = transformUserData(data, viewMode, selectedDate);
@@ -65,45 +73,49 @@ const GrowthChartUser: React.FC<GrowthChartProps> = ({ data }) => {
             labels: charts.map((item) => item.label),
             datasets: [
               {
-                label: viewMode === "yearly" ? "จำนวนผู้ใช้ต่อเดือน" : "จำนวนผู้ใช้ต่อวัน",
+                label:
+                  viewMode === "yearly"
+                    ? "จำนวนผู้ใช้ต่อเดือน"
+                    : "จำนวนผู้ใช้ต่อวัน",
                 data: charts.map((item) => item.count),
                 backgroundColor: "rgba(75, 192, 192, 0.2)",
                 borderColor: "rgba(75, 192, 192, 1)",
-                borderWidth: 1
-              }
-            ]
+                borderWidth: 1,
+              },
+            ],
           },
-          // เพิ่มเติม: ขนาด font
           options: {
+            responsive: true,
+            maintainAspectRatio: false,
             scales: {
               y: {
                 beginAtZero: true,
                 grid: { display: false },
                 ticks: {
                   font: {
-                    size: 14
-                  }
-                }
+                    size: 14,
+                  },
+                },
               },
               x: {
                 grid: { display: false },
                 ticks: {
                   font: {
-                    size: 14
-                  }
-                }
-              }
+                    size: 14,
+                  },
+                },
+              },
             },
             plugins: {
               legend: {
                 labels: {
                   font: {
-                    size: 14
-                  }
-                }
-              }
-            }
-          }
+                    size: 14,
+                  },
+                },
+              },
+            },
+          },
         });
       }
     }
@@ -116,18 +128,18 @@ const GrowthChartUser: React.FC<GrowthChartProps> = ({ data }) => {
           display: "flex",
           gap: "10px",
           margin: "20px",
-          justifyContent: "flex-end"
+          justifyContent: "flex-end",
         }}
       >
         <select
           value={viewMode}
           onChange={(e) => setViewMode(e.target.value as "monthly" | "yearly")}
           style={{
-            backgroundColor: "#7380ec", // สีพื้นหลัง
-            color: "white", // สีข้อความ
-            border: "1px solid #5c6bc0", // ขอบสีม่วงอ่อน
-            padding: "5px 10px", // ระยะห่างภายใน
-            borderRadius: "5px" // มุมขอบโค้ง
+            backgroundColor: "#7380ec",
+            color: "white",
+            border: "1px solid #5c6bc0",
+            padding: "5px 10px",
+            borderRadius: "5px",
           }}
         >
           <option value="yearly">รายปี</option>
@@ -135,7 +147,10 @@ const GrowthChartUser: React.FC<GrowthChartProps> = ({ data }) => {
         </select>
 
         {viewMode === "yearly" ? (
-          <select value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)}>
+          <select
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+          >
             {Array.from({ length: 5 }, (_, i) => {
               const year = new Date().getFullYear() - i;
               return (
@@ -158,15 +173,17 @@ const GrowthChartUser: React.FC<GrowthChartProps> = ({ data }) => {
         <div
           style={{
             display: "flex",
-            justifyContent: "center", // จัดข้อความให้อยู่กลางในแนวนอน
-            alignItems: "center", // จัดข้อความให้อยู่กลางในแนวตั้ง
-            height: "50vh" // ใช้ความสูงของหน้าจอทั้งหมด (หรือความสูงของคอนเทนเนอร์ที่ต้องการ)
+            justifyContent: "center",
+            alignItems: "center",
+            height: "50vh",
           }}
         >
           <p style={{ fontSize: "18px", color: "#888" }}>ไม่มีข้อมูล</p>
         </div>
       ) : (
-        <canvas ref={chartRef} style={{ height: "180px" }} />
+        <div style={{ width: "100%", height: "300px" }}>
+          <canvas ref={chartRef} style={{ width: "100%", height: "100%" }} />
+        </div>
       )}
     </div>
   );

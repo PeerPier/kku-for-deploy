@@ -41,7 +41,7 @@ const DeleteAccountModal: React.FC<{
   };
 
   return (
-    <Modal show={show} onHide={onClose}>
+    <Modal show={show} onHide={onClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>Delete Account</Modal.Title>
       </Modal.Header>

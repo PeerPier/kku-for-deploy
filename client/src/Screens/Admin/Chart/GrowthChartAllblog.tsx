@@ -31,11 +31,9 @@ function transformBlogData(blogs: any[], mode: string, selectedDate: string): Bl
     });
   }
 
-  const result = Object.keys(countData)
+  return Object.keys(countData)
     .map((key) => ({ label: key, count: countData[key] }))
-    .sort((a, b) => (isNaN(parseInt(a.label)) ? 0 : parseInt(a.label) - parseInt(b.label))); // จัดเรียงวันที่
-
-  return result.length > 0 ? result : [];
+    .sort((a, b) => (isNaN(parseInt(a.label)) ? 0 : parseInt(a.label) - parseInt(b.label)));
 }
 
 const GrowthChartAllblog: React.FC<GrowthChartAllblogProps> = ({ data }) => {
@@ -46,8 +44,7 @@ const GrowthChartAllblog: React.FC<GrowthChartAllblogProps> = ({ data }) => {
   const [selectedDate, setSelectedDate] = useState<string>(new Date().getFullYear().toString());
 
   useEffect(() => {
-    const transformedData = transformBlogData(data, viewMode, selectedDate);
-    setCharts(transformedData);
+    setCharts(transformBlogData(data, viewMode, selectedDate));
   }, [data, viewMode, selectedDate]);
 
   useEffect(() => {
@@ -55,7 +52,6 @@ const GrowthChartAllblog: React.FC<GrowthChartAllblogProps> = ({ data }) => {
       if (chartInstance.current) {
         chartInstance.current.destroy();
       }
-
       const ctx = chartRef.current.getContext("2d");
       if (ctx) {
         chartInstance.current = new Chart(ctx, {
@@ -73,13 +69,22 @@ const GrowthChartAllblog: React.FC<GrowthChartAllblogProps> = ({ data }) => {
             ],
           },
           options: {
+            responsive: true,
+            maintainAspectRatio: false,
             scales: {
               y: {
                 beginAtZero: true,
                 grid: { display: false },
+                ticks: { font: { size: 14 } },
               },
               x: {
                 grid: { display: false },
+                ticks: { font: { size: 14 } },
+              },
+            },
+            plugins: {
+              legend: {
+                labels: { font: { size: 14 } },
               },
             },
           },
@@ -90,53 +95,31 @@ const GrowthChartAllblog: React.FC<GrowthChartAllblogProps> = ({ data }) => {
 
   return (
     <div>
-      {/* Dropdown เลือกดูแบบรายปีหรือรายเดือน */}
-      <div style={{ display: "flex", gap: "10px", margin: "20px" ,justifyContent: "flex-end"}}>
+      <div style={{ display: "flex", gap: "10px", margin: "20px", justifyContent: "flex-end" }}>
         <select value={viewMode} onChange={(e) => setViewMode(e.target.value as "monthly" | "yearly")}
-        style={{
-          backgroundColor: "#7380ec", // สีพื้นหลัง
-          color: "white", // สีข้อความ
-          border: "1px solid #5c6bc0", // ขอบสีม่วงอ่อน
-          padding: "5px 10px", // ระยะห่างภายใน
-          borderRadius: "5px", // มุมขอบโค้ง
-        }}>
+          style={{ backgroundColor: "#7380ec", color: "white", border: "1px solid #5c6bc0", padding: "5px 10px", borderRadius: "5px" }}>
           <option value="yearly">รายปี</option>
           <option value="monthly">รายเดือน</option>
         </select>
-
-        {/* Dropdown เลือกปี หรือ input เลือกเดือน */}
         {viewMode === "yearly" ? (
           <select value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)}>
             {Array.from({ length: 5 }, (_, i) => {
               const year = new Date().getFullYear() - i;
-              return (
-                <option key={year} value={year.toString()}>
-                  {year}
-                </option>
-              );
+              return <option key={year} value={year.toString()}>{year}</option>;
             })}
           </select>
         ) : (
           <input type="month" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />
         )}
       </div>
-
-      {/* แสดง "ไม่มีข้อมูล" ถ้า charts ว่าง */}
       {charts.length === 0 ? (
-        <div
-        style={{
-          display: "flex",
-          justifyContent: "center",  // จัดข้อความให้อยู่กลางในแนวนอน
-          alignItems: "center",      // จัดข้อความให้อยู่กลางในแนวตั้ง
-          height: "50vh",           // ใช้ความสูงของหน้าจอทั้งหมด (หรือความสูงของคอนเทนเนอร์ที่ต้องการ)
-        }}
-      >
-        <p style={{ fontSize: "18px", color: "#888" }}>
-          ไม่มีข้อมูล
-        </p>
-      </div>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "50vh" }}>
+          <p style={{ fontSize: "18px", color: "#888" }}>ไม่มีข้อมูล</p>
+        </div>
       ) : (
-        <canvas ref={chartRef} style={{ height: "180px" }} />
+        <div style={{ width: "100%", height: "300px" }}>
+          <canvas ref={chartRef} />
+        </div>
       )}
     </div>
   );
