@@ -61,7 +61,7 @@ router.post("/", verifyJWT, async (req, res) => {
 
     if(content.blocks){
       if (!content.blocks.length) {
-        return res.status(403).json({ error: "ต้องมีเนื้อหาบล็อกเพื่อเผยแพร่" });
+        return res.status(403).json({ error: "เขียนอะไรบางอย่างเพื่อเผยแพร่"});
       }
     }
 
