@@ -69,7 +69,7 @@ const CommentField = ({
         toast.dismiss(loadingToast);
         toast.success("สำเร็จ");
         setComment("");
-        data.commented_by = { username, profile_picture, fullname };
+        data.commented_by = { username, profile_picture, fullname, _id: sessionStorage.getItem("userId") ? sessionStorage.getItem("userId") : null };
 
         let newCommentArr;
 
