@@ -136,46 +136,8 @@ const BlogCard: React.FC<BlogCardProps> = ({ content, author }) => {
         </div>
       </Link>
 
-      {/* Three dots menu button */}
-      <div
-        className="menu-button"
-        onClick={handleDropdownToggle}
-        style={{
-          position: "absolute",
-          top: "10px",
-          right: "10px",
-          cursor: "pointer",
-        }}
-      >
-        <FaEllipsisV />
-      </div>
 
-      {/* Dropdown menu */}
-      {isDropdownOpen && (
-        <div
-          className="dropdown-menu"
-          style={{
-            position: "absolute",
-            top: "30px", // Adjust position below the three dots button
-            right: "10px",
-            backgroundColor: "#fff",
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-            zIndex: 10,
-          }}
-        >
-          <button className="dropdown-item" style={{ padding: "8px 16px" }}>
-            Edit
-          </button>
-          <button className="dropdown-item" style={{ padding: "8px 16px" }}>
-            Delete
-          </button>
-          <button className="dropdown-item" style={{ padding: "8px 16px" }}>
-            Report
-          </button>
-        </div>
-      )}
+      
     </div>
   );
 };

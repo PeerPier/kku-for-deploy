@@ -163,7 +163,8 @@ function Navbar() {
           <IoIosSearch className="toggle-icon" />
         </button>
         </div>
-
+        {access_token ? (
+          <>
         <Link
           to="/editor"
           className="d-none d-md-flex align-items-center gap-2 md:flex gap-2 link"
@@ -172,9 +173,8 @@ function Navbar() {
           <LuFileEdit />
           <p className="m-0">เขียน</p>
         </Link>
-
-        {access_token ? (
-          <>
+        
+          
             <Notifications />
 
             {/* <Link to="/dashboard/notification"> */}
@@ -213,12 +213,13 @@ function Navbar() {
 
               {userNotiPanel ? (
                 <div
+                className="notifications-container"
                   style={{
                     padding: "1rem",
                     position: "absolute",
                     width: "25rem",
                     right: "0",
-                    backgroundColor: "#f9f9f9",
+                    backgroundColor: "#ffffff",
                     borderRadius: "10px",
                     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
                     marginTop: "1rem",

@@ -105,9 +105,7 @@
   display: block;
   opacity: 0.75;
   text-decoration: none;
-  transition:
-    color 0.2s ease,
-    background-color 0.2s ease;
+  transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 .link:hover {
@@ -180,7 +178,7 @@
   stroke-width: 1.5;
   fill: transparent;
 }
-.toggle-search-2{
+.toggle-search-2 {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -198,8 +196,31 @@
   color: #666;
   font-size: 1.25rem;
 }
+
+/* ปรับขนาดของ Scroll Bar */
+.notifications-container {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 2%;
+}
+
+/* กำหนดขนาดของ Scroll Bar */
+.notifications-container::-webkit-scrollbar {
+  width: 8px; /* ความกว้างของแถบเลื่อน */
+}
+
+/* สีของตัว Scroll Bar */
+.notifications-container::-webkit-scrollbar-thumb {
+  background: #d1d1d1; /* สีแถบเลื่อน */
+  border-radius: 10px;
+}
+
+/* เปลี่ยนสีเมื่อ Hover */
+.notifications-container::-webkit-scrollbar-thumb:hover {
+  background: #ccc1d4;
+}
+
 @media (min-width: 768px) {
-  
   .toggle-search-2 {
     display: none;
   }
@@ -233,7 +254,8 @@
     pointer-events: none;
     left: 1.25rem;
   }
-  .toggle-search,.toggle-search-2 {
+  .toggle-search,
+  .toggle-search-2 {
     gap: 1.5rem;
   }
   /* .toggle-search button {

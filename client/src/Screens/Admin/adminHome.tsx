@@ -15,14 +15,14 @@ import {
   fetchAllUser,
   fetchUser,
   fetchUsersAPI,
-  fetchViews
+  fetchViews,
 } from "../../api/adminProfile";
 import { LuView } from "react-icons/lu";
 import { PiUsersThreeFill } from "react-icons/pi";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { AiOutlineClose } from "react-icons/ai";
 import { MdLightMode, MdDarkMode } from "react-icons/md";
-import Pro from "../../pic/start1.jpg";
+import Pro from "../../pic/AdminIcon.png";
 import { RiUserStarFill } from "react-icons/ri";
 import Form from "react-bootstrap/Form";
 import ManageUser from "./manageUs";
@@ -106,7 +106,7 @@ const transformData = (data: any[]): MonthData[] => {
     { month: "September", publishedAt: 0 },
     { month: "October", publishedAt: 0 },
     { month: "November", publishedAt: 0 },
-    { month: "December", publishedAt: 0 }
+    { month: "December", publishedAt: 0 },
   ];
 
   // Iterate over the input data
@@ -137,7 +137,8 @@ const AdminHome: React.FC = () => {
 
   const [selectedCate, setSelectedCate] = useState<string>("dashboard");
   const [selectedBlog, setSelectedBlog] = useState<string>("blog-all");
-  const [selectedApprove, setSelectedApprove] = useState<string>("blog-success");
+  const [selectedApprove, setSelectedApprove] =
+    useState<string>("blog-success");
 
   const [reports, setReports] = useState<Report[]>([]);
   const [showModal, setShowModal] = useState(false);
@@ -172,8 +173,8 @@ const AdminHome: React.FC = () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/login/auth`, {
           headers: {
-            Authorization: `Bearer ${accessToken}`
-          }
+            Authorization: `Bearer ${accessToken}`,
+          },
         });
 
         console.log("Authentication successful:", response.data);
@@ -202,7 +203,9 @@ const AdminHome: React.FC = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const responseUser = await axios.get(`${API_BASE_URL}/profile/within24hour`);
+        const responseUser = await axios.get(
+          `${API_BASE_URL}/profile/within24hour`
+        );
         const responseAllUser = await axios.get(`${API_BASE_URL}/profile`);
         setUsers(responseUser.data);
         setAllUsers(responseAllUser.data);
@@ -232,8 +235,12 @@ const AdminHome: React.FC = () => {
       const changeTheme = () => {
         document.body.classList.toggle("dark-theme-variables");
 
-        themToggler?.querySelector("svg:nth-child(1)")?.classList.toggle("active");
-        themToggler?.querySelector("svg:nth-child(2)")?.classList.toggle("active");
+        themToggler
+          ?.querySelector("svg:nth-child(1)")
+          ?.classList.toggle("active");
+        themToggler
+          ?.querySelector("svg:nth-child(2)")
+          ?.classList.toggle("active");
       };
 
       themToggler.addEventListener("click", changeTheme);
@@ -287,7 +294,10 @@ const AdminHome: React.FC = () => {
         const blog = await fetchAllUser();
         const User = await fetchUser();
         const view = await fetchViews();
-        const totalViews = view.reduce((acc: any, post: any) => acc + post.total_reads, 0);
+        const totalViews = view.reduce(
+          (acc: any, post: any) => acc + post.total_reads,
+          0
+        );
         setGetUser(User);
         setGetBlog(blog);
         setUserCounter(userCountData);
@@ -341,11 +351,17 @@ const AdminHome: React.FC = () => {
   };
 
   const countVerifiedReports = (reports: Report[]): number => {
-    return reports.reduce((count, report) => (!report.verified ? count + 1 : count), 0);
+    return reports.reduce(
+      (count, report) => (!report.verified ? count + 1 : count),
+      0
+    );
   };
 
   const countNoVerifiedReports = (reports: Report[]): number => {
-    return reports.reduce((count, report) => (report.verified ? count + 1 : count), 0);
+    return reports.reduce(
+      (count, report) => (report.verified ? count + 1 : count),
+      0
+    );
   };
 
   // สถานะเพื่อจัดการการ hover สำหรับ user-all
@@ -362,7 +378,7 @@ const AdminHome: React.FC = () => {
     { month: "September", joinAt: 0 },
     { month: "October", joinAt: 0 },
     { month: "November", joinAt: 0 },
-    { month: "December", joinAt: 0 }
+    { month: "December", joinAt: 0 },
   ]);
 
   useEffect(() => {
@@ -386,16 +402,16 @@ const AdminHome: React.FC = () => {
         data: monthsUser?.map((e) => e.joinAt), // ข้อมูลกราฟ
         borderColor: "rgba(75, 192, 192, 1)",
         backgroundColor: "rgba(75, 192, 192, 0.2)",
-        fill: true
-      }
-    ]
+        fill: true,
+      },
+    ],
   };
   const options = {
     scales: {
       y: {
-        beginAtZero: true
-      }
-    }
+        beginAtZero: true,
+      },
+    },
   };
 
   return (
@@ -491,16 +507,14 @@ const AdminHome: React.FC = () => {
           <div
             className="header-profile-admin"
             style={{
-              marginBottom: "0"
+              marginBottom: "0",
             }}
           >
             <div className="header-content">
               <div className="title-container">
                 {/* Dynamic title */}
-                <h1>{title}</h1>
-                <div className="date">
-                  <input type="date" defaultValue={new Date().toISOString().split("T")[0]} />
-                </div>
+                <h1></h1>
+                <div className="date"></div>
               </div>
               {/* Profile and theme section */}
               <div className="profile-theme">
@@ -537,16 +551,28 @@ const AdminHome: React.FC = () => {
           {selectedCate === "dashboard" && (
             <div className="main1">
               <div className="dashboard-container">
+                <h2
+                  style={{
+                    fontSize: "1.8rem",
+                    fontWeight: "800",
+                    marginTop: "2rem",
+                  }}
+                >
+                  Dashboard
+                </h2>
                 <div className="insights">
                   {/* ผู้ใช้ทั้งหมด */}
                   <div
-                    className={`user-all ${selectedChart === "user" ? "active" : ""}`}
+                    className={`user-all ${
+                      selectedChart === "user" ? "active" : ""
+                    }`}
                     onClick={() => setSelectedChart("user")}
                     style={{
                       position: "relative",
                       cursor: "pointer",
-                      backgroundColor: selectedChart === "user" ? "#9fa8f6" : "transparent",
-                      color: selectedChart === "user" ? "white" : "black"
+                      backgroundColor:
+                        selectedChart === "user" ? "#9fa8f6" : "transparent",
+                      color: selectedChart === "user" ? "white" : "black",
                     }}
                   >
                     <PiUsersThreeFill className="svg1" />
@@ -560,16 +586,20 @@ const AdminHome: React.FC = () => {
 
                   {/* โพสต์ทั้งหมด */}
                   <div
-                    className={`blogpost-all ${selectedChart === "blog" ? "active" : ""}`}
+                    className={`blogpost-all ${
+                      selectedChart === "blog" ? "active" : ""
+                    }`}
                     onClick={() => setSelectedChart("blog")}
                     style={{
                       position: "relative",
                       cursor: "pointer",
-                      backgroundColor: selectedChart === "blog" ? "#9fa8f6" : "transparent",
-                      color: selectedChart === "blog" ? "white" : "black"
+                      backgroundColor:
+                        selectedChart === "blog" ? "#9fa8f6" : "transparent",
+                      color: selectedChart === "blog" ? "white" : "black",
                     }}
                   >
                     <IoDocumentTextOutline className="svg3" />
+
                     <div className="middle">
                       <div className="left">
                         <h3>บล็อกทั้งหมด</h3>
@@ -581,8 +611,12 @@ const AdminHome: React.FC = () => {
 
                 {/* แสดงกราฟด้านล่าง */}
                 <div className="chart-container">
-                  {selectedChart === "user" && <GrowthChartAlluser data={getUser} />}
-                  {selectedChart === "blog" && <GrowthChartAllblog data={getBlog} />}
+                  {selectedChart === "user" && (
+                    <GrowthChartAlluser data={getUser} />
+                  )}
+                  {selectedChart === "blog" && (
+                    <GrowthChartAllblog data={getBlog} />
+                  )}
                 </div>
               </div>
             </div>
@@ -590,6 +624,15 @@ const AdminHome: React.FC = () => {
           {selectedCate === "average" && (
             <div className="average">
               <div className="main1">
+                <h2
+                  style={{
+                    fontSize: "1.8rem",
+                    fontWeight: "800",
+                    marginTop: "2rem",
+                  }}
+                >
+                  จัดการบล็อก
+                </h2>
                 <div className="insights">
                   <div
                     className="blogpost-all"
@@ -599,6 +642,7 @@ const AdminHome: React.FC = () => {
                     }}
                   >
                     <IoDocumentTextOutline className="svg3" />
+
                     <div className="middle">
                       <div className="left">
                         <h3>บล็อกที่รายงานทั้งหมด</h3>
@@ -643,7 +687,7 @@ const AdminHome: React.FC = () => {
                   style={{
                     fontSize: "1.8rem",
                     fontWeight: "800",
-                    marginTop: "2rem"
+                    marginTop: "2rem",
                   }}
                 >
                   รายการ
@@ -655,7 +699,7 @@ const AdminHome: React.FC = () => {
                       overflowY: "auto", // เพิ่ม scrollbar เมื่อเนื้อหามากเกินไป
                       maxHeight: "400px", // กำหนดความสูงสูงสุดของ div
                       margin: "0",
-                      borderRadius: "2rem"
+                      borderRadius: "2rem",
                     }}
                   >
                     <table>
@@ -673,8 +717,16 @@ const AdminHome: React.FC = () => {
                           {reports.length > 0 ? (
                             reports.map((report) => (
                               <tr key={report._id}>
-                                <td>{report.reportedBy ? report.reportedBy.fullname : ""}</td>
-                                <td>{new Date(report.createdAt).toLocaleDateString()}</td>
+                                <td>
+                                  {report.reportedBy
+                                    ? report.reportedBy.fullname
+                                    : ""}
+                                </td>
+                                <td>
+                                  {new Date(
+                                    report.createdAt
+                                  ).toLocaleDateString()}
+                                </td>
                                 <td>{report.reason || "No Title"}</td>
                                 <td className="warning">
                                   {report.status == "Approved"
@@ -724,7 +776,7 @@ const AdminHome: React.FC = () => {
                       overflowY: "scroll",
                       maxHeight: "400px",
                       margin: "0",
-                      borderRadius: "2rem"
+                      borderRadius: "2rem",
                     }}
                   >
                     <table>
@@ -743,8 +795,16 @@ const AdminHome: React.FC = () => {
                             reports.map((report) =>
                               !report.verified ? (
                                 <tr key={report._id}>
-                                  <td>{report.reportedBy ? report.reportedBy.fullname : ""}</td>
-                                  <td>{new Date(report.createdAt).toLocaleDateString()}</td>
+                                  <td>
+                                    {report.reportedBy
+                                      ? report.reportedBy.fullname
+                                      : ""}
+                                  </td>
+                                  <td>
+                                    {new Date(
+                                      report.createdAt
+                                    ).toLocaleDateString()}
+                                  </td>
                                   <td>{report.reason || "No Title"}</td>
                                   <td className="warning">
                                     {report.status == "Approved"
@@ -796,14 +856,14 @@ const AdminHome: React.FC = () => {
                       overflowY: "scroll",
                       maxHeight: "400px",
                       margin: "0",
-                      borderRadius: "2rem"
+                      borderRadius: "2rem",
                     }}
                   >
                     <div
                       className="selectBlogCate"
                       style={{
                         marginLeft: "2rem",
-                        position: "fixed"
+                        position: "fixed",
                       }}
                     >
                       <Form>
@@ -816,7 +876,9 @@ const AdminHome: React.FC = () => {
                               name="group1"
                               type="radio"
                               id={`inline-${type}-1`}
-                              onChange={() => setSelectedApprove("blog-success")}
+                              onChange={() =>
+                                setSelectedApprove("blog-success")
+                              }
                               checked={selectedApprove === "blog-success"}
                             />
                             <Form.Check
@@ -826,7 +888,9 @@ const AdminHome: React.FC = () => {
                               name="group1"
                               type="radio"
                               id={`inline-${type}-2`}
-                              onChange={() => setSelectedApprove("blog-decline")}
+                              onChange={() =>
+                                setSelectedApprove("blog-decline")
+                              }
                               checked={selectedApprove === "blog-decline"}
                             />
                             <Form.Check
@@ -859,10 +923,19 @@ const AdminHome: React.FC = () => {
                             <tbody>
                               {reports.length > 0 ? (
                                 reports.map((report) =>
-                                  report.verified && report.status === "Approved" ? (
+                                  report.verified &&
+                                  report.status === "Approved" ? (
                                     <tr key={report._id}>
-                                      <td>{report.reportedBy ? report.reportedBy.fullname : ""}</td>
-                                      <td>{new Date(report.createdAt).toLocaleDateString()}</td>
+                                      <td>
+                                        {report.reportedBy
+                                          ? report.reportedBy.fullname
+                                          : ""}
+                                      </td>
+                                      <td>
+                                        {new Date(
+                                          report.createdAt
+                                        ).toLocaleDateString()}
+                                      </td>
                                       <td>{report.reason || "No Title"}</td>
                                       <td className="warning">
                                         {report.status == "Approved"
@@ -876,8 +949,12 @@ const AdminHome: React.FC = () => {
                                       <td className="primary">
                                         <Button
                                           variant="info"
-                                          onClick={() => handleShowModal(report)}
-                                          disabled={report.verified ? true : false}
+                                          onClick={() =>
+                                            handleShowModal(report)
+                                          }
+                                          disabled={
+                                            report.verified ? true : false
+                                          }
                                         >
                                           รายละเอียด
                                         </Button>
@@ -915,15 +992,25 @@ const AdminHome: React.FC = () => {
                               reports.map((report) =>
                                 report.status === "Declined" ? (
                                   <tr key={report._id}>
-                                    <td>{report.reportedBy ? report.reportedBy.fullname : ""}</td>
-                                    <td>{new Date(report.createdAt).toLocaleDateString()}</td>
+                                    <td>
+                                      {report.reportedBy
+                                        ? report.reportedBy.fullname
+                                        : ""}
+                                    </td>
+                                    <td>
+                                      {new Date(
+                                        report.createdAt
+                                      ).toLocaleDateString()}
+                                    </td>
                                     <td>{report.reason || "No Title"}</td>
                                     <td className="warning">ปฏิเสธ</td>
                                     <td className="primary">
                                       <Button
                                         variant="info"
                                         onClick={() => handleShowModal(report)}
-                                        disabled={report.verified ? true : false}
+                                        disabled={
+                                          report.verified ? true : false
+                                        }
                                       >
                                         รายละเอียด
                                       </Button>
@@ -960,15 +1047,27 @@ const AdminHome: React.FC = () => {
                               reports.map((report) =>
                                 report.status === "Cancel" ? (
                                   <tr key={report._id}>
-                                    <td>{report.reportedBy ? report.reportedBy.fullname : ""}</td>
-                                    <td>{new Date(report.createdAt).toLocaleDateString()}</td>
+                                    <td>
+                                      {report.reportedBy
+                                        ? report.reportedBy.fullname
+                                        : ""}
+                                    </td>
+                                    <td>
+                                      {new Date(
+                                        report.createdAt
+                                      ).toLocaleDateString()}
+                                    </td>
                                     <td>{report.reason || "No Title"}</td>
-                                    <td className="warning">โพสต์ถูกลบ/ยกเลิกรายงาน</td>
+                                    <td className="warning">
+                                      โพสต์ถูกลบ/ยกเลิกรายงาน
+                                    </td>
                                     <td className="primary">
                                       <Button
                                         variant="info"
                                         onClick={() => handleShowModal(report)}
-                                        disabled={report.verified ? true : false}
+                                        disabled={
+                                          report.verified ? true : false
+                                        }
                                       >
                                         รายละเอียด
                                       </Button>
@@ -992,7 +1091,9 @@ const AdminHome: React.FC = () => {
               </div>
             </div>
           )}
-          {selectedCate === "manage-user" && <ManageUser users={users} allUsers={allUsers} />}
+          {selectedCate === "manage-user" && (
+            <ManageUser users={users} allUsers={allUsers} />
+          )}
           {selectedCate === "manage-q" && <ManageQ />}
           {selectedCate === "manage-cate" && <ManageCate blogsData={getBlog} />}
           {selectedCate === "manage-badwords" && <ManageBadwords />}

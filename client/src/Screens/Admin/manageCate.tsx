@@ -125,6 +125,11 @@ const ManageCate: React.FC<{ blogsData: Blog[] }> = ({ blogsData }) => {
   return (
     <div className="manageUser">
       <div className="main1">
+      <h2  style={{
+                    fontSize: "1.8rem",
+                    fontWeight: "800",
+                    marginTop: "2rem"
+                  }}>จัดการหมวดหมู่</h2>
         <div className="insights">
           <div className="user-all">
             <MdCategory className="svg1" />

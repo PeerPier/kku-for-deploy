@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import backArrow from "../../pic/go-back.png";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { MdLightMode, MdDarkMode } from "react-icons/md";
-import Pro from "../../pic/start1.jpg";
+import Pro from "../../pic/AdminIcon.png";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";

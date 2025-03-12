@@ -105,6 +105,12 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
   return (
     <div className="manageUser">
       <div className="main1">
+        <h2 style={{
+                    fontSize: "1.8rem",
+                    fontWeight: "800",
+                    marginTop: "2rem"
+                  }}>จัดการบัญชีผู้ใช้</h2>
+        
         <div className="insights">
           <div className="user-all">
             <PiUsersThreeFill className="svg1" />
@@ -120,7 +126,7 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
             <LuView className="svg2" />
             <div className="middle">
               <div className="left">
-                <h3>ผู้ใช้ใหม่</h3>
+                <h3>ผู้ใช้ใหม่ใน 24 ชั่วโมง</h3>
                 <h1>{users.length}</h1>
               </div>
             </div>

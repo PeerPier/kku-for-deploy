@@ -618,6 +618,9 @@
   display: none;
 }
 
+
+
+
 @media screen and (max-width: 1200px) {
   .adminHome .contain {
     width: 94%;
