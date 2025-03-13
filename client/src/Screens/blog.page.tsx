@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { addReport, API_BASE_URL } from "../api/post";
+import { API_BASE_URL } from "../api/post";
 import {
   createContext,
   Dispatch,
@@ -12,7 +12,6 @@ import {
 import { FaEarthAmericas } from "react-icons/fa6";
 import { FaUserAlt } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
-import { MdReport } from "react-icons/md";
 import AnimationWrapper from "./page-animation";
 import Loader from "../components/loader.component";
 import { getDay } from "../common/date";
@@ -25,7 +24,6 @@ import CommentsContainer, {
   fetchComments,
 } from "../components/comments.components";
 import toast from "react-hot-toast";
-import { Button, Form, Modal } from "react-bootstrap";
 
 interface BlogContextType {
   blog: Partial<Post>;
@@ -89,51 +87,6 @@ const BlogPage = () => {
   const author_username = author?.username || "Unknown Username";
   const profile_picture = author?.profile_picture || "";
 
-  // Modal สำหรับรายงานปัญหา
-  const [showReportModal, setShowReportModal] = useState(false);
-  const [reportPostId, setReportPostId] = useState<string | null>(null);
-  const [reportReason, setReportReason] = useState("");
-  // Modal สำหรับรายงานเสร็จ (Report Submitted Modal)
-  const [showReportSubmittedModal, setShowReportSubmittedModal] = useState(false);
-  const userId = sessionStorage.getItem("userId");
-
-  const handleShowReportModal = (id: string | undefined) => {
-    setReportPostId(id || "");
-    setShowReportModal(true);
-  };
-
-  const handleCloseReportModal = () => {
-    setShowReportModal(false);
-    setReportPostId(null);
-    setReportReason("");
-  };
-
-  const handleReportPost = async () => {
-    if (reportPostId && reportReason) {
-      try {
-        if (!userId) {
-          throw new Error("User is not logged in.");
-        }
-
-        const response = await addReport(reportPostId, reportReason, userId);
-
-        if (response && response.status === 201) {
-          toast.success("Report submitted successfully!");
-          // ปิด modal รายงานและแสดง modal แจ้งผลสำเร็จ
-          handleCloseReportModal();
-          setShowReportSubmittedModal(true);
-        } else {
-          toast.error("Failed to submit the report.");
-          handleCloseReportModal();
-        }
-      } catch (error) {
-        console.error("Failed to report post:", error);
-        toast.error("An error occurred while submitting the report.");
-      }
-    } else {
-      toast.error("Please enter a reason for the report.");
-    }
-  };
 
   const getAuthHeaders = () => {
     const userStr = sessionStorage.getItem("user");
@@ -343,129 +296,8 @@ const BlogPage = () => {
                     </Link>
                   </p>
                 </div>
-                <div className="m-0 published-detail">
-                  {/* Only show the "Report Issue" button if the current user is not the author */}
-                  {userId !== author?._id && (
-                    <button
-                      className="cursor-pointer bg-dark text-white p-2 rounded"
-                      onClick={() => handleShowReportModal(_id)}
-                    >
-                      <MdReport
-                        style={{
-                          fontSize: "22px",
-                          marginRight: "0.4rem",
-                          marginBottom: "2px",
-                        }}
-                      />
-                      รายงานปัญหา
-                    </button>
-                  )}
-                </div>
               </div>
             </div>
-
-            {/* Report Modal */}
-            <Modal
-              show={showReportModal}
-              onHide={handleCloseReportModal}
-              centered
-            >
-              <Modal.Header closeButton>
-                <Modal.Title>รายงานปัญหา</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <Form>
-                  <Form.Group>
-                    <Form.Check
-                      type="radio"
-                      label="เนื้อหาไม่เหมาะสม"
-                      name="reportReason"
-                      value="เนื้อหาไม่เหมาะสม"
-                      onChange={(e) => setReportReason(e.target.value)}
-                      checked={reportReason === "เนื้อหาไม่เหมาะสม"}
-                    />
-                    <Form.Check
-                      type="radio"
-                      label="เนื้อหามีการกลั่นแกล้งหรือคุกคาม"
-                      name="reportReason"
-                      value="เนื้อหามีการกลั่นแกล้งหรือคุกคาม"
-                      onChange={(e) => setReportReason(e.target.value)}
-                      checked={
-                        reportReason === "เนื้อหามีการกลั่นแกล้งหรือคุกคาม"
-                      }
-                    />
-                    <Form.Check
-                      type="radio"
-                      label="เนื้อหามีการขายหรือส่งเสริมสินค้าต้องห้าม"
-                      name="reportReason"
-                      value="เนื้อหามีการขายหรือส่งเสริมสินค้าต้องห้าม"
-                      onChange={(e) => setReportReason(e.target.value)}
-                      checked={
-                        reportReason ===
-                        "เนื้อหามีการขายหรือส่งเสริมสินค้าต้องห้าม"
-                      }
-                    />
-                    <Form.Check
-                      type="radio"
-                      label="ข้อมูลเท็จ"
-                      name="reportReason"
-                      value="ข้อมูลเท็จ"
-                      onChange={(e) => setReportReason(e.target.value)}
-                      checked={reportReason === "ข้อมูลเท็จ"}
-                    />
-                    <Form.Check
-                      type="radio"
-                      label="การแอบอ้างบุคคลอื่น"
-                      name="reportReason"
-                      value="การแอบอ้างบุคคลอื่น"
-                      onChange={(e) => setReportReason(e.target.value)}
-                      checked={reportReason === "การแอบอ้างบุคคลอื่น"}
-                    />
-                    <Form.Check
-                      type="radio"
-                      label="สแปม"
-                      name="reportReason"
-                      value="สแปม"
-                      onChange={(e) => setReportReason(e.target.value)}
-                      checked={reportReason === "สแปม"}
-                    />
-                  </Form.Group>
-                </Form>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={handleCloseReportModal}>
-                  ยกเลิก
-                </Button>
-                <Button variant="danger" onClick={handleReportPost}>
-                  รายงานปัญหา
-                </Button>
-              </Modal.Footer>
-            </Modal>
-
-            {/* Report Submitted Modal */}
-            <Modal
-              show={showReportSubmittedModal}
-              onHide={() => setShowReportSubmittedModal(false)}
-              centered
-            >
-              <Modal.Header closeButton>
-                <Modal.Title>รายงานปัญหาสำเร็จ</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                รายงานปัญหาของคุณได้รับการส่งเรียบร้อยแล้ว
-              </Modal.Body>
-              <Modal.Footer>
-                <Button
-                  variant="secondary"
-                  onClick={() => setShowReportSubmittedModal(false)}
-                >
-                  ปิด
-                </Button>
-                <Button variant="primary" onClick={() => navigate("/dashboard/reportcheck")}>
-                  ดูการรายงาน
-                </Button>
-              </Modal.Footer>
-            </Modal>
 
             <div className="my-4 blog-page-content">
               {content &&
