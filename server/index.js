@@ -237,7 +237,7 @@ app.post("/search-users", (req, res) => {
 
     User.find({ username: new RegExp(query, "i") })
         .limit(50)
-        .select("fullname username profile_picture -_id")
+        .select("fullname username profile_picture _id")
         .then((users) => {
             return res.status(200).json({ users });
         })
