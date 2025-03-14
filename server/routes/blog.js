@@ -40,7 +40,12 @@ router.post("/", verifyJWT, async (req, res) => {
   try {
     await BadWordScanner(req.body);
   } catch (err) {
-    return res.status(403).json({ error: `${err}`, details: err });
+    badword = err.toString().split(" ");
+    badword = badword[badword.length - 1];
+    return res.status(403).json({
+      error: `ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : ${badword}`,
+      details: `$ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : “${badword}”`,
+    });
   }
   if (!topic || topic.length === 0) {
     return res.status(403).json({ error: "คุณต้องระบุชื่อบล็อก" });
@@ -59,9 +64,9 @@ router.post("/", verifyJWT, async (req, res) => {
         .json({ error: "คุณต้องใส่หน้าปกเพื่อเผยแพร่บล็อก" });
     }
 
-    if(content.blocks){
+    if (content.blocks) {
       if (!content.blocks.length) {
-        return res.status(403).json({ error: "เขียนอะไรบางอย่างเพื่อเผยแพร่"});
+        return res.status(403).json({ error: "เขียนอะไรบางอย่างเพื่อเผยแพร่" });
       }
     }
 
@@ -145,13 +150,12 @@ router.post("/", verifyJWT, async (req, res) => {
   }
 });
 
-
 // server/routes/blog.js - Updated increment-view endpoint
 
 router.post("/increment-view", async (req, res) => {
   try {
     const { blog_id, userId } = req.body;
-        // If no userId provided, return error
+    // If no userId provided, return error
     if (!userId) {
       return res.status(400).json({ error: "User ID is required" });
     }
@@ -162,7 +166,7 @@ router.post("/increment-view", async (req, res) => {
     }
 
     const currentDate = new Date();
-    const month = currentDate.toLocaleString('default', { month: 'short' });
+    const month = currentDate.toLocaleString("default", { month: "short" });
     const year = currentDate.getFullYear();
 
     // Check if user has already viewed this post this month
@@ -170,16 +174,16 @@ router.post("/increment-view", async (req, res) => {
       blog: blog._id,
       month,
       year,
-      user_ids: userId
+      user_ids: userId,
     });
 
     if (!existingView) {
       // User hasn't viewed this post this month
       const updatedView = await View.findOneAndUpdate(
         { blog: blog._id, month, year },
-        { 
+        {
           $addToSet: { user_ids: userId },
-          $inc: { total_reads: 1 }
+          $inc: { total_reads: 1 },
         },
         { upsert: true, new: true }
       );
@@ -188,8 +192,8 @@ router.post("/increment-view", async (req, res) => {
       await Blog.findByIdAndUpdate(blog._id, {
         $inc: {
           views: 1,
-          "activity.total_reads": 1
-        }
+          "activity.total_reads": 1,
+        },
       });
 
       await User.findOneAndUpdate(
@@ -201,14 +205,14 @@ router.post("/increment-view", async (req, res) => {
       // Update author's total reads
       if (blog.author) {
         await User.findByIdAndUpdate(blog.author, {
-          $inc: { total_reads: 1 }
+          $inc: { total_reads: 1 },
         });
       }
 
       return res.status(200).json({
         views: blog.views + 1,
         total_reads: blog.activity.total_reads + 1,
-        message: "View count updated successfully"
+        message: "View count updated successfully",
       });
     }
 
@@ -216,9 +220,8 @@ router.post("/increment-view", async (req, res) => {
     return res.status(200).json({
       views: blog.views,
       total_reads: blog.activity.total_reads,
-      message: "View already counted for this user"
+      message: "View already counted for this user",
     });
-
   } catch (err) {
     console.error("Error incrementing view:", err);
     return res.status(500).json({ error: err.message });
@@ -245,20 +248,22 @@ router.post("/get-blog", async (req, res) => {
     const blog = await Blog.findOne({ blog_id })
       .populate({
         path: "author",
-        select: "fullname username profile_picture followers"
+        select: "fullname username profile_picture followers",
       })
-      .select("topic des content banner activity views publishedAt blog_id tags visibility author");
+      .select(
+        "topic des content banner activity views publishedAt blog_id tags visibility author"
+      );
 
     if (!blog) {
       return res.status(404).json({ error: "Blog not found" });
     }
 
     if (!userId) {
-      if (blog.visibility == 'public'){
+      if (blog.visibility == "public") {
         return res.status(200).json({ blog });
-      }else{
+      } else {
         return res.status(403).json({
-          error: "This post is only visible to followers"
+          error: "This post is only visible to followers",
         });
       }
     }
@@ -266,22 +271,24 @@ router.post("/get-blog", async (req, res) => {
     // Check viewing permissions using the canView static method
     const canViewBlog = await Blog.canView(userId, blog.author._id);
 
-    if (typeof canViewBlog === 'boolean' && canViewBlog) {
+    if (typeof canViewBlog === "boolean" && canViewBlog) {
       // User is the author - can see everything
       return res.status(200).json({ blog });
-    } else if (typeof canViewBlog === 'object') {
+    } else if (typeof canViewBlog === "object") {
       // User is either a follower or not logged in - apply visibility filter
       const visibilityFilter = canViewBlog;
 
       // Check if the blog's visibility matches the allowed visibility
-      const canView = Array.isArray(visibilityFilter.$or) && visibilityFilter.$or.some(filter => {
-        console.log(filter, blog.visibility)
-        return filter.visibility === blog.visibility;
-      });
+      const canView =
+        Array.isArray(visibilityFilter.$or) &&
+        visibilityFilter.$or.some((filter) => {
+          console.log(filter, blog.visibility);
+          return filter.visibility === blog.visibility;
+        });
 
       if (!canView && userId) {
         return res.status(403).json({
-          error: "This post is only visible to followers"
+          error: "This post is only visible to followers",
         });
       }
 
@@ -290,9 +297,8 @@ router.post("/get-blog", async (req, res) => {
 
     // If we get here, user doesn't have permission
     return res.status(403).json({
-      error: "You don't have permission to view this post"
+      error: "You don't have permission to view this post",
     });
-
   } catch (err) {
     console.error("Error fetching blog:", err);
     return res.status(500).json({ error: err.message });
@@ -342,7 +348,12 @@ router.post("/like-blog", verifyJWT, async (req, res) => {
       );
 
       await notification.save();
-      NotiMailer(notification.notification_for,user_id,notification.type,newLike.post);
+      NotiMailer(
+        notification.notification_for,
+        user_id,
+        notification.type,
+        newLike.post
+      );
 
       return res.status(200).json({ liked_by_user: true });
     } else {
@@ -359,10 +370,10 @@ router.post("/like-blog", verifyJWT, async (req, res) => {
         await post.save();
 
         await User.findOneAndUpdate(
-          { _id: user_id }, 
+          { _id: user_id },
           { $pull: { liked_posts: _id } },
           { new: true }
-        );      
+        );
 
         // Delete the associated like notification
         await Notifications.findOneAndDelete({
@@ -433,11 +444,15 @@ router.post("/dislike-blog", verifyJWT, async (req, res) => {
 });
 
 router.post("/add-comment", verifyJWT, async (req, res) => {
-
   try {
     await BadWordScanner(req.body);
   } catch (err) {
-    return res.status(403).json({ error: `${err}`, details: err });
+    badword = err.toString().split(" ");
+    badword = badword[badword.length - 1];
+    return res.status(403).json({
+      error: `ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : ${badword}`,
+      details: `$ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : “${badword}”`,
+    });
   }
 
   let user_id = req.user;
@@ -504,7 +519,12 @@ router.post("/add-comment", verifyJWT, async (req, res) => {
         .then(() => console.log("แจ้งเตือนใหม่!!"))
         .catch((err) => console.error("Error saving notification:", err));
 
-        NotiMailer(blog_author,notifaicationObj.user,notifaicationObj.type,notifaicationObj.blog);
+      NotiMailer(
+        blog_author,
+        notifaicationObj.user,
+        notifaicationObj.type,
+        notifaicationObj.blog
+      );
 
       return res.status(200).json({
         comment,
@@ -524,14 +544,21 @@ router.patch("/update-comment", verifyJWT, async (req, res) => {
   try {
     await BadWordScanner(req.body);
   } catch (err) {
-    return res.status(403).json({ error: `${err}`, details: err });
+    badword = err.toString().split(" ");
+    badword = badword[badword.length - 1];
+    return res.status(403).json({
+      error: `ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : ${badword}`,
+      details: `$ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : “${badword}”`,
+    });
   }
 
   let user_id = req.user;
   let { _id, comment } = req.body;
 
   if (!comment.length) {
-    return res.status(403).json({ error: "เขียนอะไรบางอย่างเพื่อแก้ไขความคิดเห็น" });
+    return res
+      .status(403)
+      .json({ error: "เขียนอะไรบางอย่างเพื่อแก้ไขความคิดเห็น" });
   }
 
   try {
@@ -542,10 +569,14 @@ router.patch("/update-comment", verifyJWT, async (req, res) => {
     );
 
     if (!updatedComment) {
-      return res.status(404).json({ error: "Comment not found or unauthorized" });
+      return res
+        .status(404)
+        .json({ error: "Comment not found or unauthorized" });
     }
 
-    return res.status(200).json({ message: "Comment updated successfully", updatedComment });
+    return res
+      .status(200)
+      .json({ message: "Comment updated successfully", updatedComment });
   } catch (error) {
     console.error("Error updating comment:", error);
     return res.status(500).json({ error: "Error updating comment." });
@@ -560,15 +591,22 @@ router.post("/delete-comment", verifyJWT, async (req, res) => {
     const session = await mongoose.startSession();
     session.startTransaction();
 
-    const comment = await Comment.findOne({ _id, commented_by: user_id }).session(session);
+    const comment = await Comment.findOne({
+      _id,
+      commented_by: user_id,
+    }).session(session);
 
     if (!comment) {
       await session.abortTransaction();
-      return res.status(404).json({ error: "Comment not found or unauthorized" });
+      return res
+        .status(404)
+        .json({ error: "Comment not found or unauthorized" });
     }
 
     const deleteCommentAndChildren = async (commentId) => {
-      const commentToDelete = await Comment.findById(commentId).session(session);
+      const commentToDelete = await Comment.findById(commentId).session(
+        session
+      );
       let count = 1;
 
       if (commentToDelete) {
@@ -586,10 +624,11 @@ router.post("/delete-comment", verifyJWT, async (req, res) => {
 
     await Blog.findOneAndUpdate(
       { _id: comment.blog_id },
-      { 
+      {
         $pull: { comments: comment._id },
-        $inc: { "activity.total_comments": -totalCommentsToDelete }
-      }).session(session);
+        $inc: { "activity.total_comments": -totalCommentsToDelete },
+      }
+    ).session(session);
 
     if (comment.isReply) {
       await Comment.findOneAndUpdate(
@@ -601,14 +640,15 @@ router.post("/delete-comment", verifyJWT, async (req, res) => {
     await session.commitTransaction();
     session.endSession();
 
-    return res.status(200).json({ message: "Comment and its replies deleted successfully",totalCommentsToDelete });
+    return res.status(200).json({
+      message: "Comment and its replies deleted successfully",
+      totalCommentsToDelete,
+    });
   } catch (error) {
     console.error("Error deleting comment:", error);
     return res.status(500).json({ error: "Error deleting comment." });
   }
 });
-
-
 
 router.post("/get-blog-comments", (req, res) => {
   let { blog_id, skip } = req.body;
@@ -666,15 +706,18 @@ router.post("/edit-tag", async (req, res) => {
   try {
     const result = await Blog.updateMany(
       { tags: old_tag },
-      { $set: { 
-          "tags.$[elem]": new_tag
-        } 
+      {
+        $set: {
+          "tags.$[elem]": new_tag,
+        },
       },
-      { arrayFilters: [{ "elem": old_tag }] }
+      { arrayFilters: [{ elem: old_tag }] }
     );
 
     if (result.nModified === 0) {
-      return res.status(404).json({ error: "No blogs found with the given tag" });
+      return res
+        .status(404)
+        .json({ error: "No blogs found with the given tag" });
     }
 
     return res.status(200).json({ message: "Tags updated successfully" });
@@ -769,16 +812,16 @@ router.post("/save-blog", verifyJWT, async (req, res) => {
       : { $pull: { saves: { user: user_id, blogId: _id } } };
 
     const updateUserSavePost = !issavedByUser
-    ? await User.findOneAndUpdate(
-      { _id: user_id }, 
-      { $addToSet: { saved_posts: _id } },
-      { new: true }
-    )
-    : await User.findOneAndUpdate(
-      { _id: user_id },  
-      { $pull: { saved_posts: _id } },
-      { new: true }
-    );
+      ? await User.findOneAndUpdate(
+          { _id: user_id },
+          { $addToSet: { saved_posts: _id } },
+          { new: true }
+        )
+      : await User.findOneAndUpdate(
+          { _id: user_id },
+          { $pull: { saved_posts: _id } },
+          { new: true }
+        );
 
     await Blog.findByIdAndUpdate(_id, updateSave);
 
@@ -824,11 +867,16 @@ router.get("/saved-blogsPost", verifyJWT, async (req, res) => {
   }
 });
 
-router.post("/user-written-blog", verifyJWT,async (req, res) => {
+router.post("/user-written-blog", verifyJWT, async (req, res) => {
   try {
     await BadWordScanner(req.body);
   } catch (err) {
-    return res.status(403).json({ error: `${err}`, details: err });
+    badword = err.toString().split(" ");
+    badword = badword[badword.length - 1];
+    return res.status(403).json({
+      error: `ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : ${badword}`,
+      details: `$ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : “${badword}”`,
+    });
   }
   let user_id = req.user;
   let { page, draft, query, deleteDocCount } = req.body;
@@ -853,11 +901,16 @@ router.post("/user-written-blog", verifyJWT,async (req, res) => {
     });
 });
 
-router.post("/user-written-blog-count", verifyJWT,async (req, res) => {
+router.post("/user-written-blog-count", verifyJWT, async (req, res) => {
   try {
     await BadWordScanner(req.body);
   } catch (err) {
-    return res.status(403).json({ error: `${err}`, details: err });
+    badword = err.toString().split(" ");
+    badword = badword[badword.length - 1];
+    return res.status(403).json({
+      error: `ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : ${badword}`,
+      details: `$ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : “${badword}”`,
+    });
   }
   let user_id = req.user;
   let { draft, query } = req.body;
@@ -878,15 +931,19 @@ router.delete("/deletetag", async (req, res) => {
 
   try {
     const result = await Blog.updateMany(
-      { tags: tag }, 
+      { tags: tag },
       { $pull: { tags: tag } }
     );
 
     if (result.nModified === 0) {
-      return res.status(404).json({ error: "No blogs found with the given tag" });
+      return res
+        .status(404)
+        .json({ error: "No blogs found with the given tag" });
     }
 
-    return res.status(200).json({ message: "Tag deleted successfully from blogs" });
+    return res
+      .status(200)
+      .json({ message: "Tag deleted successfully from blogs" });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -914,7 +971,7 @@ router.post("/delete-blog", verifyJWT, (req, res) => {
       Report.updateMany(
         { post: blog._id },
         { $set: { status: "Cancel", verified: true } }
-      ).then(()=>{
+      ).then(() => {
         console.log("ตรวจสอบ report แล้ว");
       });
 
@@ -926,4 +983,3 @@ router.post("/delete-blog", verifyJWT, (req, res) => {
 });
 
 module.exports = router;
-

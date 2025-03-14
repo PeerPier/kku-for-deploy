@@ -103,11 +103,16 @@ router.post("/update-profile-img", verifyJWT, (req, res) => {
 });
 
 router.post("/update-profile", verifyJWT, async (req, res) => {
-    try {
-      await BadWordScanner(req.body);
-    } catch (err) {
-      return res.status(403).json({ error: `${err}`, details: err });
-    }
+  try {
+    await BadWordScanner(req.body);
+  } catch (err) {
+    badword = err.toString().split(" ");
+    badword = badword[badword.length - 1];
+    return res.status(403).json({
+      error: `ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : “${badword}”`,
+      details: `$ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : “${badword}”`,
+    });
+  }
   let { username, bio, social_links } = req.body;
 
   let bioLimit = 150;

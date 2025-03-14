@@ -55,11 +55,16 @@ router.get("/search", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-    try {
-      await BadWordScanner(req.body);
-    } catch (err) {
-      return res.status(403).json({ error: `${err}`, details: err });
-    }
+  try {
+    await BadWordScanner(req.body);
+  } catch (err) {
+    badword = err.toString().split(" ");
+    badword = badword[badword.length - 1];
+    return res.status(403).json({
+      error: `ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : “${badword}”`,
+      details: `$ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : “${badword}”`,
+    });
+  }
   const { user, topic, detail, category, image, contentWithImages } = req.body;
 
   if (!user || !topic || !category || !image) {
@@ -145,14 +150,14 @@ router.post("/latest-blog", async (req, res) => {
   try {
     let { page } = req.body;
     const maxLimit = 5;
-    
+
     let userId = null;
     let currentUser = null;
 
     // Get user ID from token
     if (req.headers.authorization) {
       try {
-        const token = req.headers.authorization.split(' ')[1];
+        const token = req.headers.authorization.split(" ")[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         userId = decoded.id;
         if (userId) {
@@ -171,46 +176,48 @@ router.post("/latest-blog", async (req, res) => {
         draft: false,
         $or: [
           // Show all public posts
-          { visibility: 'public' },
-          
+          { visibility: "public" },
+
           // Show user's own posts
           { author: userId },
-          
+
           // Show followers-only posts ONLY from authors the user follows
           {
             $and: [
-              { visibility: 'followers' },
-              { author: { $in: currentUser.following } }
-            ]
-          }
-        ]
+              { visibility: "followers" },
+              { author: { $in: currentUser.following } },
+            ],
+          },
+        ],
       };
     } else {
       // For non-logged-in users, only show public posts
       query = {
         draft: false,
-        visibility: 'public'
+        visibility: "public",
       };
     }
 
     const blogs = await Post.find(query)
       .populate({
         path: "author",
-        select: "profile_picture username fullname followers"
+        select: "profile_picture username fullname followers",
       })
       .sort({ publishedAt: -1 })
-      .select("blog_id topic des banner activity tags publishedAt visibility author")
+      .select(
+        "blog_id topic des banner activity tags publishedAt visibility author"
+      )
       .skip((page - 1) * maxLimit)
       .limit(maxLimit);
 
     // Add user-specific information to each blog
-    const blogsWithInfo = blogs.map(blog => {
+    const blogsWithInfo = blogs.map((blog) => {
       const blogObj = blog.toObject();
-      
+
       // Basic flags
-      blogObj.isFollowersOnly = blog.visibility === 'followers';
+      blogObj.isFollowersOnly = blog.visibility === "followers";
       blogObj.isAuthor = userId ? blog.author._id.toString() === userId : false;
-      
+
       // Following status
       if (userId && currentUser) {
         blogObj.isFollowing = currentUser.following.includes(blog.author._id);
@@ -221,12 +228,11 @@ router.post("/latest-blog", async (req, res) => {
       return blogObj;
     });
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       blogs: blogsWithInfo,
       currentPage: page,
-      hasMore: blogs.length === maxLimit
+      hasMore: blogs.length === maxLimit,
     });
-
   } catch (err) {
     console.error("Error in latest-blog:", err);
     return res.status(500).json({ error: err.message });
@@ -271,7 +277,12 @@ router.patch("/:id", getPost, async (req, res) => {
   try {
     await BadWordScanner(req.body);
   } catch (err) {
-    return res.status(403).json({ error: `${err}`, details: err });
+    badword = err.toString().split(" ");
+    badword = badword[badword.length - 1];
+    return res.status(403).json({
+      error: `ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : “${badword}”`,
+      details: `$ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : “${badword}”`,
+    });
   }
   const { topic, detail, category, image, contentWithImages } = req.body;
 
@@ -304,7 +315,7 @@ router.delete("/:id", auth, getPost, async (req, res) => {
     await Like.deleteMany({ post: post._id });
 
     await Post.deleteOne({ _id: post._id });
-        
+
     await Report.updateMany(
       { post: post._id },
       { $set: { status: "Cancel", verified: true } }
@@ -434,7 +445,7 @@ router.post("/:id/likes", async (req, res) => {
           entityModel: "Post",
         });
         await notification.save();
-        NotiMailer(notification.user,userId,notification.type,postId);
+        NotiMailer(notification.user, userId, notification.type, postId);
       }
 
       res.status(200).json({ message: "Post liked", post, like: like._id });
@@ -450,15 +461,17 @@ router.post("/:id/likes", async (req, res) => {
 router.get("/:id/likes", async (req, res) => {
   try {
     const postId = req.params.id;
-    
+
     const likes = await Like.find({ post: postId })
-      .populate('user', 'fullname  username profile_picture')
+      .populate("user", "fullname  username profile_picture")
       .sort({ createdAt: -1 });
-    
+
     res.json(likes);
   } catch (error) {
-    console.error('Error fetching post likes:', error);
-    res.status(500).json({ message: 'Error fetching likes', error: error.message });
+    console.error("Error fetching post likes:", error);
+    res
+      .status(500)
+      .json({ message: "Error fetching likes", error: error.message });
   }
 });
 
@@ -491,7 +504,7 @@ router.post("/:id/comment", async (req, res) => {
       entityModel: "Post",
     });
     await notification.save();
-    NotiMailer(notification.user,author,notification.type,postId);
+    NotiMailer(notification.user, author, notification.type, postId);
 
     res.status(201).json({
       message: "Comment created successfully",
@@ -567,7 +580,12 @@ router.post("/:postId/comment/:commentId/reply", auth, async (req, res) => {
   try {
     await BadWordScanner(req.body);
   } catch (err) {
-    return res.status(403).json({ error: `${err}`, details: err });
+    badword = err.toString().split(" ");
+    badword = badword[badword.length - 1];
+    return res.status(403).json({
+      error: `ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : “${badword}”`,
+      details: `$ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : “${badword}”`,
+    });
   }
   const { postId, commentId } = req.params;
   const { content, author, replyTo } = req.body;
@@ -609,7 +627,7 @@ router.post("/:postId/comment/:commentId/reply", auth, async (req, res) => {
         entityModel: "Comment",
       });
       await notification.save();
-      NotiMailer(notification.user,author,notification.type,postId);
+      NotiMailer(notification.user, author, notification.type, postId);
     }
 
     res.status(201).json({
@@ -767,33 +785,38 @@ router.delete("/:postId/save", async (req, res) => {
   }
 });
 
-router.post("/blog-recommends",verifyJWT, async (req, res) => {
+router.post("/blog-recommends", verifyJWT, async (req, res) => {
   let user_id = req.user;
-  try {        
-    const rec = await recommend(user_id, 5); 
+  try {
+    const rec = await recommend(user_id, 5);
     const currentUser = await User.findById(user_id);
-    const postIds = rec; 
+    const postIds = rec;
 
-    const blogs = await Post.find({ _id: { $in: postIds } })  
+    const blogs = await Post.find({ _id: { $in: postIds } })
       .populate({
         path: "author",
-        select: "profile_picture username fullname followers"
+        select: "profile_picture username fullname followers",
       })
       .sort({ publishedAt: -1 })
-      .select("blog_id topic des banner activity tags publishedAt visibility author")
+      .select(
+        "blog_id topic des banner activity tags publishedAt visibility author"
+      )
       .lean();
 
-      const filteredBlogs = blogs.filter(blog => {
-        if (blog.visibility === "public") {
-          return true;
-        }
-        return blog.visibility === "followers" && blog.author.followers.includes(user_id);
-      });
-    
+    const filteredBlogs = blogs.filter((blog) => {
+      if (blog.visibility === "public") {
+        return true;
+      }
+      return (
+        blog.visibility === "followers" &&
+        blog.author.followers.includes(user_id)
+      );
+    });
+
     return res.status(200).json({ blogs: filteredBlogs });
   } catch (error) {
-    console.error('Error fetching users:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error fetching users:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 });
 

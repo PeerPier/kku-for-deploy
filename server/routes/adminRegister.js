@@ -9,7 +9,12 @@ router.post("/", async (req, res) => {
   try {
     await BadWordScanner(req.body);
   } catch (err) {
-    return res.status(403).json({ error: `${err}`, details: err });
+    badword = err.toString().split(" ");
+    badword = badword[badword.length - 1];
+    return res.status(403).json({
+      error: `ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : ${badword}`,
+      details: `$ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : “${badword}”`,
+    });
   }
   try {
     const existingAdmin = await Admin.findOne({
@@ -34,7 +39,7 @@ router.post("/", async (req, res) => {
     await newAdmin.save();
 
     // Successful registration
-    console.log(newAdmin)
+    console.log(newAdmin);
     res.status(201).json({ message: "Admin registered successfully" });
   } catch (error) {
     console.error("Error registering admin:", error.message);

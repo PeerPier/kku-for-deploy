@@ -69,11 +69,16 @@ router.get("/:id", async function (req, res, next) {
 });
 
 router.post("/edit-profile/update/:id", async (req, res) => {
-    try {
-      await BadWordScanner(req.body);
-    } catch (err) {
-      return res.status(403).json({ error: `${err}`, details: err });
-    }
+  try {
+    await BadWordScanner(req.body);
+  } catch (err) {
+    badword = err.toString().split(" ");
+    badword = badword[badword.length - 1];
+    return res.status(403).json({
+      error: `ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : “${badword}”`,
+      details: `$ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : “${badword}”`,
+    });
+  }
   const userId = req.params.id;
   const userData = req.body;
 
@@ -95,7 +100,12 @@ router.put("/edit-profile/update-info/:id", async (req, res) => {
   try {
     await BadWordScanner(req.body);
   } catch (err) {
-    return res.status(403).json({ error: `${err}`, details: err });
+    badword = err.toString().split(" ");
+    badword = badword[badword.length - 1];
+    return res.status(403).json({
+      error: `ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : “${badword}”`,
+      details: `$ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : “${badword}”`,
+    });
   }
   const userId = req.params.id;
   const { fullname, email } = req.body;
@@ -152,9 +162,12 @@ router.delete("/edit-profile/delete/:id", async function (req, res, next) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const isMatch = await bcrypt.compare(req.body.adminPassword, admin.password);
+    const isMatch = await bcrypt.compare(
+      req.body.adminPassword,
+      admin.password
+    );
 
-    if(isMatch){
+    if (isMatch) {
       await Post.deleteMany({ author: req.params.id });
       await Notification.deleteMany({ user: req.params.id });
       await Like.deleteMany({ user: req.params.id });
@@ -164,9 +177,9 @@ router.delete("/edit-profile/delete/:id", async function (req, res, next) {
       });
       await User.findByIdAndDelete(req.params.id);
       res.json({ message: "User deleted successfully" });
-    }else{
+    } else {
       throw new Error("Password is Incorrect");
-    };
+    }
   } catch (err) {
     console.error("Error deleting user and related data: ", err);
     res.status(500).json({ error: "Error deleting user and related data" });
@@ -182,7 +195,7 @@ router.delete("/user/delete/:id", async function (req, res, next) {
 
     const isMatch = await bcrypt.compare(req.body.password, user.password);
 
-    if(isMatch){
+    if (isMatch) {
       await Post.deleteMany({ author: req.params.id });
       await Notification.deleteMany({ user: req.params.id });
       await Like.deleteMany({ user: req.params.id });
@@ -192,9 +205,9 @@ router.delete("/user/delete/:id", async function (req, res, next) {
       });
       await User.findByIdAndDelete(req.params.id);
       res.json({ message: "User deleted successfully" });
-    }else{
+    } else {
       throw new Error("Password is Incorrect");
-    };
+    }
   } catch (err) {
     console.error("Error deleting user and related data: ", err);
     res.status(500).json({ error: "Error deleting user and related data" });
@@ -256,12 +269,11 @@ router.post("/notification-status", verifyJWT, async (req, res) => {
   }
 });
 
-
 // Toggle notification
 router.patch("/notification-enable", verifyJWT, async (req, res) => {
   try {
     const userId = req.user;
-    console.log(userId)
+    console.log(userId);
     const user = await User.findById(userId);
 
     if (!user) {
@@ -269,7 +281,7 @@ router.patch("/notification-enable", verifyJWT, async (req, res) => {
     }
 
     const newValue = !user.notification_enable;
-    console.log(user.notification_enable,newValue)
+    console.log(user.notification_enable, newValue);
     user.notification_enable = newValue;
     await user.save();
 
@@ -280,7 +292,7 @@ router.patch("/notification-enable", verifyJWT, async (req, res) => {
   }
 });
 
-// Toggle email notification 
+// Toggle email notification
 router.patch("/notification-email-enable", verifyJWT, async (req, res) => {
   try {
     const userId = req.user;
