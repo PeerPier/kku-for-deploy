@@ -14,17 +14,57 @@ import LikeModal from "../components/like-modal.component";
 import { MdReport } from "react-icons/md";
 import { addReport } from "../api/post";
 import { Button, Form, Modal } from "react-bootstrap";
+import styled from "styled-components";
+const StyledModal = styled(Modal)`
+  .modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+  }
+  .modal-header {
+    border-bottom: none;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .modal-footer {
+    border-top: none;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .btn-primary {
+    background-color: #ff7782;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    color: white;
+  }
+  .btn-cancel {
+    background-color: #6c757d;
+    color: #ffff;
+    border: none;
+    font-size: 16px;
+    padding: 10px 20px;
+  }
+  .form-check {
+    margin-bottom: 10px;
+  }
+`;
 
 const BlogInteraction = () => {
   const blogContext = useContext(BlogContext);
   const userContext = useContext(UserContext);
   const [showLikesModal, setShowLikesModal] = useState(false);
-  
+
   const userId = sessionStorage.getItem("userId");
   const [showReportModal, setShowReportModal] = useState(false);
-  const [showReportSubmittedModal, setShowReportSubmittedModal] = useState(false);
+  const [showReportSubmittedModal, setShowReportSubmittedModal] =
+    useState(false);
   const [reportPostId, setReportPostId] = useState<string | null>(null);
   const [reportReason, setReportReason] = useState("");
+
   const navigate = useNavigate();
 
   const handleShowReportModal = (id: string | undefined) => {
@@ -116,21 +156,20 @@ const BlogInteraction = () => {
         .catch((err) => {
           console.log(err);
         });
-        // ตรวจสอบสถานะการบันทึก (saved-blogs)
+      // ตรวจสอบสถานะการบันทึก (saved-blogs)
       axios
-      .get( `${process.env.REACT_APP_API_ENDPOINT}/create-blog/saved-blogs`,{
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-      })
-      .then(({ data: { savedBlogs } }) => {
-        const isSaved = savedBlogs.some((blog:any) => blog._id === _id);
-        setSaveByUser(isSaved); // อัปเดตสถานะการบันทึก
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
+        .get(`${process.env.REACT_APP_API_ENDPOINT}/create-blog/saved-blogs`, {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        })
+        .then(({ data: { savedBlogs } }) => {
+          const isSaved = savedBlogs.some((blog: any) => blog._id === _id);
+          setSaveByUser(isSaved); // อัปเดตสถานะการบันทึก
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   }, []);
 
@@ -232,7 +271,11 @@ const BlogInteraction = () => {
           >
             {islikedByUser ? <FaHeart /> : <FaRegHeart />}
           </button>
-          <button className="m-0" style={{ color: "#494949" }} onClick={()=> setShowLikesModal(true)}>
+          <button
+            className="m-0"
+            style={{ color: "#494949" }}
+            onClick={() => setShowLikesModal(true)}
+          >
             {total_likes}
           </button>
 
@@ -284,34 +327,33 @@ const BlogInteraction = () => {
           <div className="m-0 published-detail">
             {/* Only show the "Report Issue" button if the current user is not the author */}
             {userId !== author?._id && (
-              <button
-                className="cursor-pointer bg-dark text-white p-2 rounded"
+              <MdReport
+                style={{
+                  fontSize: "22px",
+                  marginTop: "2px",
+                  marginBottom: "2px",
+                  color:"black",
+                  cursor: "pointer", 
+                  transition: "0.2s", 
+                }}
                 onClick={() => handleShowReportModal(_id)}
-              >
-                <MdReport
-                  style={{
-                    fontSize: "22px",
-                    marginRight: "0.4rem",
-                    marginBottom: "2px",
-                  }}
-                />
-                รายงานปัญหา
-              </button>
+              />
             )}
           </div>
+
           <Link
             to={`https://twitter.com/intent/tweet?text=Read ${topic}&url=${window.location.href}`}
             style={{
               color: "inherit",
+              
             }}
           >
-            <FaTwitter className="text-twitter" />
+            <FaTwitter className="text-twitter" style={{fontSize: "20px", color:"black",}}/>
           </Link>
-         
         </div>
       </div>
       {/* Report Modal */}
-      <Modal
+      <StyledModal
         show={showReportModal}
         onHide={handleCloseReportModal}
         centered
@@ -322,74 +364,39 @@ const BlogInteraction = () => {
         <Modal.Body>
           <Form>
             <Form.Group>
-              <Form.Check
-                type="radio"
-                label="เนื้อหาไม่เหมาะสม"
-                name="reportReason"
-                value="เนื้อหาไม่เหมาะสม"
-                onChange={(e) => setReportReason(e.target.value)}
-                checked={reportReason === "เนื้อหาไม่เหมาะสม"}
-              />
-              <Form.Check
-                type="radio"
-                label="เนื้อหามีการกลั่นแกล้งหรือคุกคาม"
-                name="reportReason"
-                value="เนื้อหามีการกลั่นแกล้งหรือคุกคาม"
-                onChange={(e) => setReportReason(e.target.value)}
-                checked={
-                  reportReason === "เนื้อหามีการกลั่นแกล้งหรือคุกคาม"
-                }
-              />
-              <Form.Check
-                type="radio"
-                label="เนื้อหามีการขายหรือส่งเสริมสินค้าต้องห้าม"
-                name="reportReason"
-                value="เนื้อหามีการขายหรือส่งเสริมสินค้าต้องห้าม"
-                onChange={(e) => setReportReason(e.target.value)}
-                checked={
-                  reportReason ===
-                  "เนื้อหามีการขายหรือส่งเสริมสินค้าต้องห้าม"
-                }
-              />
-              <Form.Check
-                type="radio"
-                label="ข้อมูลเท็จ"
-                name="reportReason"
-                value="ข้อมูลเท็จ"
-                onChange={(e) => setReportReason(e.target.value)}
-                checked={reportReason === "ข้อมูลเท็จ"}
-              />
-              <Form.Check
-                type="radio"
-                label="การแอบอ้างบุคคลอื่น"
-                name="reportReason"
-                value="การแอบอ้างบุคคลอื่น"
-                onChange={(e) => setReportReason(e.target.value)}
-                checked={reportReason === "การแอบอ้างบุคคลอื่น"}
-              />
-              <Form.Check
-                type="radio"
-                label="สแปม"
-                name="reportReason"
-                value="สแปม"
-                onChange={(e) => setReportReason(e.target.value)}
-                checked={reportReason === "สแปม"}
-              />
+              {[
+                "เนื้อหาไม่เหมาะสม",
+                "เนื้อหามีการกลั่นแกล้งหรือคุกคาม",
+                "เนื้อหามีการขายหรือส่งเสริมสินค้าต้องห้าม",
+                "ข้อมูลเท็จ",
+                "การแอบอ้างบุคคลอื่น",
+                "สแปม",
+              ].map((reason, index) => (
+                <Form.Check
+                  key={index}
+                  type="radio"
+                  label={reason}
+                  name="reportReason"
+                  value={reason}
+                  onChange={(e) => setReportReason(e.target.value)}
+                  checked={reportReason === reason}
+                />
+              ))}
             </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseReportModal}>
+          <Button className="btn-cancel" onClick={handleCloseReportModal}>
             ยกเลิก
           </Button>
-          <Button variant="danger" onClick={handleReportPost}>
+          <Button className="btn-primary" onClick={handleReportPost}>
             รายงานปัญหา
           </Button>
         </Modal.Footer>
-      </Modal>
+      </StyledModal>
 
       {/* Report Submitted Modal */}
-      <Modal
+      <StyledModal
         show={showReportSubmittedModal}
         onHide={() => setShowReportSubmittedModal(false)}
         centered
@@ -397,25 +404,26 @@ const BlogInteraction = () => {
         <Modal.Header closeButton>
           <Modal.Title>รายงานปัญหาสำเร็จ</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          รายงานปัญหาของคุณได้รับการส่งเรียบร้อยแล้ว
-        </Modal.Body>
+        <Modal.Body>รายงานปัญหาของคุณได้รับการส่งเรียบร้อยแล้ว</Modal.Body>
         <Modal.Footer>
           <Button
-            variant="secondary"
+            className="btn-cancel"
             onClick={() => setShowReportSubmittedModal(false)}
           >
             ปิด
           </Button>
-          <Button variant="primary" onClick={() => navigate("/dashboard/reportcheck")}>
+          <Button
+            className="btn-primary"
+            onClick={() => navigate("/dashboard/reportcheck")}
+          >
             ดูการรายงาน
           </Button>
         </Modal.Footer>
-      </Modal>
+      </StyledModal>
 
       <LikeModal
         isOpen={showLikesModal}
-        onClose={()=>setShowLikesModal(false)}
+        onClose={() => setShowLikesModal(false)}
         postId={_id || ""}
         accessToken={access_token || ""}
       />

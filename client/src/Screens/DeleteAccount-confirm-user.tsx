@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import styled from "styled-components"; // ใช้ Styled Components
 
 const DeleteAccountModalUser: React.FC<{
   userId: string | null;
@@ -15,7 +15,6 @@ const DeleteAccountModalUser: React.FC<{
   const API_BASE_URL =
     process.env.REACT_APP_API_ENDPOINT ||
     "https://kku-blog-server-ak2l.onrender.com";
-  const navigate = useNavigate();
 
   const handleDeleteAccount = async () => {
     try {
@@ -41,12 +40,12 @@ const DeleteAccountModalUser: React.FC<{
   };
 
   return (
-    <Modal show={show} onHide={onClose} centered>
+    <CustomModal show={show} onHide={onClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>ลบบัญชีผู้ใช้</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>
+        <p className="warning-text">
           คุณแน่ใจหรือไม่ที่จะลบบัญชีของคุณ? การกระทำนี้ไม่สามารถยกเลิกได้.
         </p>
         <Form>
@@ -57,6 +56,7 @@ const DeleteAccountModalUser: React.FC<{
               placeholder="กรอกรหัสผ่านของคุณ"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              className="password-input"
             />
           </Form.Group>
 
@@ -65,15 +65,65 @@ const DeleteAccountModalUser: React.FC<{
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onClose}>
+        <Button className="btn-cancel" onClick={onClose}>
           ยกเลิก
         </Button>
-        <Button variant="danger" onClick={handleDeleteAccount}>
+        <Button className="btn-danger" onClick={handleDeleteAccount}>
           ลบบัญชี
         </Button>
       </Modal.Footer>
-    </Modal>
+    </CustomModal>
   );
 };
 
 export default DeleteAccountModalUser;
+
+// 🔥 ใช้ Styled Components เพื่อแยก CSS ออกไป 🎨
+const CustomModal = styled(Modal)`
+  .modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+  }
+
+  .modal-header {
+    border-bottom: none;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .modal-footer {
+    border-top: none;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .btn-cancel {
+    color: #fff;
+    background: #6c757d;
+    border: none;
+    font-size: 16px;
+    padding: 10px 20px;
+  }
+
+  .btn-danger {
+    background-color: #d9534f;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    color: white;
+  }
+
+  .warning-text {
+    color: #6c757d;
+    font-weight: bold;
+  }
+
+  .password-input {
+    margin-top: 5px;
+    border-radius: 6px;
+  }
+`;
