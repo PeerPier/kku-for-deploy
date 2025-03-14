@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "../misc/helpcentre.css";
 import { fetchQuestionsAPI } from "../api/manageQAPI";
-
+import { useNavigate } from "react-router-dom";
+import { IconButton } from "@mui/material";
+import { IoChevronBackOutline } from "react-icons/io5";
 const HelpCentre = () => {
   const [questions, setQuestions] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
   
 
@@ -35,6 +38,12 @@ const HelpCentre = () => {
 
   return (
     <div className="help-centre">
+       <IconButton
+    onClick={() => navigate(-1)}
+    sx={{ position: "absolute", top: "10px", left: "10px" ,margin:"100px"}}
+  >
+    <IoChevronBackOutline />
+  </IconButton>
       <header className="header">
         <h1>คำถามที่พบบ่อย</h1>
         <h2>เราสามารถช่วยคุณได้อย่างไรบ้าง?</h2>

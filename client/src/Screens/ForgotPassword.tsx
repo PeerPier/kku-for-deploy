@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { Button, Container, Typography, Box, Alert, AlertProps } from "@mui/material";
+import { Button, Container, Typography, Box, Alert, AlertProps, IconButton } from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { IoChevronBackOutline } from "react-icons/io5";
 import "react-toastify/dist/ReactToastify.css";
 import "../misc/reset-password.css";
 import InputBox from "../components/input.component";
@@ -8,6 +10,7 @@ import InputBox from "../components/input.component";
 type CustomAlertProps = AlertProps & { show: boolean; message: string };
 
 const ForgotPassword = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [alert, setAlert] = useState<CustomAlertProps>({
     show: false,
@@ -54,6 +57,12 @@ const ForgotPassword = () => {
         
       }}
     >
+      <IconButton
+    onClick={() => navigate(-1)}
+    sx={{ position: "absolute", top: "10px", left: "10px" ,margin:"50px"}}
+  >
+    <IoChevronBackOutline />
+  </IconButton>
       <ToastContainer />
       <Box
         sx={{
