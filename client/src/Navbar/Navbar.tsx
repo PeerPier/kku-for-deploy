@@ -17,7 +17,8 @@ function Navbar() {
   const navigate = useNavigate();
   const {
     userAuth: { username },
-    setUserAuth,NotificationShow,
+    setUserAuth,
+    NotificationShow,
   } = useContext(UserContext);
   const userId = sessionStorage.getItem("userId");
 
@@ -33,7 +34,10 @@ function Navbar() {
           );
 
           if (response.status === 200) {
-            let dataFilter = response.data.filter((n:any) => n.user && n.user._id !== userId || n.type == 'delete');
+            let dataFilter = response.data.filter(
+              (n: any) =>
+                (n.user && n.user._id !== userId) || n.type == "delete"
+            );
             // console.log("Debug", dataFilter);
             setNotifications(dataFilter);
           } else {
@@ -137,6 +141,39 @@ function Navbar() {
     }, 200);
   };
 
+  const formatTimeAgo = (timestamp: string) => {
+    const now = new Date();
+    const createdAt = new Date(timestamp);
+    const diffInSeconds = Math.floor(
+      (now.getTime() - createdAt.getTime()) / 1000
+    );
+
+    if (diffInSeconds < 60) {
+      return `ไม่กี่วินาทีที่แล้ว`;
+    }
+
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) {
+      return `${diffInMinutes} นาทีที่แล้ว`;
+    }
+
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) {
+      return `${diffInHours} ชั่วโมงที่แล้ว`;
+    }
+
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays <= 3) {
+      return `${diffInDays} วันที่แล้ว`;
+    }
+
+    return createdAt.toLocaleDateString("th-TH", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  };
+
   return (
     <nav className="navbar-navbar">
       <Link to="/" className="logo-link">
@@ -157,24 +194,24 @@ function Navbar() {
 
       <div className="toggle-search">
         <div className="toggle-search-2">
-        <button
-          onClick={() => setSearchBoxVisibility((currentval) => !currentval)} className="search-toggle"
-        >
-          <IoIosSearch className="toggle-icon" />
-        </button>
+          <button
+            onClick={() => setSearchBoxVisibility((currentval) => !currentval)}
+            className="search-toggle"
+          >
+            <IoIosSearch className="toggle-icon" />
+          </button>
         </div>
         {access_token ? (
           <>
-        <Link
-          to="/editor"
-          className="d-none d-md-flex align-items-center gap-2 md:flex gap-2 link"
-          style={{ textDecoration: "none" }}
-        >
-          <LuFileEdit />
-          <p className="m-0">เขียน</p>
-        </Link>
-        
-          
+            <Link
+              to="/editor"
+              className="d-none d-md-flex align-items-center gap-2 md:flex gap-2 link"
+              style={{ textDecoration: "none" }}
+            >
+              <LuFileEdit />
+              <p className="m-0">เขียน</p>
+            </Link>
+
             <Notifications />
 
             {/* <Link to="/dashboard/notification"> */}
@@ -203,7 +240,7 @@ function Navbar() {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      opacity: NotificationShow?1:0
+                      opacity: NotificationShow ? 1 : 0,
                     }}
                   >
                     {countUnseenNotifications(notifications)}
@@ -213,87 +250,75 @@ function Navbar() {
 
               {userNotiPanel ? (
                 <div
-                className="notifications-container"
+                  className="notifications-container"
                   style={{
-                    padding: "1rem",
-                    position: "absolute",
-                    width: "25rem",
-                    right: "0",
-                    backgroundColor: "#ffffff",
-                    borderRadius: "10px",
-                    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-                    marginTop: "1rem",
-                    zIndex: 1000,
-                    maxHeight: "500px", // ความสูงสูงสุด
-                    overflowY: "auto", // เปิด scroll
+                    maxHeight: notifications.length > 5 ? "400px" : "auto", // ถ้าเกิน 5 รายการ ให้แสดง Scroll Bar
+                    overflowY: notifications.length > 5 ? "auto" : "visible",
+                    scrollbarWidth: "thin", // Firefox
+                    scrollbarColor: "#B0B0B0 transparent"
                   }}
                 >
-                  <h4 style={{marginLeft:"0.5rem"}}>การแจ้งเตือน</h4>
+                  <h4>การแจ้งเตือน</h4>
+
                   {notifications.length === 0 ? (
-                    <p>ไม่มีการแจ้งเตือน</p>
+                    <p style={{ textAlign: "center", padding: "10px" }}>
+                      ไม่มีการแจ้งเตือน
+                    </p>
                   ) : (
-                    notifications.map((notification, idx) => (
-                      <div
-                        key={idx}
-                        style={{
-                          backgroundColor: notification.seen
-                            ? "transparent"
-                            : "#eaeaea",
-                          display: "flex",
-                          alignItems: "center",
-                          padding: "10px",
-                          borderRadius: "8px",
-                          marginBottom: "0.5rem",
-                          transition: "background-color 200ms ease",
-                          cursor: "pointer",
-                        }}
-                        onClick={(e) => {
-                          const entityId =
-                            notification.blog?.blog_id || notification._id;
-                          handleNotificationClick(
-                            e,
-                            notification.type,
-                            notification._id,
-                            entityId,
-                            notification.user ? notification.user._id : null
-                          );
-                        }}
-                      >
-                        <img
-                          src={
-                            notification.type != "delete"
-                              ? notification.user.profile_picture
-                              : "https://www.svgrepo.com/show/116240/wrench-and-hammer-tools-thin-outline-symbol-inside-a-circle.svg"
-                          }
-                          alt={notification.type != "delete" ? "User" : "Admin"}
-                          className="rounded-circle"
-                          style={{
-                            height: "40px",
-                            width: "40px",
-                            objectFit: "cover",
-                            marginRight: "10px",
+                    [...notifications]
+                      .sort(
+                        (a, b) =>
+                          new Date(b.createdAt).getTime() -
+                          new Date(a.createdAt).getTime()
+                      ) // เรียงจากล่าสุด -> เก่าสุด
+                      .map((notification, idx) => (
+                        <div
+                          key={idx}
+                          className={`notification-item ${
+                            !notification.seen ? "unread" : ""
+                          }`}
+                          onClick={(e) => {
+                            const entityId =
+                              notification.blog?.blog_id || notification._id;
+                            handleNotificationClick(
+                              e,
+                              notification.type,
+                              notification._id,
+                              entityId,
+                              notification.user ? notification.user._id : null
+                            );
                           }}
-                        />
-                        <div style={{ flexGrow: 1 }}>
-                          <p style={{ margin: 0, fontWeight: 500 }}>
-                            {notification.type === "delete"
-                              ? `บล็อกของคุณได้รับการตรวจสอบและถูกลบเนื่องจาก ${notification.reason}`
-                              : notification.type === "follow"
-                              ? `${notification.user.fullname} เริ่มติดตามคุณ`
-                              : notification.type === "like"
-                              ? `${notification.user.fullname} กดถูกใจบล็อกของคุณ`
-                              : notification.type === "comment"
-                              ? `${notification.user.fullname} แสดงความคิดเห็นบนบล็อกของคุณ`
-                              : notification.type === "reply"
-                              ? `${notification.user.fullname} ตอบกลับการแสดงความคิดเห็นของคุณ`
-                              : `${notification.user.fullname} commented on your blog`}
-                          </p>
-                          <small style={{ color: "#888" }}>
-                            {new Date(notification.createdAt).toLocaleString()}
-                          </small>
+                        >
+                          <img
+                            src={
+                              notification.type !== "delete"
+                                ? notification.user.profile_picture
+                                : "https://www.svgrepo.com/show/116240/wrench-and-hammer-tools-thin-outline-symbol-inside-a-circle.svg"
+                            }
+                            alt={
+                              notification.type !== "delete" ? "User" : "Admin"
+                            }
+                          />
+                          <div className="notification-text">
+                            <p>
+                              {notification.type === "delete"
+                                ? `บล็อกของคุณถูกลบเนื่องจาก ${notification.reason}`
+                                : notification.type === "follow"
+                                ? `${notification.user.fullname} เริ่มติดตามคุณ`
+                                : notification.type === "like"
+                                ? `${notification.user.fullname} กดถูกใจบล็อกของคุณ`
+                                : notification.type === "comment"
+                                ? `${notification.user.fullname} แสดงความคิดเห็นบนบล็อกของคุณ`
+                                : notification.type === "reply"
+                                ? `${notification.user.fullname} ตอบกลับความคิดเห็นของคุณ`
+                                : `${notification.user.fullname} commented on your blog`}
+                            </p>
+                            <small style={{ marginTop: "2px" }}>
+                              {formatTimeAgo(notification.createdAt)}
+                            </small>
+                          </div>
                         </div>
-                      </div>
-                    ))
+                      ))
                   )}
                 </div>
               ) : (
