@@ -8,7 +8,7 @@ const logoPath = path.join(__dirname, './assets/logo-head.jpg');
 
 const NotiMailer = async (targetId,actionById,userAction,actionId,reason) => {
     // const capUserAction = userAction.charAt(0).toUpperCase() + userAction.slice(1)
-    const capUserAction = userAction=='like'?'ถูกใจ':userAction=='comment'?'แสดงความคิดเห็น':userAction=='reply'?'ตอบกลับ':userAction=='follow'?'ติดตาม':userAction=='delete'?'ระบบ':null;
+    const capUserAction = userAction=='like'?'การกดถูกใจ':userAction=='comment'?'การแสดงความคิดเห็น':userAction=='reply'?'การตอบกลับ':userAction=='follow'?'การติดตาม':userAction=='delete'?'จากผู้ดูแลระบบ':null;
 
     const findTargetUser = await User.findById(targetId);
     const findActionUser = actionById=='System'?'System':await User.findById(actionById);
@@ -37,7 +37,7 @@ const NotiMailer = async (targetId,actionById,userAction,actionId,reason) => {
         const mailOptions = {
             from: process.env.MAIL_USER,
             to: to,
-            subject: `[KKU Blogging] แจ้งเตือน ${capUserAction}`,
+            subject: `[KKU Blogging] แจ้งเตือน${capUserAction}`,
             html: Template(toName,capUserAction,actionByName,actionTopic,actionDirect),
             attachments: [
                 {
