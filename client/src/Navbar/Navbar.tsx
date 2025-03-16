@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import "./Navbar.css";
 import logoKKU from "../pic/logo-head.jpg";
 import { Link, useNavigate } from "react-router-dom";
@@ -14,6 +14,7 @@ function Navbar() {
   const [searchBoxVisibility, setSearchBoxVisibility] = useState(false);
   const [userNavPanel, setUserNavPanel] = useState(false);
   const [userNotiPanel, setUserNotiPanel] = useState(false);
+  const [activeButton, setActiveButton] = useState("ทั้งหมด");
   const navigate = useNavigate();
   const {
     userAuth: { username },
@@ -24,6 +25,8 @@ function Navbar() {
 
   const [notifications, setNotifications] = useState<any[]>([]);
   const API_BASE_URL = process.env.REACT_APP_API_ENDPOINT;
+
+  const notiPanelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -53,6 +56,19 @@ function Navbar() {
     const intervalId = setInterval(fetchNotifications, 5000);
     return () => clearInterval(intervalId);
   }, [userId]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (notiPanelRef.current && !notiPanelRef.current.contains(event.target as Node)) {
+        setUserNotiPanel(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [notiPanelRef]);
 
   const handleNotificationClick = async (
     e: React.MouseEvent<HTMLDivElement>,
@@ -174,6 +190,13 @@ function Navbar() {
     });
   };
 
+  const filteredNotifications = notifications.filter((notification) => {
+    if (activeButton === "ทั้งหมด") return true;
+    if (activeButton === "อ่านแล้ว") return notification.seen;
+    if (activeButton === "ยังไม่อ่าน") return !notification.seen;
+    return true;
+  });
+
   return (
     <nav className="navbar-navbar">
       <Link to="/" className="logo-link">
@@ -218,10 +241,9 @@ function Navbar() {
             <div
               className="relative"
               style={{ position: "relative" }}
-              onClick={handleNotiPanel}
-              onBlur={handleNotiBlur}
+              ref={notiPanelRef}
             >
-              <button className="button-noti">
+              <button onClick={handleNotiPanel} className="button-noti">
                 <IoNotificationsOutline
                   className="d-block"
                   style={{ fontSize: "1.5rem" }}
@@ -252,25 +274,45 @@ function Navbar() {
                 <div
                   className="notifications-container"
                   style={{
-                    maxHeight: notifications.length > 5 ? "400px" : "auto", // ถ้าเกิน 5 รายการ ให้แสดง Scroll Bar
+                    maxHeight: notifications.length > 5 ? "400px" : "auto",
                     overflowY: notifications.length > 5 ? "auto" : "visible",
-                    scrollbarWidth: "thin", // Firefox
-                    scrollbarColor: "#B0B0B0 transparent"
+                    scrollbarWidth: "thin",
+                    scrollbarColor: "#B0B0B0 transparent",
                   }}
                 >
-                  <h4 style={{margin:"3%"}}>การแจ้งเตือน</h4>
-
-                  {notifications.length === 0 ? (
+                  <h4 style={{ margin: "3%" }}>การแจ้งเตือน</h4>
+                  <div className="notifications-categories">
+                    <button
+                      className={activeButton === "ทั้งหมด" ? "active" : ""}
+                      onClick={() => setActiveButton("ทั้งหมด")}
+                    >
+                      ทั้งหมด
+                    </button>
+                    <button
+                      className={activeButton === "อ่านแล้ว" ? "active" : ""}
+                      onClick={() => setActiveButton("อ่านแล้ว")}
+                    >
+                      อ่านแล้ว
+                    </button>
+                    <button
+                      className={activeButton === "ยังไม่อ่าน" ? "active" : ""}
+                      onClick={() => setActiveButton("ยังไม่อ่าน")}
+                    >
+                      ยังไม่อ่าน
+                    </button>
+                  </div>
+                  <hr style={{ opacity: 0.1, marginTop: "0.3rem" }} />
+                  {filteredNotifications.length === 0 ? (
                     <p style={{ textAlign: "center", padding: "10px" }}>
                       ไม่มีการแจ้งเตือน
                     </p>
                   ) : (
-                    [...notifications]
+                    [...filteredNotifications]
                       .sort(
                         (a, b) =>
                           new Date(b.createdAt).getTime() -
                           new Date(a.createdAt).getTime()
-                      ) // เรียงจากล่าสุด -> เก่าสุด
+                      )
                       .map((notification, idx) => (
                         <div
                           key={idx}
@@ -287,6 +329,7 @@ function Navbar() {
                               entityId,
                               notification.user ? notification.user._id : null
                             );
+                            handleNotiPanel();
                           }}
                         >
                           <img

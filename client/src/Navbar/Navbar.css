@@ -275,6 +275,31 @@
   transition: opacity 0.3s ease-in-out;
 }
 
+.notifications-categories {
+  display: flex;
+  position: relative;
+  gap: 20px;
+  padding: 0 .4rem;
+}
+.notifications-categories button {
+  position: relative;
+  text-align: center;
+  font-weight: bold;
+  padding: 1rem 0;
+  width: 100%;
+}
+.notifications-categories button.active {
+  color: #c4b4ec;
+}
+.notifications-categories button.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 100%;
+  background: #c4b4ec;
+}
 /* 📌 Individual Notification */
 .notification-item {
   display: flex;
