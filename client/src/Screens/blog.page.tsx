@@ -24,6 +24,7 @@ import CommentsContainer, {
   fetchComments,
 } from "../components/comments.components";
 import toast from "react-hot-toast";
+import { BsDot } from "react-icons/bs";
 
 interface BlogContextType {
   blog: Partial<Post>;
@@ -43,6 +44,7 @@ export const BlogState: Partial<Post> = {
   blog_id: "",
   topic: "",
   des: "",
+  tags: "",
   content: [
     {
       blocks: [],
@@ -86,7 +88,11 @@ const BlogPage = () => {
   const fullname = author?.fullname || "Unknown Author";
   const author_username = author?.username || "Unknown Username";
   const profile_picture = author?.profile_picture || "";
-
+  const tagList = Array.isArray(blog.tags)
+    ? blog.tags
+    : blog.tags
+    ? [blog.tags]
+    : [];
 
   const getAuthHeaders = () => {
     const userStr = sessionStorage.getItem("user");
@@ -239,40 +245,8 @@ const BlogPage = () => {
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex justify-content-start align-items-center">
                   <h2 className="mt-4 fs-3 mb-0">{topic}</h2>
-                  <p className="mb-0 ms-3 mt-4 ">
-                    {publishedAt
-                      ? `${getDay(publishedAt)} ${
-                          new Date(publishedAt).getFullYear() + 543
-                        } เวลา ${new Date(publishedAt).toLocaleTimeString(
-                          "th-TH",
-                          {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          }
-                        )}`
-                      : "ไม่ทราบวันที่"}
-                  </p>
+                  <p className="mb-0 ms-3 mt-4 "></p>
                 </div>
-
-                <p className="mb-0 ms-3 mt-4 ">
-                  <FaEye style={{ fontSize: "20px", marginRight: "0.1rem" }} />{" "}
-                  {blog?.views || 0}
-                  {visibility === "followers" ? (
-                    <>
-                      <FaUserAlt 
-                        style={{ marginRight: "0.2rem", marginLeft: "0.5rem" }}
-                      />
-                      ผู้ติดตาม
-                    </>
-                  ) : (
-                    <>
-                      <FaEarthAmericas
-                        style={{ marginRight: "0.2rem", marginLeft: "0.5rem" }}
-                      />
-                      สาธารณะ
-                    </>
-                  )}
-                </p>
               </div>
 
               <div className="detail-user d-flex justify-content-between my-4">
@@ -294,6 +268,46 @@ const BlogPage = () => {
                     >
                       {author_username}
                     </Link>
+                    <BsDot style={{ marginRight: "5px" }} />
+                    {publishedAt
+                      ? `${getDay(publishedAt)} ${
+                          new Date(publishedAt).getFullYear() + 543
+                        } เวลา ${new Date(publishedAt).toLocaleTimeString(
+                          "th-TH",
+                          {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }
+                        )}`
+                      : "ไม่ทราบวันที่"}
+                  </p>
+                  <p className="mb-0 ms-3 mt-4 ">
+                    <BsDot style={{ marginRight: "5px" }} />
+                    <FaEye
+                      style={{ fontSize: "20px", marginRight: "0.1rem" }}
+                    />{" "}
+                    {blog?.views || 0}
+                    {visibility === "followers" ? (
+                      <>
+                        <FaUserAlt
+                          style={{
+                            marginRight: "0.2rem",
+                            marginLeft: "0.5rem",
+                          }}
+                        />
+                        ผู้ติดตาม
+                      </>
+                    ) : (
+                      <>
+                        <FaEarthAmericas
+                          style={{
+                            marginRight: "0.2rem",
+                            marginLeft: "0.5rem",
+                          }}
+                        />
+                        สาธารณะ
+                      </>
+                    )}
                   </p>
                 </div>
               </div>
@@ -302,19 +316,25 @@ const BlogPage = () => {
             <div className="my-4 blog-page-content">
               {content &&
               Array.isArray(content[0].blocks) &&
-              content[0].blocks.length > 0 ? (
-                content[0].blocks.map((block, i) => (
-                  <div key={i} className="my-2 md:my-8">
-                    <BlogContent block={block} />
-                  </div>
-                ))
-              ) : (
-                // <p>No content available</p>
-                null
-              )}
+              content[0].blocks.length > 0
+                ? content[0].blocks.map((block, i) => (
+                    <div key={i} className="my-2 md:my-8">
+                      <BlogContent block={block} />
+                    </div>
+                  ))
+                : // <p>No content available</p>
+                  null}
             </div>
-
+            <div className="d-flex gap-3 mt-3 tags-description">
+              {tagList.map((tag: string, index: number) => (
+                <span key={index} className="btn-light">
+                  {tag}
+                </span>
+              ))}
+            </div>
             <BlogInteraction />
+            
+
             <CommentsContainer />
 
             {similarBlogs !== null && similarBlogs.length ? (

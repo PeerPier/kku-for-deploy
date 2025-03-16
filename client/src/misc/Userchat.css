@@ -257,3 +257,14 @@
   background-color: #f0e6e6;
   border-radius: 10px;
 }
+
+.no-notifications {
+  display: flex;
+  justify-content: center;  /* จัดตำแหน่งในแนวนอน */
+  align-items: center;      /* จัดตำแหน่งในแนวตั้ง */
+  height: 100%;             /* ใช้ความสูงเต็ม */
+  text-align: center;       /* จัดข้อความให้อยู่กลาง */
+  font-size: 16px;
+  color: #888;
+  padding: 20px;
+}

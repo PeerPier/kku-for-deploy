@@ -156,23 +156,34 @@ export const SaveBlog = ({ blog}:any) => {
   }, [access_token]); // เพิ่ม access_token เพื่อการโหลดใหม่เมื่อ access_token เปลี่ยนแปลง
 
   return (
-    <div className="manage-blogpage">
+    <div className="">
       {savedBlogs.map((savedBlog) => (
-        <div key={savedBlog._id} className="manage-blogdetail">
+        <div key={savedBlog._id} className="manage-blogpage">
           <img
-            src={savedBlog.banner || banner} // ใช้ banner จาก savedBlog ถ้ามี
-            alt={savedBlog.topic || topic} // ใช้ topic จาก savedBlog ถ้ามี
+            src={savedBlog.banner || banner}
+            alt={savedBlog.topic || topic}
             className="img-manageblog"
           />
           <div>
             <Link
-              to={`/blog/${savedBlog.blog_id}`} // ใช้ _id แทน blog_id ที่มาจาก props
-              className="blog-title mb-4 manage-link"
+              to={`/blog/${savedBlog._id}`}
+              className="blog-title manage-link"
             >
-              {savedBlog.topic || topic}
+              <h1 className="blog-title mt-3">{savedBlog.topic || topic}</h1>
             </Link>
             <p className="clamp-1">
-              เผยแพร่เมื่อ: {getDay(savedBlog.publishedAt || publishedAt)}
+              เผยแพร่เมื่อ:{" "}
+              {publishedAt
+                ? `${getDay(savedBlog.publishedAt)} ${
+                    new Date(savedBlog.publishedAt).getFullYear() + 543
+                  } เวลา ${new Date(savedBlog.publishedAt).toLocaleTimeString(
+                    "th-TH",
+                    {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    }
+                  )}`
+                : "ไม่ทราบวันที่"}
             </p>
             <p>{savedBlog.des || ""}</p>
           </div>
@@ -182,7 +193,7 @@ export const SaveBlog = ({ blog}:any) => {
   );
 };
 
-const deleteBlog = (blog:any, access_token:any, target:any) => {
+const deleteBlog = (blog: any, access_token: any, target: any) => {
   let { index, blog_id, setStateFunc } = blog;
 
   target.setAttribute("disabled", true);
@@ -200,7 +211,7 @@ const deleteBlog = (blog:any, access_token:any, target:any) => {
     .then(({ data }) => {
       target.removeAttribute("disabled");
 
-      setStateFunc((preVal:any) => {
+      setStateFunc((preVal: any) => {
         let { deleteDocCount, totalDocs, result } = preVal;
 
         result.splice(index, 1);

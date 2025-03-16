@@ -15,7 +15,7 @@ img {
 
 .Banner-div {
   position: relative;
-  aspect-ratio: 16 / 9; /* aspect-video แสดงวิดีโอแบบ 16:9 */
+  aspect-ratio: 16 / 9;
   background-color: white;
   border: 4px solid #f0f0f0;
 }
@@ -43,7 +43,6 @@ img {
   opacity: 0.4;
 }
 
-/* สำหรับ placeholder */
 .custom-textarea::placeholder {
   opacity: 0.4;
 }
@@ -61,6 +60,7 @@ img {
 .descript-blogpost {
   margin-top: 0.75rem;
   margin-bottom: 0.75rem;
+  margin-right: 0.75rem;
   font-size: 1rem;
   line-height: 1.75rem;
   overflow: hidden;
@@ -140,6 +140,75 @@ img {
 
 .not-liked {
   background-color: #f0f0f0;
+}
+
+.tag-post-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.blog-card-wrapper {
+  transition: transform 0.3s ease-in-out;
+}
+
+/* .blog-card-wrapper:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+} */
+
+.tag-post-container .d-flex span {
+  color: #495057;
+  font-weight: 500;
+}
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+.loader-message {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #6c757d;
+}
+
+.tag-header {
+  background-color: #fafafa;
+  padding: 18px 30px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.tag-header:hover {
+  background-color: #e0e0e0;
+  border-color: #b0b0b0;
+  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.tag-icon {
+  color: #9e9e9e;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.tag-header:hover .tag-icon {
+  color: #616161;
+  transform: scale(1.2);
+}
+
+.tag-text {
+  color: #616161;
+  font-weight: 600;
+  font-size: 1.5rem;
+  transition: color 0.3s ease;
+}
+
+.tag-header:hover .tag-text {
+  color: #424242;
 }
 
 @media (min-width: 1024px) {

@@ -258,7 +258,7 @@ function Navbar() {
                     scrollbarColor: "#B0B0B0 transparent"
                   }}
                 >
-                  <h4>การแจ้งเตือน</h4>
+                  <h4 style={{margin:"3%"}}>การแจ้งเตือน</h4>
 
                   {notifications.length === 0 ? (
                     <p style={{ textAlign: "center", padding: "10px" }}>

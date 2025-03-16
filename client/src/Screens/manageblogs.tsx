@@ -205,21 +205,14 @@ const ManageBlogs = () => {
           <Loader />
         ) : save.result.length ? (
           <>
-            {save.result.map((blog, index) => {
-              return (
-                <AnimationWrapper
-                  key={blog.blog_id} // Use blog_id as the key
-                  transition={{ delay: index * 0.04 }}
-                >
-                  <SaveBlog blog={{ ...blog, setStateFunc: setSave }} />
-                </AnimationWrapper>
-              );
-            })}
+            {save.result.map((blog, index) => (
+              <SaveBlog key={index} blog={blog} />
+            ))}
             <LoadMoreDataBtn
               state={save}
               fetchDataFun={getBlogs}
               additionalParam={{
-                drafts: false, // Ensure drafts is set appropriately
+                drafts: false,
                 deleteDocCount: save.deleteDocCount,
               }}
             />

@@ -7,7 +7,7 @@ import Loader from "../components/loader.component";
 import toast, { Toaster } from "react-hot-toast";
 import "../misc/edit-profile.css";
 import InputBox from "../components/input.component";
-import { uploadImage, uploadProfileImage } from "../common/b2";
+import { uploadProfileImage } from "../common/b2";
 import { storeInSession } from "../common/session";
 
 const EditProfile = () => {
@@ -87,7 +87,6 @@ const EditProfile = () => {
                   profile_picture: data.profile_picture,
                 };
                 console.log("Updated userAuth:", newUserAuth); // ตรวจสอบข้อมูลที่เก็บใน userAuth
-                
 
                 storeInSession("user", JSON.stringify(newUserAuth));
                 setUserAuth(newUserAuth);
@@ -110,7 +109,7 @@ const EditProfile = () => {
                   response?.data?.error || "เกิดข้อผิดพลาดในการบันทึก URL"
                 );
               });
-              console.log("Uploaded Image URL:", url);
+            console.log("Uploaded Image URL:", url);
           }
         })
         .catch((err) => {
@@ -133,7 +132,7 @@ const EditProfile = () => {
       formData[key] = value;
     });
     let {
-      username,
+      fullname,
       bio,
       facebook,
       twitter,
@@ -143,15 +142,15 @@ const EditProfile = () => {
       youtube,
     } = formData;
 
-    if (typeof username === "string" && username.length < 3) {
-      return toast.error("ชื่อผู้ใช้ต้องมีความยาวอย่างน้อย 3 ตัวอักษร");
+    if (typeof fullname === "string" && fullname.length < 3) {
+      return toast.error("ชื่อต้องมีความยาวอย่างน้อย 3 ตัวอักษร");
     }
 
     if (typeof bio === "string" && bio.length > bioLimit) {
       return toast.error(`ไบโอต้องไม่เกิน ${bioLimit} ตัวอักษร`);
     }
 
-    let loadingToast = toast.loading("กำลังอัพเดต...");
+    let loadingToast = toast.loading("กำลังอัปเดต...");
     const button = e.target as HTMLButtonElement;
     button.setAttribute("disabled", "true");
 
@@ -159,7 +158,7 @@ const EditProfile = () => {
       .post(
         `${process.env.REACT_APP_API_ENDPOINT}/users/update-profile`,
         {
-          username,
+          fullname,
           bio,
           social_links: {
             youtube,
@@ -177,8 +176,8 @@ const EditProfile = () => {
         }
       )
       .then(({ data }) => {
-        if (userAuth.username !== data.username) {
-          let newUserAuth = { ...userAuth, username: data.username };
+        if (userAuth.fullname !== data.fullname) {
+          let newUserAuth = { ...userAuth, fullname: data.fullname };
 
           storeInSession("user", JSON.stringify(newUserAuth));
           setUserAuth(newUserAuth);
@@ -186,7 +185,7 @@ const EditProfile = () => {
 
         toast.dismiss(loadingToast);
         button.removeAttribute("disabled");
-        toast.success("โปรไฟล์อัพเดตแล้ว");
+        toast.success("โปรไฟล์อัปเดตแล้ว");
       })
       .catch(({ response }) => {
         toast.dismiss(loadingToast);
@@ -236,20 +235,24 @@ const EditProfile = () => {
                 style={{ paddingLeft: "2.5rem", paddingRight: "2.5rem" }}
                 onClick={handleImageUpload}
               >
-                อัพโหลด
+                อัปโหลด
               </button>
+
+              {/* <p className="m-0 " style={{ color: "#494949" }}>
+                กดอัปโหลดเพื่อเปลี่ยนรูปภาพ
+              </p> */}
             </div>
 
             <div className="w-100">
               <div className="Inputbox-edit">
                 <div>
                   <InputBox
-                    name="fullname"
                     type="text"
-                    value={fullname}
-                    placeholder="ชื่อ"
+                    name="username"
+                    value={profile_username}
+                    placeholder="username"
                     disabled={true}
-                    icon="AiOutlineUser"
+                    icon="CiAt"
                   />
                 </div>
 
@@ -265,32 +268,39 @@ const EditProfile = () => {
                 </div>
               </div>
 
+              <p
+                className="m-0 "
+                style={{ marginTop: "-0.75rem", color: "#494949" }}
+              >
+                ชื่อ
+              </p>
+
               <InputBox
+                name="fullname"
                 type="text"
-                name="username"
-                value={profile_username}
-                placeholder="username"
-                icon="CiAt"
+                value={fullname}
+                placeholder="ชื่อ"
+                icon="AiOutlineUser"
               />
 
               <p
                 className="m-0 "
                 style={{ marginTop: "-0.75rem", color: "#494949" }}
               >
-                ชื่อผู้ใช้จะใช้ในการค้นหา และจะปรากฏให้ผู้ใช้ทุกคนเห็น
+                ไบโอ
               </p>
-
               <textarea
                 name="bio"
                 maxLength={bioLimit}
                 defaultValue={bio}
                 className="input-box textarea-editprofile"
-                placeholder="Bio"
+                placeholder="ไบโอ"
                 onChange={handleCharacterChange}
+                style={{ margin: "0" }}
               ></textarea>
 
               <p className="mt-1" style={{ color: "#494949" }}>
-                {charactersLeft} ตัวอักษรคงเหลือ
+                 ตัวอักษรคงเหลือ {charactersLeft}
               </p>
 
               <p className="my-4" style={{ color: "#494949" }}>
@@ -320,7 +330,7 @@ const EditProfile = () => {
                 type="submit"
                 onClick={handleSumit}
               >
-                อัพเดต
+                อัปเดต
               </button>
             </div>
           </div>

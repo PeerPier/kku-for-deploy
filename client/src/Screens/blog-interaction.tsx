@@ -11,7 +11,7 @@ import axios from "axios";
 import { IoBookmarkOutline } from "react-icons/io5";
 import { MdOutlineBookmark } from "react-icons/md";
 import LikeModal from "../components/like-modal.component";
-import { MdReport } from "react-icons/md";
+import { IoIosWarning } from "react-icons/io";
 import { addReport } from "../api/post";
 import { Button, Form, Modal } from "react-bootstrap";
 import styled from "styled-components";
@@ -327,7 +327,7 @@ const BlogInteraction = () => {
           <div className="m-0 published-detail">
             {/* Only show the "Report Issue" button if the current user is not the author */}
             {userId !== author?._id && (
-              <MdReport
+              <IoIosWarning
                 style={{
                   fontSize: "22px",
                   marginTop: "2px",

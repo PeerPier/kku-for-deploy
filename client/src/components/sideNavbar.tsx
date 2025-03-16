@@ -6,11 +6,10 @@ import { LuFileEdit } from "react-icons/lu";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { LuUser2 } from "react-icons/lu";
 import { SlLock } from "react-icons/sl";
-import { FaBarsStaggered } from "react-icons/fa6";
+import { RxHamburgerMenu } from "react-icons/rx";
 import "../misc/blogpage.css";
 import { lookInSession, removeFromSession } from "../common/session";
 import DeleteAccountModalUser from "../Screens/DeleteAccount-confirm-user";
-
 
 const SideNav = () => {
   let {
@@ -23,10 +22,10 @@ const SideNav = () => {
   useEffect(() => {
     const userInSession = lookInSession("user");
     if (userInSession) {
-      console.log(JSON.parse(userInSession).access_token)
-      setAccessToken(JSON.parse(userInSession).access_token)
+      console.log(JSON.parse(userInSession).access_token);
+      setAccessToken(JSON.parse(userInSession).access_token);
     } else {
-      window.location.href = '/signin'
+      window.location.href = "/signin";
     }
   }, []);
 
@@ -86,7 +85,7 @@ const SideNav = () => {
               style={{ textTransform: "capitalize" }}
               onClick={changePageState}
             >
-              <FaBarsStaggered style={{ pointerEvents: "none" }} />
+              <RxHamburgerMenu style={{ pointerEvents: "none" }} />
             </button>
 
             <button
@@ -105,8 +104,11 @@ const SideNav = () => {
           </div>
 
           <div className={`edit-form ${showSideNav ? "active" : ""}`}>
-            <h1 className="mb-3" style={{ color: "#494949", fontSize: "16px" }}>
-              Dashboard
+            <h1
+              className="mb-3"
+              style={{ color: "#494949", fontSize: "16px"}}
+            >
+              แดชบอร์ด
             </h1>
             <hr
               className="border-grey"
@@ -162,7 +164,7 @@ const SideNav = () => {
             </NavLink>
 
             <NavLink
-              to="/dashboard/reportCheck"  // ✅ path ตรงกับ Route แล้ว
+              to="/dashboard/reportCheck" // ✅ path ตรงกับ Route แล้ว
               onClick={(e) => setPageState(e.currentTarget.innerText)}
               className="sidebar-link"
             >
@@ -211,11 +213,13 @@ const SideNav = () => {
               การแจ้งเตือน
             </NavLink>
 
-            <div className="delete-ac-btn" onClick={() => setShowDeleteModal(true)}>
-            <IoRemoveCircleOutline />
+            <div
+              className="delete-ac-btn"
+              onClick={() => setShowDeleteModal(true)}
+            >
+              <IoRemoveCircleOutline />
               <p>ลบบัญชีผู้ใช้</p>
             </div>
-
           </div>
         </div>
 
@@ -224,11 +228,11 @@ const SideNav = () => {
         </div>
       </section>
       <DeleteAccountModalUser
-          userId={userId}
-          show={showDeleteModal}
-          onClose={() => setShowDeleteModal(false)}
-          onDeleteSuccess={handleDeleteSuccess}
-        />
+        userId={userId}
+        show={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onDeleteSuccess={handleDeleteSuccess}
+      />
     </>
   );
 };

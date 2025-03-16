@@ -17,7 +17,7 @@ import Tag from "./tags.component";
 import "../misc/publish-form.css";
 
 const BlogEditor = () => {
-  const [visibility, setVisibility] = useState('public');
+  const [visibility, setVisibility] = useState("public");
   const characterLimit = 200;
   const tagLimit = 10;
 
@@ -128,33 +128,35 @@ const BlogEditor = () => {
           content,
           tags,
           draft: true,
-          visibility
+          visibility,
         };
         axios
-        .post(
-          API_URL + "/create-blog",
-          { ...blogObj, id: blog_id },
-          {
-            headers: {
-              Authorization: `Bearer ${access_token}`,
-            },
-          }
-        )
-        .then(() => {
-          (e.target as HTMLButtonElement).classList.remove("disable");
-  
-          toast.dismiss(loadingToast);
-          toast.success("บันทึกแล้ว");
-  
-          setTimeout(() => {
-            navigate("/dashboard/blogs?tab=draft");
-          }, 500);
-        }).catch(err => {
-          toast.dismiss(loadingToast);
-          toast.error(err.response.data.error);
-          target.classList.remove("disable");
-        })   
-      })}
+          .post(
+            API_URL + "/create-blog",
+            { ...blogObj, id: blog_id },
+            {
+              headers: {
+                Authorization: `Bearer ${access_token}`,
+              },
+            }
+          )
+          .then(() => {
+            (e.target as HTMLButtonElement).classList.remove("disable");
+
+            toast.dismiss(loadingToast);
+            toast.success("บันทึกแล้ว");
+
+            setTimeout(() => {
+              navigate("/dashboard/blogs?tab=draft");
+            }, 500);
+          })
+          .catch((err) => {
+            toast.dismiss(loadingToast);
+            toast.error(err.response.data.error);
+            target.classList.remove("disable");
+          });
+      });
+    }
   };
 
   const handleBlogTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -205,7 +207,9 @@ const BlogEditor = () => {
     }
 
     if (!des.length || des.length > characterLimit) {
-      return toast.error(`เขียนรายละเอียดเกี่ยวกับบล็อกของคุณภายใน ${characterLimit} ตัวอักษรก่อนเผยแพร่`);
+      return toast.error(
+        `เขียนรายละเอียดเกี่ยวกับบล็อกของคุณภายใน ${characterLimit} ตัวอักษรก่อนเผยแพร่`
+      );
     }
     if (!tags.length) {
       return toast.error("กรอกอย่างน้อย 1 แท็ก เพื่อช่วยจัดอันดับบล็อกของคุณ");
@@ -223,33 +227,33 @@ const BlogEditor = () => {
           content,
           tags,
           draft: false,
-          visibility
+          visibility,
         };
         axios
-        .post(
-          API_URL + "/create-blog",
-          { ...blogObj, id: blog_id },
-          {
-            headers: {
-              Authorization: `Bearer ${access_token}`,
-            },
-          }
-        )
-        .then(() => {
-          target.classList.remove("disable");
-          toast.dismiss(loadingToast);
-          toast.success("เผยแพร่แล้ว");
-          setTimeout(() => {
-            navigate("/");
-          }, 500);
-        })
-        .catch(({ response }) => {
-          target.classList.remove("disable");
-          toast.dismiss(loadingToast);
-          return toast.error(response.data.error);
-        });
+          .post(
+            API_URL + "/create-blog",
+            { ...blogObj, id: blog_id },
+            {
+              headers: {
+                Authorization: `Bearer ${access_token}`,
+              },
+            }
+          )
+          .then(() => {
+            target.classList.remove("disable");
+            toast.dismiss(loadingToast);
+            toast.success("เผยแพร่แล้ว");
+            setTimeout(() => {
+              navigate("/");
+            }, 500);
+          })
+          .catch(({ response }) => {
+            target.classList.remove("disable");
+            toast.dismiss(loadingToast);
+            return toast.error(response.data.error);
+          });
       });
-    };
+    }
   };
 
   return (
@@ -276,7 +280,7 @@ const BlogEditor = () => {
         <section>
           <div className="Banner-divhost">
             <div className="Banner-div ">
-              <label htmlFor="uploadBanner">
+              <label htmlFor="uploadBanner" style={{width:"100%", height:"100%", objectFit:"cover", overflow:"hidden"}}>
                 <img
                   src={banner}
                   alt=""
@@ -293,67 +297,57 @@ const BlogEditor = () => {
               </label>
             </div>
 
-            <hr className="w-100 my-1" style={{ opacity: "0.1" }} />
+            <div className="div-p-text" style={{ margin: "1rem 0" }}>
+              <VisibilitySelector
+                visibility={visibility}
+                onChange={setVisibility}
+              />
 
-          </div>
-          <div id="textEditor"></div>
-        </section>
-        <section className="section-publish">
-
-          <div className="div-p-text">
-            <VisibilitySelector
-              visibility={visibility}
-              onChange={setVisibility}
-            />
-
-            <p className="p-text">Blog Title</p>
-            <input
-              type="text"
-              placeholder="Blog Title"
-              defaultValue={topic}
-              className="input-box pl-4"
-              onChange={handleBlogTitleChange}
-            />
-
-            <p className="p-text">รายละเอียดเกี่ยวกับบล็อกของคุณ</p>
-            <textarea
-              maxLength={characterLimit}
-              defaultValue={des}
-              className="textarea-input-box input-box"
-              onChange={handleBlogDesChange}
-              onKeyDown={handleTitleKeyDown}
-              placeholder="รายละเอียด"
-            />
-
-            <p className="p-characters">
-              {characterLimit - des.length} characters left
-            </p>
-
-            <p className="topic-p">
-              เพิ่มแท็กเพื่อช่วยค้นหาและจัดอันดับบล็อกของคุณ
-            </p>
-
-            <div className="position-relative input-box pl-2 pb-4">
+              <p className="p-text">ชื่อบล็อก</p>
               <input
                 type="text"
-                placeholder="Enter เพื่อเพิ่มแท็ก"
-                className="sticky-bg input-box"
-                onKeyDown={handleKeyDown}
+                placeholder="ชื่อบล็อก..."
+                defaultValue={topic}
+                className="input-box pl-4"
+                onChange={handleBlogTitleChange}
               />
-              {tags.map((tag, i) => (
-                <Tag tag={tag} tagIndex={i} key={i} />
-              ))}
-            </div>
-            <p className="p-tagLimit">{tagLimit - tags.length} Tags left</p>
 
-            <button
-              className="btn-dark"
-              style={{ paddingLeft: "2rem", paddingRight: "2rem" }}
-              onClick={publishBlog}
-            >
-              เผยแพร่
-            </button>
+              <p className="p-text">รายละเอียดเกี่ยวกับบล็อกของคุณ</p>
+              <textarea
+                maxLength={characterLimit}
+                defaultValue={des}
+                className="textarea-input-box input-box"
+                onChange={handleBlogDesChange}
+                onKeyDown={handleTitleKeyDown}
+                placeholder="รายละเอียด"
+              />
+
+              <p className="p-characters">
+                เหลือ {characterLimit - des.length} ตัวอักษร
+              </p>
+
+              <p className="topic-p">
+                เพิ่มแท็กเพื่อช่วยค้นหาและจัดอันดับบล็อกของคุณ
+              </p>
+
+              <div className="position-relative input-box pl-2 pb-4">
+                <input
+                  type="text"
+                  placeholder="Enter เพื่อเพิ่มแท็ก"
+                  className="sticky-bg input-box"
+                  onKeyDown={handleKeyDown}
+                />
+                {tags.map((tag, i) => (
+                  <Tag tag={tag} tagIndex={i} key={i} />
+                ))}
+              </div>
+              <p className="p-tagLimit">เหลือ {tagLimit - tags.length} แท็ก</p>
+            </div>
+
+            <hr className="w-100 my-1" style={{ opacity: "0.1" }} />
           </div>
+
+          <div id="textEditor"></div>
         </section>
       </AnimationWrapper>
     </>

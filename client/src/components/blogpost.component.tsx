@@ -37,13 +37,10 @@ const BlogCard: React.FC<BlogCardProps> = ({ content, author }) => {
     username = "Unknown User",
   } = author || {};
 
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   const tagList = Array.isArray(tags) ? tags : [];
 
-  const handleDropdownToggle = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent click event from propagating to the parent Link
-    setIsDropdownOpen((prev) => !prev);
-  };
+ 
 
   return (
     <div className="blog-card-wrapper" style={{ position: "relative" }}>
@@ -117,9 +114,9 @@ const BlogCard: React.FC<BlogCardProps> = ({ content, author }) => {
             
           </div>
 
-          <div className="d-flex gap-4 mt-3">
+          <div className="d-flex gap-3 mt-3 tag-blogpage">
             {tagList.map((tag, index) => (
-              <span key={index} className="btn-light py-1 px-4">
+              <span key={index} className="btn-light">
                 {tag}
               </span>
             ))}
