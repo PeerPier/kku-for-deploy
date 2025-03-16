@@ -118,7 +118,7 @@ const UserAuthForm: React.FC<LoginPageProps> = ({ type }) => {
   };
 
   return access_token ? (
-    <Navigate to="/" />
+    <Navigate to="/homepage" />
   ) : (
     <AnimationWrapper keyValue={type}>
       <Toaster />

@@ -1,18 +1,11 @@
 const API_BASE_URL = process.env.REACT_APP_API_ENDPOINT;
 
-// Function to fetch all questions
+// Function to fetch all questions (ไม่ต้องล็อกอิน)
 export const fetchQuestionsAPI = async () => {
-  const token = sessionStorage.getItem("userId");
-  if (!token) {
-    console.error("No token found, redirecting to login...");
-    return null;
-  }
-
   const response = await fetch(`${API_BASE_URL}/api/questions`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -24,7 +17,7 @@ export const fetchQuestionsAPI = async () => {
   return data;
 };
 
-// Function to add a new question
+// Function to add a new question (ต้องล็อกอิน)
 export const addQuestionAPI = async (
   topic: string,
   answer: string,
@@ -53,25 +46,24 @@ export const addQuestionAPI = async (
   return data;
 };
 
-// Function to update a question
+// Function to update a question (ต้องล็อกอิน)
 export const updateQuestionAPI = async (
   id: string,
   topic: string,
   answer: string
 ) => {
-  const token = sessionStorage.getItem("userId"); // Get token from sessionStorage
-
+  const token = sessionStorage.getItem("userId");
   if (!token) {
     throw new Error("No admin token found. Unauthorized request.");
   }
 
   const response = await fetch(`${API_BASE_URL}/api/questions/${id}`, {
-    method: "PUT", // Make sure you're using PUT for updates
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ topic, answer }), // Send the updated data
+    body: JSON.stringify({ topic, answer }),
   });
 
   if (!response.ok) {
@@ -79,10 +71,10 @@ export const updateQuestionAPI = async (
   }
 
   const data = await response.json();
-  return data; // Return the updated question
+  return data;
 };
 
-// Function to delete a question
+// Function to delete a question (ต้องล็อกอิน)
 export const deleteQuestionAPI = async (id: string) => {
   const token = sessionStorage.getItem("userId");
   if (!token) {

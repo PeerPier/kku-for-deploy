@@ -38,6 +38,12 @@
   width: 200px;
   height: auto;
 }
+.auth-buttons {
+  display: flex;
+  justify-content: flex-end; /* จัดให้อยู่ทางขวา */
+  gap: 10px; /* เพิ่มระยะห่างระหว่างปุ่ม */
+  width: 100%; /* ทำให้มีความกว้างเต็ม */
+}
 
 .hide {
   opacity: 0;
@@ -358,8 +364,6 @@
   right: 12px;
 }
 
-
-
 .notifications-container {
   scrollbar-width: thin; /* สำหรับ Firefox */
   scrollbar-color: #b0b0b0 transparent; /* สำหรับ Firefox */
@@ -403,7 +407,19 @@
   .toggle-search-2 {
     gap: 1.5rem;
   }
+
   /* .toggle-search button {
     display: none;
   } */
+}
+@media (max-width: 768px) {
+  .logo-img {
+    width: 130px;
+    height: auto;
+  }
+  
+  .chat-icon {
+    font-size: 20px;
+    width: 2rem;
+  }
 }

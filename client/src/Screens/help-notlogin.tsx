@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { IconButton } from "@mui/material";
 import { IoChevronBackOutline } from "react-icons/io5";
 
-const HelpCentre = () => {
+const Helpnotlog = () => {
   const [questions, setQuestions] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
@@ -31,34 +31,21 @@ const HelpCentre = () => {
     setSearchQuery(e.target.value.toLowerCase());
   };
 
-  // If searchQuery is empty, don't filter and return all questions.
-  const filteredFaqs = searchQuery
-    ? questions.filter((faq) =>
-        faq.topic.toLowerCase().includes(searchQuery)
-      )
-    : questions; // Show all questions when there's no search query.
+  const filteredFaqs = questions.filter((faq) =>
+    faq.topic.toLowerCase().includes(searchQuery)
+  );
 
   return (
     <div className="help-centre">
-      <div className="backbtn">
-        <IconButton onClick={() => navigate(-1)} className="back-button">
-          <IoChevronBackOutline />
-        </IconButton>
-      </div>
+      {/* ปุ่มย้อนกลับ */}
+      <IconButton
+        onClick={() => navigate(-1)}
+        sx={{ position: "absolute", top: "10px", left: "10px", margin: "100px" }}
+      >
+        <IoChevronBackOutline />
+      </IconButton>
 
-      <header className="header">
-        <h1>คำถามที่พบบ่อย</h1>
-        <h2>เราสามารถช่วยคุณได้อย่างไรบ้าง?</h2>
-        <div className="search-bar">
-          <input
-            type="text"
-            placeholder="ค้นหา..."
-            value={searchQuery}
-            onChange={handleSearchChange}
-          />
-        </div>
-      </header>
-
+      {/* FAQ Section */}
       <div className="faq">
         {filteredFaqs.length > 0 ? (
           filteredFaqs.map((faq, index) => (
@@ -70,11 +57,11 @@ const HelpCentre = () => {
             </div>
           ))
         ) : (
-          <p>ไม่พบผลลัพธ์</p> // Show message when no search results match
+          <p>No results found.</p>
         )}
       </div>
     </div>
   );
 };
 
-export default HelpCentre;
+export default Helpnotlog;

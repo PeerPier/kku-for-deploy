@@ -7,25 +7,21 @@ import {
   Navigate,
 } from "react-router-dom";
 import LoginPage from "./Screens/login";
-import RegistPage from "./Screens/register";
 import HomePage from "./Screens/home.page";
+import FirstPage from "./Screens/firstpage";
 import EditProfile from "./Screens/edit-profile.page";
 import RegisterAdmin from "./Screens/Admin/adminRegister";
-
-// import Content from "./Screens/Content";
 import AdminHome from "./Screens/Admin/adminHome";
 import Footer from "./Navbar/footer";
 import ForgotPassword from "./Screens/Admin/ForgotPassword";
 import ResetPassword from "./Screens/Admin/ResetPassword";
 import ResetPasswordUser from "./Screens/ResetPasswordUser";
-
 import Chat from "./Screens/chat";
 import { ChatContextProvider } from "./Screens/ChatContext";
 import Navbar2 from "./Navbar/Navbar1";
 import Navbar from "./Navbar/Navbar";
-// import SearchResults from "./Navbar/SearchResults ";
 import HelpCentre from "./Screens/helpcentre";
-
+import Helpnotlog from "./Screens/help-notlogin";
 import { createContext } from "react";
 import { lookInSession } from "./common/session";
 import UserAuthForm from "./Screens/UserAuthForm";
@@ -37,10 +33,6 @@ import BlogPage from "./Screens/blog.page";
 import DashboardUser from "./Screens/DashboardUser";
 import LoginAdmin from "./Screens/Admin/adminLogin";
 import ProfileAdmin from "./Screens/Admin/adminProfile";
-
-// import ForgotPassword from './Screens/Admin/ForgotPassword';
-// import VerifyOTP from "./Screens/Admin/VerifyOTP";
-// import ResetPassword from './Screens/Admin/ResetPassword';
 import SideNav from "./components/sideNavbar";
 import ChangPassword from "./Screens/change-password";
 import Notifications from "./Screens/notifications.page";
@@ -165,7 +157,7 @@ function App() {
               path="/signup"
               element={<UserAuthForm type="สมัครสมาชิก" />}
             />
-            <Route path="/" element={<HomePage />} />
+            <Route path="/homepage" element={<HomePage />} /> {/* Updated route */}
             <Route path="/user/:id" element={<ProfilePage />} />
             <Route path="/search/:query" element={<SearchPage />} />
             <Route path="*" element={<PageNotFound />} />
@@ -189,16 +181,14 @@ function App() {
               element={<DashboardUser />}
             />
             <Route path="/helpcentre" element={<HelpCentre />} />
-            {/* <Route path="/content/:id" element={<Content />} /> */}
-            {/* <Route path="/search" element={<SearchResults />} /> */}
+            <Route path="/help-notlogin" element={<Helpnotlog />} />
           </Route>
-
+          <Route path="/" element={<FirstPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/admin/register" element={<RegisterAdmin />} />
           <Route path="/admin/login" element={<LoginAdmin type="admin" />} />
           <Route path="/admin/" element={<RegisterAdmin />} />
 
-          {/* เพ่ิ่มเติม: route profile admin */}
           <Route
             path="/admin/:adminId/profile"
             element={
@@ -226,10 +216,6 @@ function App() {
             path="/reset-password-user/:token"
             element={<ResetPasswordUser />}
           />
-
-          {/* <Route path="/forgot-password" element={<ForgotPassword />} />
-             <Route path="/verify-otp" element={<VerifyOTP />} /> */}
-          {/* <Route path="/reset-password" element={<ResetPassword />} /> */}
           <Route path="/chats" element={<Chat />} />
           <Route path="/nav" element={<Navbar2 />} />
         </Routes>
