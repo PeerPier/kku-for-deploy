@@ -274,9 +274,9 @@ function Navbar() {
                 <div
                   className="notifications-container"
                   style={{
-                    maxHeight: notifications.length > 5 ? "400px" : "auto",
+                    maxHeight: notifications.length > 5 ? "400px" : "auto", // ถ้าเกิน 5 รายการ ให้แสดง Scroll Bar
                     overflowY: notifications.length > 5 ? "auto" : "visible",
-                    scrollbarWidth: "thin",
+                    scrollbarWidth: "thin", // Firefox
                     scrollbarColor: "#B0B0B0 transparent",
                   }}
                 >
@@ -312,7 +312,7 @@ function Navbar() {
                         (a, b) =>
                           new Date(b.createdAt).getTime() -
                           new Date(a.createdAt).getTime()
-                      )
+                      ) // เรียงจากล่าสุด -> เก่าสุด
                       .map((notification, idx) => (
                         <div
                           key={idx}
