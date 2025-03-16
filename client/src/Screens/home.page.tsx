@@ -255,8 +255,23 @@ const HomePage = () => {
             )}
           </InPageNavigation>
         </div>
-        <div className="trending-blog">
-          <div className="d-flex flex-column gap-3 ">
+        <div
+          className="trending-blog"
+          style={{
+            position: "relative", // ทำให้แน่ใจว่า position ของ container ถูกกำหนด
+            zIndex: 10,
+            top: 0,
+          }}
+        >
+          <div
+            className="d-flex flex-column gap-3 "
+            style={{
+              position: "sticky", // กำหนด sticky ให้แท็ก
+              top: "20px", // ตำแหน่งที่มันจะอยู่เมื่อ scroll
+              zIndex: 10, // ควบคุมชั้นการแสดงผล
+              backgroundColor: "#fff", // เพิ่มพื้นหลังเพื่อไม่ให้เกิดปัญหาการทับซ้อน
+            }}
+          >
             <div>
               <h1 className="fw-medium mb-3 fs-5">
                 แท็กยอดนิยม
@@ -269,7 +284,14 @@ const HomePage = () => {
                 />
               </h1>
 
-              <div className="d-flex gap-3 flex-wrap tag-blogpage">
+              <div
+                className="d-flex gap-3 flex-wrap tag-blogpage"
+                style={{
+                  position: "sticky", // sticky ให้กับแท็ก
+                  top: "60px", // ตำแหน่งที่แท็กจะยึดติด
+                  zIndex: 9,
+                }}
+              >
                 {allTags.map((tag, i) => (
                   <button
                     onClick={loadBlogBycategory}
@@ -282,8 +304,18 @@ const HomePage = () => {
               </div>
             </div>
 
-            <div>
-              <h1 className="fw-medium mb-3 fs-5">
+            <div
+              style={{
+                position: "sticky",
+                top: "100px", // ปรับตำแหน่งของเนื้อหาถัดไป
+                zIndex: 10,
+                backgroundColor: "#fff",
+              }}
+            >
+              <h1
+                className="fw-medium mb-3 fs-5"
+                style={{ position: "sticky", top: "20px", zIndex: "10" }}
+              >
                 บล็อกที่มีคนถูกใจมากที่สุด{" "}
                 <MdAutoGraph
                   style={{ fontSize: "25px", marginBottom: "5px" }}
