@@ -1,28 +1,31 @@
 import React, { useEffect, useState, ReactNode } from "react";
-import { BrowserRouter as Router, Routes, Route, Outlet, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Outlet,
+  Navigate,
+} from "react-router-dom";
 import LoginPage from "./Screens/login";
 import RegistPage from "./Screens/register";
 import HomePage from "./Screens/home.page";
-import Profile from "./Screens/profile";
 import EditProfile from "./Screens/edit-profile.page";
 import RegisterAdmin from "./Screens/Admin/adminRegister";
-import Writepost from "./Screens/post";
+
 // import Content from "./Screens/Content";
 import AdminHome from "./Screens/Admin/adminHome";
-import Category from "./Screens/category";
 import Footer from "./Navbar/footer";
-import ForgotPassword from "./Screens/ForgotPassword";
-import ResetPassword from "./Screens/ResetPassword";
+import ForgotPassword from "./Screens/Admin/ForgotPassword";
+import ResetPassword from "./Screens/Admin/ResetPassword";
 import ResetPasswordUser from "./Screens/ResetPasswordUser";
-import Post from "./Screens/post";
+
 import Chat from "./Screens/chat";
 import { ChatContextProvider } from "./Screens/ChatContext";
 import Navbar2 from "./Navbar/Navbar1";
 import Navbar from "./Navbar/Navbar";
-import EditPost from "./Screens/edit-post";
 // import SearchResults from "./Navbar/SearchResults ";
 import HelpCentre from "./Screens/helpcentre";
-import Popular from "./Screens/Popular";
+
 import { createContext } from "react";
 import { lookInSession } from "./common/session";
 import UserAuthForm from "./Screens/UserAuthForm";
@@ -34,7 +37,7 @@ import BlogPage from "./Screens/blog.page";
 import DashboardUser from "./Screens/DashboardUser";
 import LoginAdmin from "./Screens/Admin/adminLogin";
 import ProfileAdmin from "./Screens/Admin/adminProfile";
-import AccountPreferences from "./Screens/AccountPreferences";
+
 // import ForgotPassword from './Screens/Admin/ForgotPassword';
 // import VerifyOTP from "./Screens/Admin/VerifyOTP";
 // import ResetPassword from './Screens/Admin/ResetPassword';
@@ -73,7 +76,7 @@ export const UserContext = createContext<UserContextType>({
   userAuth: { access_token: null },
   setUserAuth: () => {},
   NotificationShow: true,
-  setNotificationShow: () => {}
+  setNotificationShow: () => {},
 });
 
 function NavbarLayout() {
@@ -87,13 +90,15 @@ function NavbarLayout() {
 
 function App() {
   const [userAuth, setUserAuth] = useState<{ access_token: string | null }>({
-    access_token: null
+    access_token: null,
   });
   const [NotificationShow, setNotificationShow] = useState(false);
 
   useEffect(() => {
     const userInSession = lookInSession("user");
-    userInSession ? setUserAuth(JSON.parse(userInSession)) : setUserAuth({ access_token: null });
+    userInSession
+      ? setUserAuth(JSON.parse(userInSession))
+      : setUserAuth({ access_token: null });
   }, []);
 
   useEffect(() => {
@@ -130,11 +135,12 @@ function App() {
     };
 
     fetchNotificationStatus();
-  }, [setNotificationShow]); 
-
+  }, [setNotificationShow]);
 
   function PrivateRoute({ children }: { children: ReactNode }) {
-    const user = JSON.parse(sessionStorage.getItem("user") || "{}") as User | null;
+    const user = JSON.parse(
+      sessionStorage.getItem("user") || "{}"
+    ) as User | null;
 
     if (!user?.access_token) {
       return <Navigate to="/admin/login" />;
@@ -143,29 +149,33 @@ function App() {
   }
 
   return (
-    <UserContext.Provider value={{ userAuth, setUserAuth, NotificationShow, setNotificationShow }}>
+    <UserContext.Provider
+      value={{ userAuth, setUserAuth, NotificationShow, setNotificationShow }}
+    >
       <ChatContextProvider>
         <Routes>
           <Route path="/editor" element={<Editor />} />
           <Route path="/editor/:blog_id" element={<Editor />} />
           <Route element={<NavbarLayout />}>
-            <Route path="/signin" element={<UserAuthForm type="เข้าสู่ระบบ" />} />
-            <Route path="/signup" element={<UserAuthForm type="สมัครสมาชิก" />} />
+            <Route
+              path="/signin"
+              element={<UserAuthForm type="เข้าสู่ระบบ" />}
+            />
+            <Route
+              path="/signup"
+              element={<UserAuthForm type="สมัครสมาชิก" />}
+            />
             <Route path="/" element={<HomePage />} />
             <Route path="/user/:id" element={<ProfilePage />} />
             <Route path="/search/:query" element={<SearchPage />} />
             <Route path="*" element={<PageNotFound />} />
             <Route path="/blog/:blog_id" element={<BlogPage />}></Route>
-            <Route path="/profile/:id" element={<Profile />} />
             <Route path="/profile/edit-profile/:id" element={<EditProfile />} />
             <Route path="settings" element={<SideNav />}>
               <Route path="edit-profile" element={<EditProfile />}></Route>
               <Route path="change-password" element={<ChangPassword />}></Route>
               <Route path="noti-setting" element={<NotiSetting />} />
             </Route>
-            <Route path="/posts" element={<Post />} />
-            <Route path="/writepost" element={<Writepost />} />
-            <Route path="/editpost/:id" element={<EditPost />} />
             <Route path="/footer" element={<Footer />} />
 
             <Route path="dashboard" element={<SideNav />}>
@@ -174,11 +184,12 @@ function App() {
               <Route path="reportCheck" element={<ReportCheck />} />
             </Route>
 
-            <Route path="/dashboard/blogs/statistics" element={<DashboardUser />} />
+            <Route
+              path="/dashboard/blogs/statistics"
+              element={<DashboardUser />}
+            />
             <Route path="/helpcentre" element={<HelpCentre />} />
             {/* <Route path="/content/:id" element={<Content />} /> */}
-            <Route path="/category" element={<Category />} />
-            <Route path="/popular" element={<Popular />} />
             {/* <Route path="/search" element={<SearchResults />} /> */}
           </Route>
 
@@ -206,10 +217,16 @@ function App() {
           />
 
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/forgot-password-user" element={<ForgotPasswordUser />} />
+          <Route
+            path="/forgot-password-user"
+            element={<ForgotPasswordUser />}
+          />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
-          <Route path="/reset-password-user/:token" element={<ResetPasswordUser />} />
-          <Route path="/account/preference/:id" element={<AccountPreferences />} />
+          <Route
+            path="/reset-password-user/:token"
+            element={<ResetPasswordUser />}
+          />
+
           {/* <Route path="/forgot-password" element={<ForgotPassword />} />
              <Route path="/verify-otp" element={<VerifyOTP />} /> */}
           {/* <Route path="/reset-password" element={<ResetPassword />} /> */}

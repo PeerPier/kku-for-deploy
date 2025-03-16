@@ -1,11 +1,19 @@
 import React, { useState } from "react";
-import { Button, Container, Typography, Box, Alert, AlertProps, IconButton } from "@mui/material";
+import {
+  Button,
+  Container,
+  Typography,
+  Box,
+  Alert,
+  AlertProps,
+  IconButton,
+} from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { IoChevronBackOutline } from "react-icons/io5";
 import "react-toastify/dist/ReactToastify.css";
-import "../misc/reset-password.css";
-import InputBox from "../components/input.component";
+import "../../misc/reset-password.css";
+import InputBox from "../../components/input.component";
 
 type CustomAlertProps = AlertProps & { show: boolean; message: string };
 
@@ -15,7 +23,7 @@ const ForgotPassword = () => {
   const [alert, setAlert] = useState<CustomAlertProps>({
     show: false,
     message: "",
-    severity: "success"
+    severity: "success",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -24,19 +32,21 @@ const ForgotPassword = () => {
     fetch(`${process.env.REACT_APP_API_ENDPOINT}/forgot-password`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ email }),
-      credentials: "include"
+      credentials: "include",
     })
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          toast.success(`เราได้ส่งลิงก์สําหรับตั้งค่ารหัสผ่านใหม่ไปยังอีเมล ${email}`);
+          toast.success(
+            `เราได้ส่งลิงก์สําหรับตั้งค่ารหัสผ่านใหม่ไปยังอีเมล ${email}`
+          );
           setAlert({
             show: true,
             message: `เราได้ส่งลิงก์สําหรับตั้งค่ารหัสผ่านใหม่ไปยังอีเมล ${email} รหัสอ้างอิง (${data.ref})`,
-            severity: "success"
+            severity: "success",
           });
         } else {
           toast.error(data.message);
@@ -49,20 +59,19 @@ const ForgotPassword = () => {
     <Container
       maxWidth="xs"
       sx={{
-        display: "flex",              // ใช้ Flexbox เพื่อจัดการตำแหน่ง
-        justifyContent: "center",     // จัดกลางในแนวนอน
-        alignItems: "center",         // จัดกลางในแนวตั้ง
-        minHeight: "100vh",           // ทำให้ Container ใช้พื้นที่ทั้งหน้าจอ
-        padding: "10px",              // กำหนดระยะห่างขอบ
-        
+        display: "flex", // ใช้ Flexbox เพื่อจัดการตำแหน่ง
+        justifyContent: "center", // จัดกลางในแนวนอน
+        alignItems: "center", // จัดกลางในแนวตั้ง
+        minHeight: "100vh", // ทำให้ Container ใช้พื้นที่ทั้งหน้าจอ
+        padding: "10px", // กำหนดระยะห่างขอบ
       }}
     >
       <IconButton
-    onClick={() => navigate(-1)}
-    sx={{ position: "absolute", top: "10px", left: "10px" ,margin:"50px"}}
-  >
-    <IoChevronBackOutline />
-  </IconButton>
+        onClick={() => navigate(-1)}
+        sx={{ position: "absolute", top: "10px", left: "10px", margin: "50px" }}
+      >
+        <IoChevronBackOutline />
+      </IconButton>
       <ToastContainer />
       <Box
         sx={{
@@ -72,14 +81,21 @@ const ForgotPassword = () => {
           width: "100%",
           maxWidth: "400px",
           textAlign: "center",
-                    // เพิ่มเงาให้กับกล่องเพื่อความสวยงาม
+          // เพิ่มเงาให้กับกล่องเพื่อความสวยงาม
         }}
       >
-        <Typography variant="h4" component="h1" sx={{ marginBottom: "20px", fontWeight: "600" }}>
+        <Typography
+          variant="h4"
+          component="h1"
+          sx={{ marginBottom: "20px", fontWeight: "600" }}
+        >
           ป้อนอีเมลของคุณ
         </Typography>
 
-        <Typography variant="body1" sx={{ marginBottom: "20px", color: "#6c757d" }}>
+        <Typography
+          variant="body1"
+          sx={{ marginBottom: "20px", color: "#6c757d" }}
+        >
           ป้อนที่อยู่อีเมลที่เชื่อมต่อกับบัญชีของคุณ
           แล้วเราจะส่งลิงก์สำหรับตั้งค่ารหัสผ่านใหม่ให้แก่คุณ
         </Typography>
@@ -101,7 +117,10 @@ const ForgotPassword = () => {
             placeholder="อีเมล"
             icon="MdOutlineMail"
             value={email}
-            onChange={(e) => {setEmail(e.target.value);console.log(e.target.value)}}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              console.log(e.target.value);
+            }}
             disabled={alert.show}
           />
 
@@ -111,7 +130,8 @@ const ForgotPassword = () => {
               fullWidth
               disableElevation
               onClick={() => {
-                window.location.href = "https://kku-client.vercel.app/admin/login";
+                window.location.href =
+                  "https://kku-client.vercel.app/admin/login";
               }}
               sx={{
                 backgroundColor: "#000",
@@ -120,8 +140,8 @@ const ForgotPassword = () => {
                 padding: "10px 0",
                 borderRadius: "50px",
                 "&:hover": {
-                  backgroundColor: "#181818"
-                }
+                  backgroundColor: "#181818",
+                },
               }}
             >
               กลับไปหน้าหลัก
@@ -139,8 +159,8 @@ const ForgotPassword = () => {
                 padding: "10px 0",
                 borderRadius: "50px",
                 "&:hover": {
-                  backgroundColor: "#181818"
-                }
+                  backgroundColor: "#181818",
+                },
               }}
             >
               ดำเนินการต่อ

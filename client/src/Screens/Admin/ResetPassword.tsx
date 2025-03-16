@@ -10,7 +10,7 @@ import {
   Container,
   Typography
 } from "@mui/material";
-import InputBox from "../components/input.component";
+import InputBox from "../../components/input.component";
 
 type Params = {
   token: string;
