@@ -1,10 +1,10 @@
 const {
-  checkBadWords,
   addBadWords,
   removeBadWords,
   getBadWords,
   addIgnoreList,
   addPrefixes,
+  scanBadWords,
 } = require("@sit-sandbox/thai-bad-words");
 const BadWordModel = require("../models/badword");
 
@@ -28,7 +28,7 @@ async function loadBadWordsFromDB() {
       "แม่",
       "นาย",
     ]);
-    addIgnoreList(["หีบ", "สัสดี", "หน้าหีบ", "ตด", "กะหรี่ปั๊บ"]);
+    addIgnoreList(["หีบ", "สัสดี", "หน้าหีบ", "ตด", "กะหรี่ปั๊บ", "บ้าน"]);
     addBadWords(allBadWords);
     console.log("✅ Loaded bad words from database");
   } catch (error) {
@@ -38,29 +38,5 @@ async function loadBadWordsFromDB() {
 
 loadBadWordsFromDB();
 
-async function BadWordScanner(input) {
-  for (const key in input) {
-    if (input.hasOwnProperty(key)) {
-      const value =
-        typeof input[key] === "string" ? input[key].toLowerCase() : input[key];
-      if (typeof value === "object" && value !== null) {
-        if (Array.isArray(value)) {
-          for (const item of value) {
-            if (typeof item === "string") {
-              checkBadWords(item);
-            } else if (typeof item === "object" && item !== null) {
-              await BadWordScanner(item);
-            }
-          }
-        } else {
-          await BadWordScanner(value);
-        }
-      } else if (typeof value === "string") {
-        checkBadWords(value);
-      }
-    }
-  }
-}
-
-module.exports = BadWordScanner;
+module.exports = scanBadWords;
 module.exports.loadBadWordsFromDB = loadBadWordsFromDB;
