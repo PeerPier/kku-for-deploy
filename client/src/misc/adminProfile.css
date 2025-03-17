@@ -336,12 +336,14 @@
 }
 .adminProfile .main1 .recent-order table th {
   padding-top: 1.8rem;
+  white-space: nowrap;
 }
 .adminProfile .main1 .recent-order table:hover {
   box-shadow: none;
 }
 .adminProfile .main1 table tbody td {
   height: 2.8rem;
+  white-space: nowrap;
   border-bottom: 1px solid rgba(132, 139, 200, 0.18);
 }
 .adminProfile .main1 table tbody tr:last-child td {
@@ -708,6 +710,7 @@
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  max-width: calc(100vw - 2rem);
 }
 
 .adminProfile .tab-content table {
@@ -758,6 +761,8 @@
   background-color: var(--color-white);
   color: var(--color-dark);
 }
+
+
 
 .adminProfile .dark-theme-variables .tab-content th,
 .adminProfile .dark-theme-variables .tab-content td {
@@ -1121,12 +1126,13 @@
   }
   .adminProfile .main1 table thead tr th:last-child,
   .adminProfile .main1 table thead tr th:first-child {
-    display: none;
+    display: block;
   }
   .adminProfile .main1 table tbody tr td:last-child,
   .adminProfile .main1 table tbody tr td:first-child {
-    display: none;
+    display: block;
   }
+  
   .adminProfile .form-fields {
     flex-direction: column;
   }
@@ -1447,4 +1453,18 @@
   cursor: pointer;
   font-weight: 500;
   transition: background-color 0.3s;
+}
+
+@media screen and (max-width: 678px) {
+  .main-content {
+    width: 200px;
+  }
+
+  /* .user-profile-section {
+    width: 100%;
+  } */
+
+  .tab-content {
+    width: 200px;
+  }
 }

@@ -5,8 +5,8 @@ import logostart from "../../pic/logo-headV2.png";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { TiDocumentText } from "react-icons/ti";
 import { RiDashboardFill } from "react-icons/ri";
-import { IoIosHelpCircle } from "react-icons/io";
-import { MdManageAccounts, MdCategory } from "react-icons/md";
+import { IoIosHelpCircle, IoIosTime } from "react-icons/io";
+import { MdManageAccounts, MdCategory, MdOutlinePostAdd } from "react-icons/md";
 import { FiLogOut } from "react-icons/fi";
 import { RiCharacterRecognitionFill } from "react-icons/ri";
 import {
@@ -17,18 +17,24 @@ import {
   fetchUsersAPI,
   fetchViews,
 } from "../../api/adminProfile";
+import { LuView } from "react-icons/lu";
 import { PiUsersThreeFill } from "react-icons/pi";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { AiOutlineClose } from "react-icons/ai";
 import { MdLightMode, MdDarkMode } from "react-icons/md";
 import Pro from "../../pic/AdminIcon.png";
-
+import { RiUserStarFill } from "react-icons/ri";
+import Form from "react-bootstrap/Form";
 import ManageUser from "./manageUs";
-
+import GrowthChart from "./Chart/GrowthChartAllblog";
+import { IoNotifications } from "react-icons/io5";
+import { FaUserMinus } from "react-icons/fa6";
 import ManageCate from "./manageCate";
 import ManageQ from "./manageQ";
-import ManageReport from "./manageReport";
 import axios from "axios";
+import ReportDetailsModal from "./approve-modal";
+import { Button } from "react-bootstrap";
+import { Line } from "react-chartjs-2"; // ใช้แสดงกราฟ Line
 import "chart.js/auto"; // สำหรับการใช้งาน Chart.js
 import ManageBadwords from "./manage-badwords";
 import GrowthChartAlluser from "./Chart/GrowthChartAlluser";
@@ -131,6 +137,8 @@ const AdminHome: React.FC = () => {
 
   const [selectedCate, setSelectedCate] = useState<string>("dashboard");
   const [selectedBlog, setSelectedBlog] = useState<string>("blog-all");
+  const [selectedApprove, setSelectedApprove] =
+    useState<string>("blog-success");
 
   const [reports, setReports] = useState<Report[]>([]);
   const [showModal, setShowModal] = useState(false);
@@ -140,6 +148,15 @@ const AdminHome: React.FC = () => {
   const [monthsPost, setMonthsPost] = useState<MonthData[]>([]);
   const [title, setTitle] = useState("Dashboard"); // เพิ่มเติม: สร้าง state สำหรับเปลี่ยน title ของหน้าเว็บ
 
+  const handleShowModal = (report: any) => {
+    setSelectedReport(report);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedReport(null);
+  };
 
   const navigate = useNavigate();
 
@@ -242,7 +259,7 @@ const AdminHome: React.FC = () => {
   useEffect(() => {
     if (selectedCate === "dashboard") {
       setTitle("Dashboard");
-    } else if (selectedCate === "manage-blog") {
+    } else if (selectedCate === "average") {
       setTitle("จัดการบล็อก");
     } else if (selectedCate === "manage-q") {
       setTitle("จัดการคำถาม");
@@ -426,14 +443,13 @@ const AdminHome: React.FC = () => {
               href="#"
               onClick={(e) => {
                 e.preventDefault();
-                handleCategorySelection("manage-blog");
+                handleCategorySelection("average");
               }}
-              className={selectedCate === "manage-blog" ? "active" : ""}
+              className={selectedCate === "average" ? "active" : ""}
             >
               <TiDocumentText />
               <h3>จัดการบล็อก</h3>
             </a>
-
             <a
               href="#"
               onClick={(e) => {
@@ -607,11 +623,521 @@ const AdminHome: React.FC = () => {
               </div>
             </div>
           )}
+          {selectedCate === "average" && (
+            <div className="average">
+              <div className="main1">
+                <h2
+                  style={{
+                    fontSize: "1.8rem",
+                    fontWeight: "800",
+                    marginTop: "2rem",
+                  }}
+                >
+                  จัดการบล็อก
+                </h2>
+                <div className="insights">
+                  <div
+                    className="blogpost-all"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleTableSelection("blog-all");
+                    }}
+                  >
+                    <IoDocumentTextOutline className="svg3" />
 
+                    <div className="middle">
+                      <div className="left">
+                        <h3>บล็อกที่รายงานทั้งหมด</h3>
+                        <h1>{reports.length}</h1>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    className="view-all"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleTableSelection("blog-wait");
+                    }}
+                  >
+                    <IoIosTime className="svg2" />
+                    <div className="middle">
+                      <div className="left">
+                        <h3>รอตรวจสอบ</h3>
+                        <h1>{countVerifiedReports(reports)}</h1>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    className="user-all"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleTableSelection("blog-success");
+                    }}
+                  >
+                    <PiUsersThreeFill className="svg1" />
+                    <div className="middle">
+                      <div className="left">
+                        <h3>ตรวจสอบแล้ว</h3>
+                        <h1>{countNoVerifiedReports(reports)}</h1>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {selectedBlog === "blog-all" && (
+                  <div
+                    className="recent-order"
+                    style={{
+                      overflowY: "auto", // เพิ่ม scrollbar เมื่อเนื้อหามากเกินไป
+                      maxHeight: "400px", // กำหนดความสูงสูงสุดของ div
+                      marginTop: "10px",
+                      borderRadius: "2rem",
+                    }}
+                  >
+                    <table>
+                      <thead
+                        style={{
+                          position: "sticky",
+                          top: 0,
+                          backgroundColor: "#fff",
+                          zIndex: 1,
+                        }}
+                        className="pt-5"
+                      >
+                        <tr>
+                          <th>ผู้รายงาน</th>
+                          <th>วันที่</th>
+                          <th>หัวข้อการรายงาน</th>
+                          <th>สถานะ</th>
+                          <th>รายละเอียด</th>
+                        </tr>
+                      </thead>
+
+                      {adminProfile && (
+                        <tbody>
+                          {reports.length > 0 ? (
+                            reports.map((report) => (
+                              <tr key={report._id}>
+                                <td>
+                                  {report.reportedBy
+                                    ? report.reportedBy.fullname
+                                    : ""}
+                                </td>
+                                <td>
+                                  {new Date(
+                                    report.createdAt
+                                  ).toLocaleDateString()}
+                                </td>
+                                <td>{report.reason || "No Title"}</td>
+                                <td
+                                  className="warning"
+                                  style={{
+                                    color:
+                                      report.status === "Approved"
+                                        ? "#44ab89"
+                                        : report.status === "Pending"
+                                        ? "black"
+                                        : report.status === "Cancel"
+                                        ? "orange"
+                                        : "#ff7782",
+                                  }}
+                                >
+                                  {report.status === "Approved"
+                                    ? "อนุญาติให้อยู่บนเว็บไซต์"
+                                    : report.status === "Pending"
+                                    ? "รอดำเนินการ"
+                                    : report.status === "Cancel"
+                                    ? "ผู้ใช้ลบบล็อกหรือยกเลิกรายงาน"
+                                    : "ไม่อนุญาติให้อยู่บนเว็บไซต์"}
+                                </td>
+
+
+                                <td className="primary">
+                                  <Button
+                                    variant="info"
+                                    onClick={() => handleShowModal(report)}
+                                    disabled={report.status !== "Pending"}
+                                  >
+                                    รายละเอียด
+                                  </Button>
+                                </td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan={5}>ไม่มีการรายงาน</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      )}
+                    </table>
+
+                    {/* Report Details Modal */}
+                    {selectedReport && (
+                      <ReportDetailsModal
+                        showModal={showModal}
+                        handleClose={handleCloseModal}
+                        report={selectedReport}
+                        refreshReports={refreshReports}
+                      />
+                    )}
+                  </div>
+                )}
+
+                {selectedBlog === "blog-wait" && (
+                  <div
+                    className="recent-order"
+                    style={{
+                      overflowY: "scroll",
+                      maxHeight: "400px",
+                      margin: "0",
+                      borderRadius: "2rem",
+                    }}
+                  >
+                    <table>
+                      <thead className="pt-5">
+                        <tr>
+                          <th>ผู้รายงาน</th>
+                          <th>วันที่</th>
+                          <th>หัวข้อการรายงาน</th>
+                          <th>สถานะ</th>
+                          <th>รายละเอียด</th>
+                        </tr>
+                      </thead>
+                      {adminProfile && (
+                        <tbody>
+                          {reports.length > 0 ? (
+                            reports.map((report) =>
+                              !report.verified ? (
+                                <tr key={report._id}>
+                                  <td>
+                                    {report.reportedBy
+                                      ? report.reportedBy.fullname
+                                      : ""}
+                                  </td>
+                                  <td>
+                                    {new Date(
+                                      report.createdAt
+                                    ).toLocaleDateString()}
+                                  </td>
+                                  <td>{report.reason || "No Title"}</td>
+                                  <td
+  className="warning"
+  style={{
+    color:
+      report.status === "Approved"
+        ? "#44ab89"
+        : report.status === "Pending"
+        ? "black"
+        : report.status === "Cancel"
+        ? "orange"
+        : "#ff7782",
+  }}
+>
+  {report.status === "Approved"
+    ? "อนุญาติให้อยู่บนเว็บไซต์"
+    : report.status === "Pending"
+    ? "รอดำเนินการ"
+    : report.status === "Cancel"
+    ? "ผู้ใช้ลบบล็อกหรือยกเลิกรายงาน"
+    : "ไม่อนุญาติให้อยู่บนเว็บไซต์"}
+</td>
+
+
+                                  <td className="primary">
+                                    <Button
+                                      variant="info"
+                                      onClick={() => handleShowModal(report)}
+                                      disabled={report.verified ? true : false}
+                                    >
+                                      รายละเอียด
+                                    </Button>
+                                  </td>
+                                </tr>
+                              ) : (
+                                <></>
+                              )
+                            )
+                          ) : (
+                            <tr>
+                              <td colSpan={5}>ไม่มีการรายงาน</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      )}
+                    </table>
+                    {/* Report Details Modal */}
+                    {selectedReport && (
+                      <ReportDetailsModal
+                        showModal={showModal}
+                        handleClose={handleCloseModal}
+                        report={selectedReport}
+                        refreshReports={refreshReports}
+                      />
+                    )}
+                  </div>
+                )}
+
+                {selectedBlog === "blog-success" && (
+                  <div
+                    className="recent-order"
+                    style={{
+                      overflowY: "scroll",
+                      maxHeight: "400px",
+                      margin: "0",
+                      borderRadius: "2rem",
+                    }}
+                  >
+                    <div
+                      className="selectBlogCate"
+                      style={{
+                        marginLeft: "2rem",
+                        position: "fixed",
+                      }}
+                    >
+                      <Form>
+                        {["radio"].map((type) => (
+                          <div key={`inline-${type}`}>
+                            <Form.Check
+                              inline
+                              label="Approve"
+                              style={{ color: "#41f1b6" }}
+                              name="group1"
+                              type="radio"
+                              id={`inline-${type}-1`}
+                              onChange={() =>
+                                setSelectedApprove("blog-success")
+                              }
+                              checked={selectedApprove === "blog-success"}
+                            />
+                            <Form.Check
+                              inline
+                              label="Decline"
+                              style={{ color: "#ff7782" }}
+                              name="group1"
+                              type="radio"
+                              id={`inline-${type}-2`}
+                              onChange={() =>
+                                setSelectedApprove("blog-decline")
+                              }
+                              checked={selectedApprove === "blog-decline"}
+                            />
+                            <Form.Check
+                              inline
+                              label="Cancel"
+                              style={{ color: "#ff7782" }}
+                              name="group1"
+                              type="radio"
+                              id={`inline-${type}-3`}
+                              onChange={() => setSelectedApprove("blog-cancel")}
+                              checked={selectedApprove === "blog-cancel"}
+                            />
+                          </div>
+                        ))}
+                      </Form>
+                    </div>
+                    <div>
+                      {selectedApprove === "blog-success" && (
+                        <table>
+                          <thead className="pt-5">
+                            <tr>
+                              <th>ผู้รายงาน</th>
+                              <th>วันที่</th>
+                              <th>หัวข้อการรายงาน</th>
+                              <th>สถานะ</th>
+                              <th>รายละเอียด</th>
+                            </tr>
+                          </thead>
+                          {adminProfile && (
+                            <tbody>
+                              {reports.length > 0 ? (
+                                reports.map((report) =>
+                                  report.verified &&
+                                  report.status === "Approved" ? (
+                                    <tr key={report._id}>
+                                      <td>
+                                        {report.reportedBy
+                                          ? report.reportedBy.fullname
+                                          : ""}
+                                      </td>
+                                      <td>
+                                        {new Date(
+                                          report.createdAt
+                                        ).toLocaleDateString()}
+                                      </td>
+                                      <td>{report.reason || "No Title"}</td>
+                                      <td
+  className="warning"
+  style={{
+    color:
+      report.status === "Approved"
+        ? "#44ab89"
+        : report.status === "Pending"
+        ? "black"
+        : report.status === "Cancel"
+        ? "orange"
+        : "#ff7782",
+  }}
+>
+  {report.status === "Approved"
+    ? "อนุญาติให้อยู่บนเว็บไซต์"
+    : report.status === "Pending"
+    ? "รอดำเนินการ"
+    : report.status === "Cancel"
+    ? "ผู้ใช้ลบบล็อกหรือยกเลิกรายงาน"
+    : "ไม่อนุญาติให้อยู่บนเว็บไซต์"}
+</td>
+
+
+                                      <td className="primary">
+                                        <Button
+                                          variant="info"
+                                          onClick={() =>
+                                            handleShowModal(report)
+                                          }
+                                          disabled={
+                                            report.verified ? true : false
+                                          }
+                                        >
+                                          รายละเอียด
+                                        </Button>
+                                      </td>
+                                    </tr>
+                                  ) : (
+                                    <></>
+                                  )
+                                )
+                              ) : (
+                                <tr>
+                                  <td colSpan={5}>ไม่มีการรายงาน</td>
+                                </tr>
+                              )}
+                            </tbody>
+                          )}
+                        </table>
+                      )}
+                    </div>
+
+                    {selectedApprove === "blog-decline" && (
+                      <table>
+                        <thead className="pt-5">
+                          <tr>
+                            <th>ผู้รายงาน</th>
+                            <th>วันที่</th>
+                            <th>หัวข้อการรายงาน</th>
+                            <th>สถานะ</th>
+                            <th>รายละเอียด</th>
+                          </tr>
+                        </thead>
+                        {adminProfile && (
+                          <tbody>
+                            {reports.length > 0 ? (
+                              reports.map((report) =>
+                                report.status === "Declined" ? (
+                                  <tr key={report._id}>
+                                    <td>
+                                      {report.reportedBy
+                                        ? report.reportedBy.fullname
+                                        : ""}
+                                    </td>
+                                    <td>
+                                      {new Date(
+                                        report.createdAt
+                                      ).toLocaleDateString()}
+                                    </td>
+                                    <td>{report.reason || "No Title"}</td>
+                                    <td className="warning">ปฏิเสธ</td>
+                                    <td className="primary">
+                                      <Button
+                                        variant="info"
+                                        onClick={() => handleShowModal(report)}
+                                        disabled={
+                                          report.verified ? true : false
+                                        }
+                                      >
+                                        รายละเอียด
+                                      </Button>
+                                    </td>
+                                  </tr>
+                                ) : (
+                                  <></>
+                                )
+                              )
+                            ) : (
+                              <tr>
+                                <td colSpan={5}>ไม่มีการรายงาน</td>
+                              </tr>
+                            )}
+                          </tbody>
+                        )}
+                      </table>
+                    )}
+
+                    {selectedApprove === "blog-cancel" && (
+                      <table>
+                        <thead className="pt-5">
+                          <tr>
+                            <th>ผู้รายงาน</th>
+                            <th>วันที่</th>
+                            <th>หัวข้อการรายงาน</th>
+                            <th>สถานะ</th>
+                            <th>รายละเอียด</th>
+                          </tr>
+                        </thead>
+                        {adminProfile && (
+                          <tbody>
+                            {reports.length > 0 ? (
+                              reports.map((report) =>
+                                report.status === "Cancel" ? (
+                                  <tr key={report._id}>
+                                    <td>
+                                      {report.reportedBy
+                                        ? report.reportedBy.fullname
+                                        : ""}
+                                    </td>
+                                    <td>
+                                      {new Date(
+                                        report.createdAt
+                                      ).toLocaleDateString()}
+                                    </td>
+                                    <td>{report.reason || "No Title"}</td>
+                                    <td className="warning">
+                                      โพสต์ถูกลบ/ยกเลิกรายงาน
+                                    </td>
+                                    <td className="primary">
+                                      <Button
+                                        variant="info"
+                                        onClick={() => handleShowModal(report)}
+                                        disabled={
+                                          report.verified ? true : false
+                                        }
+                                      >
+                                        รายละเอียด
+                                      </Button>
+                                    </td>
+                                  </tr>
+                                ) : (
+                                  <></>
+                                )
+                              )
+                            ) : (
+                              <tr>
+                                <td colSpan={5}>ไม่มีการรายงาน</td>
+                              </tr>
+                            )}
+                          </tbody>
+                        )}
+                      </table>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
           {selectedCate === "manage-user" && (
             <ManageUser users={users} allUsers={allUsers} />
           )}
-          {selectedCate === "manage-blog" && <ManageReport />}
           {selectedCate === "manage-q" && <ManageQ />}
           {selectedCate === "manage-cate" && <ManageCate blogsData={getBlog} />}
           {selectedCate === "manage-badwords" && <ManageBadwords />}

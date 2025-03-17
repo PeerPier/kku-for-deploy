@@ -827,14 +827,14 @@ const AdminProfile: React.FC = () => {
                 {activeTab === "login-history" && (
                   <div
                     className="tab-content"
-                    style={{
-                      display: "inline-block",
-                      width: "100%", // หรือกำหนดความกว้างตามต้องการ
-                      maxHeight: "450px", // กำหนดความสูงสูงสุด
-                      overflowY: "auto", // ทำให้เลื่อนเฉพาะแนวตั้ง
-                      overflowX: "auto", // ถ้าต้องการให้เลื่อนแนวนอนด้วย
-                      border: "1px solid #ddd", // เพิ่มเส้นขอบให้ดูชัดขึ้น (เลือกใช้)
-                    }}
+                    // style={{
+                    //   display: "inline-block",
+                    //   width: "100%", // หรือกำหนดความกว้างตามต้องการ
+                    //   maxHeight: "450px", // กำหนดความสูงสูงสุด
+                    //   overflowY: "auto", // ทำให้เลื่อนเฉพาะแนวตั้ง
+                    //   overflowX: "auto", // ถ้าต้องการให้เลื่อนแนวนอนด้วย
+                    //   border: "1px solid #ddd", // เพิ่มเส้นขอบให้ดูชัดขึ้น (เลือกใช้)
+                    // }}
                   >
                     <table
                       style={{ width: "100%", borderCollapse: "collapse" }}
@@ -879,14 +879,17 @@ const AdminProfile: React.FC = () => {
                 {activeTab === "edit-admin-profile" && (
                   <div
                     className="tab-content"
-                    style={{
-                      display: "inline-block",
-                      width: "100%", // หรือกำหนดความกว้างตามต้องการ
-                      maxHeight: "450px", // กำหนดความสูงสูงสุด
-                      overflowY: "auto", // ทำให้เลื่อนเฉพาะแนวตั้ง
-                      overflowX: "auto", // ถ้าต้องการให้เลื่อนแนวนอนด้วย
-                      border: "1px solid #ddd", // เพิ่มเส้นขอบให้ดูชัดขึ้น (เลือกใช้)
-                    }}
+                    // style={{
+                      
+                    // }}
+                    // style={{
+                    //   display: "inline-block",
+                    //   width: "100%", // หรือกำหนดความกว้างตามต้องการ
+                    //   maxHeight: "450px", // กำหนดความสูงสูงสุด
+                    //   overflowY: "auto", // ทำให้เลื่อนเฉพาะแนวตั้ง
+                    //   overflowX: "auto", // ถ้าต้องการให้เลื่อนแนวนอนด้วย
+                    //   border: "1px solid #ddd", // เพิ่มเส้นขอบให้ดูชัดขึ้น (เลือกใช้)
+                    // }}
                   >
                     <table
                       style={{ width: "100%", borderCollapse: "collapse" }}

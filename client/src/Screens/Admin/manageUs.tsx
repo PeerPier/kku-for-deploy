@@ -177,7 +177,7 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
                   <tr>
                     <th
                       style={{
-                        position: "sticky",
+                        // position: "sticky",
                         top: 0,
                         backgroundColor: "#fff",
                         zIndex: 1,
@@ -187,7 +187,7 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
                     </th>
                     <th
                       style={{
-                        position: "sticky",
+                        // position: "sticky",
                         top: 0,
                         backgroundColor: "#fff",
                         zIndex: 1,
@@ -197,7 +197,7 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
                     </th>
                     <th
                       style={{
-                        position: "sticky",
+                        // position: "sticky",
                         top: 0,
                         backgroundColor: "#fff",
                         zIndex: 1,
@@ -207,7 +207,7 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
                     </th>
                     <th
                       style={{
-                        position: "sticky",
+                        // position: "sticky",
                         top: 0,
                         backgroundColor: "#fff",
                         zIndex: 1,
@@ -217,7 +217,7 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
                     </th>
                     <th
                       style={{
-                        position: "sticky",
+                        // position: "sticky",
                         top: 0,
                         backgroundColor: "#fff",
                         zIndex: 1,
@@ -225,7 +225,7 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
                     ></th>
                     <th
                       style={{
-                        position: "sticky",
+                        // position: "sticky",
                         top: 0,
                         backgroundColor: "#fff",
                         zIndex: 1,
