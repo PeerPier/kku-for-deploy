@@ -179,58 +179,114 @@ app.post("/get-upload-picture", upload.single("file"), (req, res) => {
 
 app.post("/search-blogs", (req, res) => {
     const { tag, author, query, page, limit, eliminate_blog } = req.body;
-    let findQuery = { tags: tag, draft: false };
-
+  
+    const maxLimit = limit || 10;
+    const currentPage = page > 0 ? page : 1;
+    let findQuery = { draft: false };
+  
     if (tag) {
-        const lowerCaseTag = tag.toLowerCase();
-        findQuery = {
-            tags: lowerCaseTag,
-            draft: false,
-            blog_id: { $ne: eliminate_blog }
-        };
+      const lowerCaseTags = Array.isArray(tag)
+        ? tag.map((t) => t.toLowerCase())
+        : [tag.toLowerCase()];
+      findQuery = {
+        tags: { $in: lowerCaseTags },
+        draft: false,
+      };
+      if (eliminate_blog) {
+        findQuery.blog_id = { $ne: eliminate_blog };
+      }
+      Post.aggregate([
+        { $match: findQuery },
+        {
+          $addFields: {
+            matchCount: { $size: { $setIntersection: ["$tags", lowerCaseTags] } },
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "author",
+            foreignField: "_id",
+            as: "author",
+          },
+        },
+        {
+          $project: {
+            author: { $arrayElemAt: ["$author", 0] },
+            topic: 1,
+            des: 1,
+            banner: 1,
+            activity: 1,
+            tags: 1,
+            publishedAt: 1,
+            blog_id: 1,
+          },
+        },
+        { $sort: { matchCount: -1, publishedAt: -1 } },
+        { $skip: (currentPage - 1) * maxLimit },
+        { $limit: maxLimit },
+      ])
+        .then((blogs) => {
+          return res.status(200).json({ blogs });
+        })
+        .catch((err) => {
+          return res.status(500).json({ error: err.message });
+        });
     } else if (query) {
-        findQuery = { draft: false, topic: new RegExp(query, "i") };
-    } else if (author) {
-        findQuery = { author, draft: false };
-    }
-    const maxLimit = limit ? limit : 2;
-
-    Post.find(findQuery)
+      findQuery = { draft: false, topic: new RegExp(query, "i") };
+      Post.find(findQuery)
         .populate("author", "profile_picture username fullname -_id")
         .sort({ publishedAt: -1 })
         .select("blog_id topic des banner activity tags publishedAt -_id")
-        .skip((page - 1) * maxLimit)
+        .skip((currentPage - 1) * maxLimit)
         .limit(maxLimit)
         .then((blogs) => {
-            return res.status(200).json({ blogs });
+          return res.status(200).json({ blogs });
         })
         .catch((err) => {
-            return res.status(500).json({ error: err.message });
+          return res.status(500).json({ error: err.message });
         });
-});
-
-app.post("/search-blogs-count", (req, res) => {
+    } else if (author) {
+      findQuery = { author, draft: false };
+      Post.find(findQuery)
+        .populate("author", "profile_picture username fullname -_id")
+        .sort({ publishedAt: -1 })
+        .select("blog_id topic des banner activity tags publishedAt -_id")
+        .skip((currentPage - 1) * maxLimit)
+        .limit(maxLimit)
+        .then((blogs) => {
+          return res.status(200).json({ blogs });
+        })
+        .catch((err) => {
+          return res.status(500).json({ error: err.message });
+        });
+    } else {
+      return res.status(400).json({ error: "Invalid search parameters" });
+    }
+  });
+  
+  app.post("/search-blogs-count", (req, res) => {
     const { tag, query, author } = req.body;
     let findQuery;
-
+  
     if (tag) {
-        const lowerCaseTag = tag.toLowerCase();
-        findQuery = { tags: lowerCaseTag, draft: false };
+      const lowerCaseTag = tag.toLowerCase();
+      findQuery = { tags: lowerCaseTag, draft: false };
     } else if (query) {
-        findQuery = { draft: false, topic: new RegExp(query, "i") };
+      findQuery = { draft: false, topic: new RegExp(query, "i") };
     } else if (author) {
-        findQuery = { author, draft: false };
+      findQuery = { author, draft: false };
     }
-
+  
     Post.countDocuments(findQuery)
-        .then((count) => {
-            return res.status(200).json({ totalDocs: count });
-        })
-        .catch((err) => {
-            console.log(err.message);
-            return res.status(500).json({ error: err.message });
-        });
-});
+      .then((count) => {
+        return res.status(200).json({ totalDocs: count });
+      })
+      .catch((err) => {
+        console.log(err.message);
+        return res.status(500).json({ error: err.message });
+      });
+  });
 
 app.post("/search-users", (req, res) => {
     let { query } = req.body;
