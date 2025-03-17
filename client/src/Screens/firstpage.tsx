@@ -48,12 +48,12 @@ const FirstPage = () => {
   };
 
   return (
-    <div className="container">
-      <nav className="navbar">
-        <nav className="navbar">
+    <div className="container-fp">
+      <nav className="navbar1-fp">
+        <nav className="navbar-fp">
           <img
             src={logoKKU}
-            className="logo" /* ใช้ className เพื่อควบคุมขนาด */
+            className="logo-fp" /* ใช้ className เพื่อควบคุมขนาด */
             style={{ objectFit: "contain", userSelect: "none" }}
             alt="Logo"
           />
@@ -63,35 +63,35 @@ const FirstPage = () => {
         </nav>
       </nav>
 
-      <div className="main-content">
-        <div className="text-container">
+      <div className="main-content-fp">
+        <div className="text-container-fp">
           <p>ยินดีต้อนรับสู่</p>
 
           {/* ข้อความเด้งขึ้นทีละตัวและขยับไปเรื่อยๆ */}
-          <h1 className={`main-title ${isTextVisible ? "show" : ""}`}>
+          <h1 className={`main-title-fp ${isTextVisible ? "show" : ""}`}>
             <SplitText text="KKU Blogging Platform" />
           </h1>
 
-          <p className={`subtitle ${isTextVisible ? "show" : ""}`}>
+          <p className={`subtitle-fp ${isTextVisible ? "show" : ""}`}>
             พื้นที่แห่งการแบ่งปันความรู้และประสบการณ์สำหรับชาวมหาวิทยาลัยขอนแก่น!
             ไม่ว่าคุณจะเป็นนักศึกษา คณาจารย์ หรือผู้สนใจทั่วไป
             ที่นี่คือสถานที่ที่คุณสามารถแสดงความคิดสร้างสรรค์ แบ่งปันไอเดีย
             และแลกเปลี่ยนความรู้ในหลากหลายหัวข้อ ตั้งแต่การศึกษา เทคโนโลยี
             การวิจัย ไปจนถึงเรื่องราวจากชีวิตประจำวัน
           </p>
-          <button className="btn-primary">
+          <button className="btn-primary-fp">
             <a href="/homepage">เข้าสู่เว็บไซต์</a>
           </button>
         </div>
 
         {/* รูปฝั่งขวา */}
-        <div className="image-container">
-          <img src={heroImage} alt="Hero" className="hero-image" />
+        <div className="image-container-fp">
+          <img src={heroImage} alt="Hero" className="hero-image-fp" />
         </div>
       </div>
 
-      <footer className="footer">
-        <nav className="footer-menu">
+      <footer className="footer-fp">
+        <nav className="footer-menu-fp">
           <p></p>
         </nav>
       </footer>

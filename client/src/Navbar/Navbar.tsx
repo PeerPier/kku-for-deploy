@@ -59,7 +59,10 @@ function Navbar() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (notiPanelRef.current && !notiPanelRef.current.contains(event.target as Node)) {
+      if (
+        notiPanelRef.current &&
+        !notiPanelRef.current.contains(event.target as Node)
+      ) {
         setUserNotiPanel(false);
       }
     };
@@ -199,13 +202,13 @@ function Navbar() {
 
   return (
     <nav className="navbar-navbar">
-      <Link to="/" className="logo-link">
-        <img src={logoKKU} alt="Logo" className="logo-img" />
-      </Link>
+  <Link to="/homepage" className="logo-link">
+    <img src={logoKKU} alt="Logo" className="logo-img" />
+  </Link>
 
-      <div
-        className={`search-container ${searchBoxVisibility ? "show" : "hide"} `}
-      >
+  {access_token && (
+    <>
+      <div className={`search-container ${searchBoxVisibility ? "show" : "hide"} `}>
         <input
           type="text"
           placeholder="Search..."
@@ -224,193 +227,142 @@ function Navbar() {
             <IoIosSearch className="toggle-icon" />
           </button>
         </div>
-        {access_token ? (
-          <>
-            <Link
-              to="/editor"
-              className="d-none d-md-flex align-items-center gap-2 md:flex gap-2 link"
-              style={{ textDecoration: "none" }}
-            >
-              <LuFileEdit />
-              <p className="m-0">เขียน</p>
-            </Link>
 
-            <Notifications />
+        <Link
+          to="/editor"
+          className="d-none d-md-flex align-items-center gap-2 md:flex gap-2 link"
+          style={{ textDecoration: "none" }}
+        >
+          <LuFileEdit />
+          <p className="m-0">เขียน</p>
+        </Link>
 
-            {/* <Link to="/dashboard/notification"> */}
+        <Notifications />
+
+        {/* ปุ่มแจ้งเตือน */}
+        <div className="relative" style={{ position: "relative" }} ref={notiPanelRef}>
+          <button onClick={handleNotiPanel} className="button-noti">
+            <IoNotificationsOutline className="d-block" style={{ fontSize: "1.5rem" }} />
+            {countUnseenNotifications(notifications) > 0 && (
+              <p
+                style={{
+                  backgroundColor: "red",
+                  borderRadius: "50px",
+                  width: "1.2rem",
+                  height: "1.2rem",
+                  color: "white",
+                  marginTop: "-1rem",
+                  marginRight: "-1rem",
+                  fontSize: "0.8rem",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  opacity: NotificationShow ? 1 : 0,
+                }}
+              >
+                {countUnseenNotifications(notifications)}
+              </p>
+            )}
+          </button>
+
+          {userNotiPanel && (
             <div
-              className="relative"
-              style={{ position: "relative" }}
-              ref={notiPanelRef}
+              className="notifications-container"
+              style={{
+                maxHeight: notifications.length > 5 ? "400px" : "auto",
+                overflowY: notifications.length > 5 ? "auto" : "visible",
+                scrollbarWidth: "thin",
+                scrollbarColor: "#B0B0B0 transparent",
+              }}
             >
-              <button onClick={handleNotiPanel} className="button-noti">
-                <IoNotificationsOutline
-                  className="d-block"
-                  style={{ fontSize: "1.5rem" }}
-                />
-                {countUnseenNotifications(notifications) > 0 && (
-                  <p
-                    style={{
-                      backgroundColor: "red",
-                      borderRadius: "50px",
-                      width: "1.2rem",
-                      height: "1.2rem",
-                      color: "white",
-                      marginTop: "-1rem",
-                      marginRight: "-1rem",
-                      fontSize: "0.8rem",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      opacity: NotificationShow ? 1 : 0,
-                    }}
-                  >
-                    {countUnseenNotifications(notifications)}
-                  </p>
-                )}
-              </button>
-
-              {userNotiPanel ? (
-                <div
-                  className="notifications-container"
-                  style={{
-                    maxHeight: notifications.length > 5 ? "400px" : "auto", // ถ้าเกิน 5 รายการ ให้แสดง Scroll Bar
-                    overflowY: notifications.length > 5 ? "auto" : "visible",
-                    scrollbarWidth: "thin", // Firefox
-                    scrollbarColor: "#B0B0B0 transparent",
-                  }}
-                >
-                  <h4 style={{ margin: "3%" }}>การแจ้งเตือน</h4>
-                  <div className="notifications-categories">
-                    <button
-                      className={activeButton === "ทั้งหมด" ? "active" : ""}
-                      onClick={() => setActiveButton("ทั้งหมด")}
-                    >
-                      ทั้งหมด
-                    </button>
-                    <button
-                      className={activeButton === "อ่านแล้ว" ? "active" : ""}
-                      onClick={() => setActiveButton("อ่านแล้ว")}
-                    >
-                      อ่านแล้ว
-                    </button>
-                    <button
-                      className={activeButton === "ยังไม่อ่าน" ? "active" : ""}
-                      onClick={() => setActiveButton("ยังไม่อ่าน")}
-                    >
-                      ยังไม่อ่าน
-                    </button>
-                  </div>
-                  <hr style={{ opacity: 0.1, marginTop: "0.3rem" }} />
-                  {filteredNotifications.length === 0 ? (
-                    <p style={{ textAlign: "center", padding: "10px" }}>
-                      ไม่มีการแจ้งเตือน
-                    </p>
-                  ) : (
-                    [...filteredNotifications]
-                      .sort(
-                        (a, b) =>
-                          new Date(b.createdAt).getTime() -
-                          new Date(a.createdAt).getTime()
-                      ) // เรียงจากล่าสุด -> เก่าสุด
-                      .map((notification, idx) => (
-                        <div
-                          key={idx}
-                          className={`notification-item ${
-                            !notification.seen ? "unread" : ""
-                          }`}
-                          onClick={(e) => {
-                            const entityId =
-                              notification.blog?.blog_id || notification._id;
-                            handleNotificationClick(
-                              e,
-                              notification.type,
-                              notification._id,
-                              entityId,
-                              notification.user ? notification.user._id : null
-                            );
-                            handleNotiPanel();
-                          }}
-                        >
-                          <img
-                            src={
-                              notification.type !== "delete"
-                                ? notification.user.profile_picture
-                                : "https://www.svgrepo.com/show/116240/wrench-and-hammer-tools-thin-outline-symbol-inside-a-circle.svg"
-                            }
-                            alt={
-                              notification.type !== "delete" ? "User" : "Admin"
-                            }
-                          />
-                          <div className="notification-text">
-                            <p>
-                              {notification.type === "delete"
-                                ? `บล็อกของคุณถูกลบเนื่องจาก ${notification.reason}`
-                                : notification.type === "follow"
-                                ? `${notification.user.fullname} เริ่มติดตามคุณ`
-                                : notification.type === "like"
-                                ? `${notification.user.fullname} กดถูกใจบล็อกของคุณ`
-                                : notification.type === "comment"
-                                ? `${notification.user.fullname} แสดงความคิดเห็นบนบล็อกของคุณ`
-                                : notification.type === "reply"
-                                ? `${notification.user.fullname} ตอบกลับความคิดเห็นของคุณ`
-                                : `${notification.user.fullname} commented on your blog`}
-                            </p>
-                            <small style={{ marginTop: "2px" }}>
-                              {formatTimeAgo(notification.createdAt)}
-                            </small>
-                          </div>
-                        </div>
-                      ))
-                  )}
-                </div>
+              <h4 style={{ margin: "3%" }}>การแจ้งเตือน</h4>
+              <div className="notifications-categories">
+                <button className={activeButton === "ทั้งหมด" ? "active" : ""} onClick={() => setActiveButton("ทั้งหมด")}>
+                  ทั้งหมด
+                </button>
+                <button className={activeButton === "อ่านแล้ว" ? "active" : ""} onClick={() => setActiveButton("อ่านแล้ว")}>
+                  อ่านแล้ว
+                </button>
+                <button className={activeButton === "ยังไม่อ่าน" ? "active" : ""} onClick={() => setActiveButton("ยังไม่อ่าน")}>
+                  ยังไม่อ่าน
+                </button>
+              </div>
+              <hr style={{ opacity: 0.1, marginTop: "0.3rem" }} />
+              {filteredNotifications.length === 0 ? (
+                <p style={{ textAlign: "center", padding: "10px" }}>ไม่มีการแจ้งเตือน</p>
               ) : (
-                ""
+                [...filteredNotifications]
+                  .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                  .map((notification, idx) => (
+                    <div
+                      key={idx}
+                      className={`notification-item ${!notification.seen ? "unread" : ""}`}
+                      onClick={(e) => {
+                        const entityId = notification.blog?.blog_id || notification._id;
+                        handleNotificationClick(e, notification.type, notification._id, entityId, notification.user ? notification.user._id : null);
+                        handleNotiPanel();
+                      }}
+                    >
+                      <img
+                        src={
+                          notification.type !== "delete"
+                            ? notification.user.profile_picture
+                            : "https://www.svgrepo.com/show/116240/wrench-and-hammer-tools-thin-outline-symbol-inside-a-circle.svg"
+                        }
+                        alt={notification.type !== "delete" ? "User" : "Admin"}
+                      />
+                      <div className="notification-text">
+                        <p>
+                          {notification.type === "delete"
+                            ? `บล็อกของคุณถูกลบเนื่องจาก ${notification.reason}`
+                            : notification.type === "follow"
+                            ? `${notification.user.fullname} เริ่มติดตามคุณ`
+                            : notification.type === "like"
+                            ? `${notification.user.fullname} กดถูกใจบล็อกของคุณ`
+                            : notification.type === "comment"
+                            ? `${notification.user.fullname} แสดงความคิดเห็นบนบล็อกของคุณ`
+                            : notification.type === "reply"
+                            ? `${notification.user.fullname} ตอบกลับความคิดเห็นของคุณ`
+                            : `${notification.user.fullname} commented on your blog`}
+                        </p>
+                        <small style={{ marginTop: "2px" }}>{formatTimeAgo(notification.createdAt)}</small>
+                      </div>
+                    </div>
+                  ))
               )}
             </div>
+          )}
+        </div>
 
-            <div
-              className="relative"
-              style={{ position: "relative" }}
-              onClick={handleNavpanel}
-              onBlur={handleBlur}
-            >
-              <button
-                className=" mt-1"
-                style={{ width: "3rem", height: "3rem" }}
-              >
-                <img
-                  src={profile_picture}
-                  className="img-fluid rounded-circle"
-                  alt=""
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-              </button>
+        {/* User Navigation Panel */}
+        <div className="relative" style={{ position: "relative" }} onClick={handleNavpanel} onBlur={handleBlur}>
+          <button className="mt-1" style={{ width: "3rem", height: "3rem" }}>
+            <img
+              src={profile_picture}
+              className="img-fluid rounded-circle"
+              alt=""
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          </button>
 
-              {userNavPanel ? <UserNavigationPanel /> : ""}
-            </div>
-          </>
-        ) : (
-          <>
-            <Link
-              className="btn-dark py-2"
-              to="/signin"
-              style={{ textDecoration: "none" }}
-            >
-              เข้าสู่ระบบ
-            </Link>
-
-            <Link
-              className="btn-light py-2 hidden md:block"
-              to="/signup"
-              style={{ textDecoration: "none" }}
-            >
-              สมัครสมาชิก
-            </Link>
-          </>
-        )}
+          {userNavPanel && <UserNavigationPanel />}
+        </div>
       </div>
-    </nav>
+    </>
+  )}
+
+  {!access_token && (
+    <div className="auth-buttons">
+      <Link className="btn-dark py-2" to="/signin" style={{ textDecoration: "none" }}>
+        เข้าสู่ระบบ
+      </Link>
+      <Link className="btn-light py-2 hidden md:block" to="/signup" style={{ textDecoration: "none" }}>
+        สมัครสมาชิก
+      </Link>
+    </div>
+  )}
+</nav>
+
   );
 }
 

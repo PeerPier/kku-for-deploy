@@ -365,6 +365,15 @@
   scrollbar-color: #b0b0b0 transparent; /* สำหรับ Firefox */
 }
 
+
+
+.auth-buttons {
+  margin-left: auto; /* ดันไปขวาสุด */
+  display: flex;
+  gap: 10px; /* เพิ่มระยะห่างระหว่างปุ่ม */
+}
+
+
 @media (min-width: 768px) {
   .toggle-search-2 {
     display: none;

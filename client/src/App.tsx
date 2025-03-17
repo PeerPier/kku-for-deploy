@@ -21,7 +21,6 @@ import { ChatContextProvider } from "./Screens/ChatContext";
 import Navbar2 from "./Navbar/Navbar1";
 import Navbar from "./Navbar/Navbar";
 import HelpCentre from "./Screens/helpcentre";
-import Helpnotlog from "./Screens/help-notlogin";
 import { createContext } from "react";
 import { lookInSession } from "./common/session";
 import UserAuthForm from "./Screens/UserAuthForm";
@@ -38,6 +37,7 @@ import ChangPassword from "./Screens/change-password";
 import Notifications from "./Screens/notifications.page";
 import ManageBlogs from "./Screens/manageblogs";
 import ReportCheck from "./Screens/reportCheck";
+import ManageReport from "./Screens/Admin/manageReport";
 import NotiSetting from "./Screens/noti-setting";
 import ForgotPasswordUser from "./Screens/ForgotPasswordUser";
 import axios from "axios";
@@ -157,7 +157,8 @@ function App() {
               path="/signup"
               element={<UserAuthForm type="สมัครสมาชิก" />}
             />
-            <Route path="/homepage" element={<HomePage />} /> {/* Updated route */}
+            <Route path="/homepage" element={<HomePage />} />{" "}
+            {/* Updated route */}
             <Route path="/user/:id" element={<ProfilePage />} />
             <Route path="/search/:query" element={<SearchPage />} />
             <Route path="*" element={<PageNotFound />} />
@@ -169,25 +170,23 @@ function App() {
               <Route path="noti-setting" element={<NotiSetting />} />
             </Route>
             <Route path="/footer" element={<Footer />} />
-
             <Route path="dashboard" element={<SideNav />}>
               <Route path="blogs" element={<ManageBlogs />} />
               <Route path="notifications" element={<Notifications />} />
               <Route path="reportCheck" element={<ReportCheck />} />
             </Route>
-
             <Route
               path="/dashboard/blogs/statistics"
               element={<DashboardUser />}
             />
             <Route path="/helpcentre" element={<HelpCentre />} />
-            <Route path="/help-notlogin" element={<Helpnotlog />} />
           </Route>
           <Route path="/" element={<FirstPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/admin/register" element={<RegisterAdmin />} />
           <Route path="/admin/login" element={<LoginAdmin type="admin" />} />
           <Route path="/admin/" element={<RegisterAdmin />} />
+          <Route path="/admin/managereport" element={<ManageReport />} />
 
           <Route
             path="/admin/:adminId/profile"
