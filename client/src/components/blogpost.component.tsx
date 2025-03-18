@@ -2,17 +2,11 @@ import { Link } from "react-router-dom";
 import { Post, Author } from "../types/post";
 import { 
   FaRegHeart, 
-  FaRegCommentDots, 
-  FaEllipsisV, 
-  FaEye 
-} from "react-icons/fa";
-import { FaUserAlt } from "react-icons/fa";
+  FaRegCommentDots} from "react-icons/fa";
+  import { FaUserAlt } from "react-icons/fa";
 import { FaEarthAmericas } from "react-icons/fa6";
-
-
 import { getDay } from "../common/date";
-import { useState } from "react";
-
+import "../misc/blogpost.component.css";
 interface BlogCardProps {
   content: Post;
   author: Author;
@@ -99,7 +93,6 @@ const BlogCard: React.FC<BlogCardProps> = ({ content, author }) => {
           </div>
 
           <h1 className="blog-title mt-3">{topic}</h1>
-
           <p className="descript-blogpost">{des}</p>
           <div className="d-flex gap-4 mt-3" style={{ alignItems: "center" }}>
             <span className="d-flex align-items-center gap-2" style={{ color: "#404040" }}>
@@ -110,8 +103,6 @@ const BlogCard: React.FC<BlogCardProps> = ({ content, author }) => {
               <FaRegCommentDots />
               {total_comments}
             </span>
-           
-            
           </div>
 
           <div className="d-flex gap-3 mt-3 tag-blogpage">
@@ -132,11 +123,9 @@ const BlogCard: React.FC<BlogCardProps> = ({ content, author }) => {
           />
         </div>
       </Link>
-
-
-      
     </div>
   );
 };
 
 export default BlogCard;
+

@@ -1,0 +1,15 @@
+@media (max-width: 480px) {
+
+    .fw-medium{
+        font-size: 8px;
+    }
+    .tag-blogpage{
+        font-size: 8px;
+    }
+    .blog-title  {
+        font-size: 8px;
+    }
+    .tag-blogpage span  {
+        font-size: 10px;
+    }     
+}

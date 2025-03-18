@@ -373,6 +373,16 @@
   gap: 10px; /* เพิ่มระยะห่างระหว่างปุ่ม */
 }
 
+@media (max-width: 768px) {
+.logo-link {
+  flex: none;
+  width: 1rem;
+  margin-right: 50px;
+}
+.logo-img {
+  width: 150px;
+  height: auto;
+}}
 
 @media (min-width: 768px) {
   .toggle-search-2 {
@@ -412,6 +422,7 @@
   .toggle-search-2 {
     gap: 1.5rem;
   }
+ 
   /* .toggle-search button {
     display: none;
   } */
