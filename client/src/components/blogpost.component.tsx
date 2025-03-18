@@ -6,7 +6,7 @@ import {
   import { FaUserAlt } from "react-icons/fa";
 import { FaEarthAmericas } from "react-icons/fa6";
 import { getDay } from "../common/date";
-import "../misc/blogpost.component.css";
+import "../misc/blog.post-component.css";
 interface BlogCardProps {
   content: Post;
   author: Author;
