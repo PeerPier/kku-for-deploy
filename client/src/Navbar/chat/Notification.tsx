@@ -87,26 +87,18 @@ const Notifications = () => {
             </div>
           </div>
 
-          {/* Show "ไม่มีข้อความ" if no notifications */}
-          {unreadNotifications.length === 0 ? (
-            <div className="no-notifications">
-              <p>ไม่มีข้อความ</p>
-            </div>
-          ) : (
-            <div className="notification-list">
-              {modifiedNotifications.map((notification) => (
-                <div
-                  key={notification.chatId}
-                  className="notification-item"
-                  onClick={() => handleNotificationClick(notification)}
-                >
-                  <p>{notification.senderName}: {notification.text}</p>
-                </div>
-              ))}
-            </div>
-          )}
+          <div className="notification-list">
+            {modifiedNotifications.map((notification) => (
+              <div
+                key={notification.chatId}
+                className="notification-item"
+                onClick={() => handleNotificationClick(notification)}
+              >
+                <p>{notification.senderName}: {notification.text}</p>
+              </div>
+            ))}
+          </div>
 
-          {/* If the chat box is not open, show a section to initiate chat */}
           {!isChatBoxOpen && (
             <div className="chat-section" onClick={handleChatClick}>
               <Chat />
