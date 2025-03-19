@@ -3,8 +3,11 @@ import { getDay } from "../common/date";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../App";
 import axios from "axios";
+import PostStatisticsChart from "./stat-component";
 
-interface Blog {
+interface Blog
+ {
+_id?:"";
   banner?: string;
   blog_id?: string;
   topic?: string;
@@ -15,31 +18,13 @@ interface Blog {
   setStateFunc?:any;
 }
 
-interface BlogStatsProps {
-  stats: { [key: string]: number };
-}
-
-const BlogStats: React.FC<BlogStatsProps> = ({ stats }) => {
-  return (
-    <div className="stat-blogs">
-      {Object.keys(stats).map((key, i) => {
-        return !key.includes("parent") ? (
-          <div key={i} className={"stat-key " + (i !== 0 ? " stat-keyi " : "")}>
-            <h1 className="stat-h1">{stats[key].toLocaleString()}</h1>
-            <p className="stat-p">{key.split("_")[1]}</p>
-          </div>
-        ) : null;
-      })}
-    </div>
-  );
-};
 
 interface ManagePublishedBlogCardProps {
   blog: Blog;
 }
 
 export const ManagePublishedBlogCard: React.FC<ManagePublishedBlogCardProps> = ({ blog }) => {
-  let { banner, blog_id, topic, publishedAt, activity } = blog;
+  let { banner, blog_id, topic, publishedAt, activity,_id } = blog;
   let [showStat, setShowStat] = useState(false);
   let { userAuth: { access_token } } = useContext(UserContext);
 
@@ -83,9 +68,17 @@ export const ManagePublishedBlogCard: React.FC<ManagePublishedBlogCardProps> = (
         </div>
 
         <div className="hidden-max-lg">
-        {showStat && <BlogStats stats={activity ?? {}} />}
+          <PostStatisticsChart postId={_id?.toString() || ""} />
         </div>
       </div>
+
+      {showStat ? (
+        <div className="lg-hidden">
+          <PostStatisticsChart postId={_id?.toString() ||  ""} />
+        </div>
+      ) : (
+        ""
+      )}
     </>
   );
 };

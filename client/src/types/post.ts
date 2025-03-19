@@ -41,7 +41,7 @@ export type Post = {
   visibility: 'public' | 'followers';
   isSaved?: boolean;
   views: number;
-  tags: string;
+  tags: string[];
   des: string;
   banner: string;
   activity: {

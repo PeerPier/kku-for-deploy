@@ -826,4 +826,10 @@ router.post("/blog-recommends", verifyJWT, async (req, res) => {
   }
 });
 
+router.get("/:postId/statistics", verifyJWT, async (req, res) => {
+  const { postId } = req.params;
+  const statistics = await Post.calculateStatistics(postId);
+  res.status(200).json(statistics);
+});
+
 module.exports = router;

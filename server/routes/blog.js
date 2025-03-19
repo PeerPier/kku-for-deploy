@@ -154,76 +154,62 @@ router.post("/", verifyJWT, async (req, res) => {
 
 router.post("/increment-view", async (req, res) => {
   try {
-    const { blog_id, userId } = req.body;
-    // If no userId provided, return error
-    if (!userId) {
-      return res.status(400).json({ error: "User ID is required" });
+    const { blog_id } = req.body;
+
+    if (!blog_id || typeof blog_id !== "string") {
+      return res.status(400).json({ error: "Invalid Blog ID" });
     }
 
-    const blog = await Blog.findOne({ blog_id });
+    let blog = await Blog.findOne({ blog_id });
+
     if (!blog) {
       return res.status(404).json({ error: "Blog not found" });
     }
 
-    const currentDate = new Date();
-    const month = currentDate.toLocaleString("default", { month: "short" });
-    const year = currentDate.getFullYear();
-
-    // Check if user has already viewed this post this month
-    const existingView = await View.findOne({
-      blog: blog._id,
-      month,
-      year,
-      user_ids: userId,
-    });
-
-    if (!existingView) {
-      // User hasn't viewed this post this month
-      const updatedView = await View.findOneAndUpdate(
-        { blog: blog._id, month, year },
-        {
-          $addToSet: { user_ids: userId },
-          $inc: { total_reads: 1 },
-        },
-        { upsert: true, new: true }
-      );
-
-      // Update blog view count only for new views
-      await Blog.findByIdAndUpdate(blog._id, {
-        $inc: {
-          views: 1,
-          "activity.total_reads": 1,
-        },
-      });
-
-      await User.findOneAndUpdate(
-        { _id: userId },
-        { $addToSet: { viewed_posts: blog._id } },
-        { new: true }
-      );
-
-      // Update author's total reads
-      if (blog.author) {
-        await User.findByIdAndUpdate(blog.author, {
-          $inc: { total_reads: 1 },
-        });
-      }
-
-      return res.status(200).json({
-        views: blog.views + 1,
-        total_reads: blog.activity.total_reads + 1,
-        message: "View count updated successfully",
-      });
+    // ✅ ตรวจสอบว่า views เป็น object ถ้าไม่ใช่ ให้กำหนดใหม่
+    if (typeof blog.views !== "object") {
+      blog.views = {
+        total: blog.views || 0,
+        daily: {},
+        monthly: {},
+        yearly: {},
+      };
+      await blog.save();
     }
 
-    // User has already viewed this post this month
+    // ✅ ปรับเวลาเป็นโซนไทย (UTC+7)
+    const now = new Date();
+    const thailandOffset = 7 * 60 * 60 * 1000;
+    const nowInThailand = new Date(now.getTime() + thailandOffset);
+
+    const today = nowInThailand.toISOString().split("T")[0]; // YYYY-MM-DD
+    const month = nowInThailand.toISOString().slice(0, 7); // YYYY-MM
+    const year = nowInThailand.getFullYear().toString(); // YYYY
+
+    // ✅ ใช้ findOneAndUpdate() เพื่ออัปเดตและคืนค่าล่าสุด
+    const updatedBlog = await Blog.findOneAndUpdate(
+      { blog_id },
+      {
+        $inc: {
+          "views.total": 1,
+          [`views.daily.${today}`]: 1,
+          [`views.monthly.${month}`]: 1,
+          [`views.yearly.${year}`]: 1,
+        },
+      },
+      { new: true } // ✅ คืนค่า blog ที่ถูกอัปเดตกลับมา
+    );
+
+    console.log("🕒 Thai Time:", nowInThailand.toISOString());
+    console.log("📅 Views Daily:", updatedBlog.views.daily);
+    console.log("✅ Updated Blog Views:", updatedBlog.views.total);
+
     return res.status(200).json({
-      views: blog.views,
-      total_reads: blog.activity.total_reads,
-      message: "View already counted for this user",
+      message: "View count updated successfully",
+      views: updatedBlog.views.total,
     });
   } catch (err) {
-    console.error("Error incrementing view:", err);
+    console.error("🔥 Error incrementing view:", err);
     return res.status(500).json({ error: err.message });
   }
 });
@@ -899,7 +885,7 @@ router.post("/user-written-blog", verifyJWT, async (req, res) => {
     .skip(skipDocs)
     .limit(maxLimit)
     .sort({ publishedAt: -1 })
-    .select(" topic banner publishedAt blog_id activity des draft -_id")
+    .select(" topic banner publishedAt blog_id activity des draft _id")
     .then((blogs) => {
       return res.status(200).json({ blogs });
     })
@@ -987,6 +973,20 @@ router.post("/delete-blog", verifyJWT, (req, res) => {
     .catch((err) => {
       return res.status(500).json({ error: err.message });
     });
+});
+router.get("/tag/:tag", async (req, res) => {
+  const tag = req.params.tag;
+  try {
+    const posts = await Blog.find({ tags: tag }).populate({
+      path: "author",
+      select: "profile_picture username fullname followers",
+    });
+
+    res.json(posts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error fetching posts" });
+  }
 });
 
 module.exports = router;

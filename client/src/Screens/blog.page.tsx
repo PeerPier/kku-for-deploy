@@ -10,7 +10,7 @@ import {
 } from "react";
 
 import { FaEarthAmericas } from "react-icons/fa6";
-import { FaUserAlt } from "react-icons/fa";
+import { FaTag, FaUserAlt } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
 import AnimationWrapper from "./page-animation";
 import Loader from "../components/loader.component";
@@ -44,7 +44,7 @@ export const BlogState: Partial<Post> = {
   blog_id: "",
   topic: "",
   des: "",
-  tags: "",
+
   content: [
     {
       blocks: [],
@@ -66,6 +66,7 @@ export const BlogState: Partial<Post> = {
   },
   views: 0,
   visibility: "public",
+  tags:[]
 };
 
 export const BlogContext = createContext<BlogContextType | undefined>(
@@ -79,7 +80,8 @@ const BlogPage = () => {
   const [similarBlogs, setSimilarBlogs] = useState<Post[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  let { _id, topic, content, banner, author, publishedAt, visibility } = blog;
+  let { _id, topic, content, banner, author, publishedAt, visibility, tags } =
+    blog;
   const [islikedByUser, setLikeByUser] = useState(false);
   const [issavedByUser, setSaveByUser] = useState(false);
   const [commentWrapper, setCommentWrapper] = useState(false);
@@ -325,15 +327,27 @@ const BlogPage = () => {
                 : // <p>No content available</p>
                   null}
             </div>
-            <div className="d-flex gap-3 mt-3 tags-description">
-              {tagList.map((tag: string, index: number) => (
-                <span key={index} className="btn-light">
-                  {tag}
-                </span>
-              ))}
+            <div className="d-flex align-items-center gap-2 flex-wrap">
+              <div aria-hidden="true">
+                <FaTag className="text-secondary" /> <span>:</span>
+              </div>
+              {tags?.length ? (
+                tags.map((tag, index) => (
+                  <Link
+                    key={index}
+                    to={`/tag/${encodeURIComponent(tag)}`}
+                    className="badge bg-secondary text-light px-2 py-1 text-decoration-none"
+                    aria-label={`View posts tagged with ${tag}`}
+                  >
+                    {tag}
+                  </Link>
+                ))
+              ) : (
+                <span className="text-muted">ไม่มีแท็ก</span>
+              )}
             </div>
+
             <BlogInteraction />
-            
 
             <CommentsContainer />
 

@@ -33,6 +33,7 @@ import DashboardUser from "./Screens/DashboardUser";
 import LoginAdmin from "./Screens/Admin/adminLogin";
 import ProfileAdmin from "./Screens/Admin/adminProfile";
 import SideNav from "./components/sideNavbar";
+import TagPost from "./Screens/tag";
 import ChangPassword from "./Screens/change-password";
 import Notifications from "./Screens/notifications.page";
 import ManageBlogs from "./Screens/manageblogs";
@@ -187,7 +188,7 @@ function App() {
           <Route path="/admin/login" element={<LoginAdmin type="admin" />} />
           <Route path="/admin/" element={<RegisterAdmin />} />
           <Route path="/admin/managereport" element={<ManageReport />} />
-
+          <Route path="/tag/:tag" element={<TagPost />} />
           <Route
             path="/admin/:adminId/profile"
             element={
