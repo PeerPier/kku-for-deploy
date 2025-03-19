@@ -813,7 +813,13 @@ router.post("/blog-recommends", verifyJWT, async (req, res) => {
       );
     });
 
-    return res.status(200).json({ blogs: filteredBlogs });
+    const sortedBlogs = filteredBlogs.sort((a, b) => {
+      const aIsFollowing = currentUser.following.includes(a.author._id.toString());
+      const bIsFollowing = currentUser.following.includes(b.author._id.toString());
+      return bIsFollowing - aIsFollowing;
+    });
+
+    return res.status(200).json({ blogs: sortedBlogs });
   } catch (error) {
     console.error("Error fetching users:", error);
     return res.status(500).json({ error: "Internal Server Error" });
