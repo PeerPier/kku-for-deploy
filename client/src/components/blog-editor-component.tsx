@@ -244,7 +244,7 @@ const BlogEditor = () => {
             toast.dismiss(loadingToast);
             toast.success("เผยแพร่แล้ว");
             setTimeout(() => {
-              navigate("/");
+              navigate("/homepage");
             }, 500);
           })
           .catch(({ response }) => {

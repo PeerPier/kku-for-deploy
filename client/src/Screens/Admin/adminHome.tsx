@@ -752,7 +752,6 @@ const AdminHome: React.FC = () => {
                                     : "ไม่อนุญาติให้อยู่บนเว็บไซต์"}
                                 </td>
 
-
                                 <td className="primary">
                                   <Button
                                     variant="info"
@@ -823,27 +822,26 @@ const AdminHome: React.FC = () => {
                                   </td>
                                   <td>{report.reason || "No Title"}</td>
                                   <td
-  className="warning"
-  style={{
-    color:
-      report.status === "Approved"
-        ? "#44ab89"
-        : report.status === "Pending"
-        ? "black"
-        : report.status === "Cancel"
-        ? "orange"
-        : "#ff7782",
-  }}
->
-  {report.status === "Approved"
-    ? "อนุญาติให้อยู่บนเว็บไซต์"
-    : report.status === "Pending"
-    ? "รอดำเนินการ"
-    : report.status === "Cancel"
-    ? "ผู้ใช้ลบบล็อกหรือยกเลิกรายงาน"
-    : "ไม่อนุญาติให้อยู่บนเว็บไซต์"}
-</td>
-
+                                    className="warning"
+                                    style={{
+                                      color:
+                                        report.status === "Approved"
+                                          ? "#44ab89"
+                                          : report.status === "Pending"
+                                          ? "black"
+                                          : report.status === "Cancel"
+                                          ? "orange"
+                                          : "#ff7782",
+                                    }}
+                                  >
+                                    {report.status === "Approved"
+                                      ? "อนุญาติให้อยู่บนเว็บไซต์"
+                                      : report.status === "Pending"
+                                      ? "รอดำเนินการ"
+                                      : report.status === "Cancel"
+                                      ? "ผู้ใช้ลบบล็อกหรือยกเลิกรายงาน"
+                                      : "ติให้อยู่บนเว็บไซต์"}
+                                  </td>
 
                                   <td className="primary">
                                     <Button
@@ -968,27 +966,26 @@ const AdminHome: React.FC = () => {
                                       </td>
                                       <td>{report.reason || "No Title"}</td>
                                       <td
-  className="warning"
-  style={{
-    color:
-      report.status === "Approved"
-        ? "#44ab89"
-        : report.status === "Pending"
-        ? "black"
-        : report.status === "Cancel"
-        ? "orange"
-        : "#ff7782",
-  }}
->
-  {report.status === "Approved"
-    ? "อนุญาติให้อยู่บนเว็บไซต์"
-    : report.status === "Pending"
-    ? "รอดำเนินการ"
-    : report.status === "Cancel"
-    ? "ผู้ใช้ลบบล็อกหรือยกเลิกรายงาน"
-    : "ไม่อนุญาติให้อยู่บนเว็บไซต์"}
-</td>
-
+                                        className="warning"
+                                        style={{
+                                          color:
+                                            report.status === "Approved"
+                                              ? "#44ab89"
+                                              : report.status === "Pending"
+                                              ? "black"
+                                              : report.status === "Cancel"
+                                              ? "orange"
+                                              : "#ff7782",
+                                        }}
+                                      >
+                                        {report.status === "Approved"
+                                          ? "อนุญาติให้อยู่บนเว็บไซต์"
+                                          : report.status === "Pending"
+                                          ? "รอดำเนินการ"
+                                          : report.status === "Cancel"
+                                          ? "ผู้ใช้ลบบล็อกหรือยกเลิกรายงาน"
+                                          : "ไม่อนุญาติให้อยู่บนเว็บไซต์"}
+                                      </td>
 
                                       <td className="primary">
                                         <Button
