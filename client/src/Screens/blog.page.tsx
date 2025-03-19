@@ -64,7 +64,12 @@ export const BlogState: Partial<Post> = {
     total_comments: 0,
     total_saves: 0,
   },
-  views: 0,
+  views: {
+    total: 0,
+    daily: {},
+    monthly: {},
+    yearly: {},
+  },
   visibility: "public",
   tags:[]
 };
@@ -90,12 +95,7 @@ const BlogPage = () => {
   const fullname = author?.fullname || "Unknown Author";
   const author_username = author?.username || "Unknown Username";
   const profile_picture = author?.profile_picture || "";
-  const tagList = Array.isArray(blog.tags)
-    ? blog.tags
-    : blog.tags
-    ? [blog.tags]
-    : [];
-
+ 
   const getAuthHeaders = () => {
     const userStr = sessionStorage.getItem("user");
     if (!userStr) return {};
@@ -288,7 +288,7 @@ const BlogPage = () => {
                     <FaEye
                       style={{ fontSize: "20px", marginRight: "0.1rem" }}
                     />{" "}
-                    {blog?.views || 0}
+                    {blog?.views?.total ?? 0}
                     {visibility === "followers" ? (
                       <>
                         <FaUserAlt

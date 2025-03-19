@@ -3,6 +3,12 @@ import { Comment, CommentsData } from "./comment";
 import { Like } from "./like";
 import { save } from "./save"; // ตรวจสอบว่าชื่อไฟล์เป็น Save หรือ save
 
+interface Views {
+  total: number;
+  daily: Record<string, number>;
+  monthly: Record<string, number>;
+  yearly: Record<string, number>;
+}
 export type ContentWithImages = {
   content: string;
   images: string[];
@@ -40,7 +46,7 @@ export type Post = {
   createdAt: string;
   visibility: 'public' | 'followers';
   isSaved?: boolean;
-  views: number;
+  views: Views;
   tags: string[];
   des: string;
   banner: string;
