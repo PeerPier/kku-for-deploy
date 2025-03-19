@@ -456,6 +456,7 @@ router.post("/add-comment", verifyJWT, async (req, res) => {
   }
 
   let user_id = req.user;
+
   let { _id, comment, blog_author, replying_to } = req.body;
 
   if (!comment.length) {
@@ -489,6 +490,12 @@ router.post("/add-comment", verifyJWT, async (req, res) => {
             "activity.total_parent_comments": replying_to ? 0 : 1,
           },
         }
+      );
+
+      await User.findOneAndUpdate(
+        { _id: user_id, commented_posts: { $ne: _id } },
+        { $addToSet: { commented_posts: _id } },
+        { new: true }
       );
 
       console.log("แสดงความคิดเห็นแล้ว!");

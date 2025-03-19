@@ -14,13 +14,14 @@ async function recommend(userId, topN = 3) {
         return [];
     }
     //การรวบรวมโพสต์ที่ผู้ใช้โต้ตอบ
-    const user = await User.findById(userId, 'viewed_posts liked_posts saved_posts').lean();
+    const user = await User.findById(userId, 'viewed_posts liked_posts saved_posts commented_posts').lean();
     if (!user) return [];  
 
     const interactedPosts = new Set([
         ...user.viewed_posts,
         ...user.liked_posts,
-        ...user.saved_posts
+        ...user.saved_posts,
+        ...user.commented_posts
     ]);
 
     //รวบรวมข้อมูลการโต้ตอบของผู้ใช้ทุกคนกับโพสต์
@@ -28,7 +29,7 @@ async function recommend(userId, topN = 3) {
     const userCollection = await User.aggregate([
         { $project: { 
             _id: 1, 
-            posts: { $setUnion: ["$viewed_posts", "$liked_posts", "$saved_posts"] } 
+            posts: { $setUnion: ["$viewed_posts", "$liked_posts", "$saved_posts", "$commented_posts"] } 
         }},
         { $unwind: "$posts" },
         { $group: { 

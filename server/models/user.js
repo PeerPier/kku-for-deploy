@@ -152,6 +152,10 @@ const userSchema = new mongoose.Schema(
       type: [String], 
       default: [],
     },
+    commented_posts: {
+      type: [String], 
+      default: [],
+    },
     notification_enable: {
       type: Boolean, 
       default: true,
