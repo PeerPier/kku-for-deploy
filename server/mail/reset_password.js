@@ -6,7 +6,7 @@ const logoPath = path.join(__dirname, './assets/logo-head.jpg');
 
 const sendResetPasswordEmail = async (recipientEmail, recipientName, resetLink, referenceId) => {
   const mailOptions = {
-    from: `no-reply <${process.env.MAIL_USER}>`,
+    from: `KKU Blogging - Reset Password <${process.env.MAIL_USER}>`,
     to: recipientEmail,
     subject: `[KKU Blogging] ตั้งค่ารหัสผ่านใหม่ รหัสอ้างอิง: (${referenceId})`,
     html: resetPasswordTemplate(recipientName, resetLink, referenceId),

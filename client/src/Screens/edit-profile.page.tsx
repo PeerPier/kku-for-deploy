@@ -146,13 +146,14 @@ const EditProfile = () => {
       return toast.error("ชื่อต้องมีความยาวอย่างน้อย 3 ตัวอักษร");
     }
 
+    // ตรวจสอบความถูกต้องของ bio
     if (typeof bio === "string" && bio.length > bioLimit) {
       return toast.error(`ไบโอต้องไม่เกิน ${bioLimit} ตัวอักษร`);
     }
 
     let loadingToast = toast.loading("กำลังอัปเดต...");
     const button = e.target as HTMLButtonElement;
-    button.setAttribute("disabled", "true");
+    button.setAttribute("disable", "true");
 
     axios
       .post(
@@ -184,16 +185,15 @@ const EditProfile = () => {
         }
 
         toast.dismiss(loadingToast);
-        button.removeAttribute("disabled");
+        button.removeAttribute("disable");
         toast.success("โปรไฟล์อัปเดตแล้ว");
       })
       .catch(({ response }) => {
         toast.dismiss(loadingToast);
-        button.removeAttribute("disabled");
+        button.removeAttribute("disable");
         toast.error(response.data.error);
       });
   };
-
   return (
     <AnimationWrapper>
       {loading ? (

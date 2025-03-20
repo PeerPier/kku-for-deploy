@@ -93,38 +93,25 @@ router.post("/update-profile-img", verifyJWT, (req, res) => {
     });
 });
 
-router.post("/update-profile", verifyJWT, async (req, res) => {
-  let { username, bio, social_links } = req.body;
-
-  try {
-    await BadWordScanner(req.body);
-  } catch (err) {
-    badword = err.toString().split(" ");
-    badword = badword[badword.length - 1];
-    return res.status(403).json({
-      error: `ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : “${badword}”`,
-      details: `$ข้อความของคุณมีคำไม่เหมาะสม กรุณาตรวจสอบและแก้ไข : “${badword}”`,
-    });
-  }
+router.post("/update-profile", verifyJWT, (req, res) => {
+  let { fullname, bio, social_links } = req.body;
 
   let bioLimit = 150;
-  if (username.length < 3) {
+  if (fullname.length < 3) {
     return res
       .status(403)
-      .json({ error: "ชื่อผู้ใช้ต้องมีความยาวอย่างน้อย 3 ตัวอักษร" });
+      .json({ error: "ชื่อเต็มต้องมีความยาวอย่างน้อย 3 ตัวอักษร" });
   }
   if (bio.length > bioLimit) {
     return res
       .status(403)
-      .json({ error: `ไบโอต้องไม่เกิน ${bioLimit} ตัวอักษร` });
+      .json({ error: `ไบโอต้องไม่เกิน ${bioLimit} ตัวอักษร `});
   }
 
   let socialLinksArr = Object.keys(social_links);
   try {
     for (let i = 0; i < socialLinksArr.length; i++) {
       if (social_links[socialLinksArr[i]].length) {
-        // let hostname = new URL.apply(social_links[socialLinksArr[i]]).hostname;
-
         let hostname = new URL(social_links[socialLinksArr[i]]).hostname;
 
         if (
@@ -144,7 +131,7 @@ router.post("/update-profile", verifyJWT, async (req, res) => {
   }
 
   let updateObj = {
-    username,
+    fullname,
     bio,
     social_links,
   };
@@ -153,11 +140,11 @@ router.post("/update-profile", verifyJWT, async (req, res) => {
     runValidators: true,
   })
     .then(() => {
-      return res.status(200).json({ username });
+      return res.status(200).json({ fullname });
     })
     .catch((err) => {
       if (err.code === 11000) {
-        return res.status(409).json({ error: "ชื่อผู้ใช้ถูกใช้ไปแล้ว" });
+        return res.status(409).json({ error: "ชื่อเต็มนี้ถูกใช้ไปแล้ว" });
       }
       return res.status(500).json({ error: err.message });
     });
