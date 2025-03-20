@@ -273,25 +273,9 @@ const HomePage = () => {
             }}
           >
             <div>
-              <h1 className="fw-medium mb-3 fs-5">
-                แท็กยอดนิยม
-                <FaTags
-                  style={{
-                    fontSize: "20px",
-                    marginBottom: "5px",
-                    marginLeft: "7px",
-                  }}
-                />
-              </h1>
+              <h1 className="fw-medium mb-3 fs-5">แท็กยอดนิยม</h1>
 
-              <div
-                className="d-flex gap-3 flex-wrap tag-blogpage"
-                style={{
-                  position: "sticky", // sticky ให้กับแท็ก
-                  top: "60px", // ตำแหน่งที่แท็กจะยึดติด
-                  zIndex: 9,
-                }}
-              >
+              <div className="d-flex gap-3 flex-wrap">
                 {allTags.map((tag, i) => (
                   <button
                     onClick={loadBlogBycategory}
