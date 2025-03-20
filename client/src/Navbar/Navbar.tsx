@@ -353,10 +353,10 @@ function Navbar() {
 
   {!access_token && (
     <div className="auth-buttons">
-      <Link className="btn-dark py-2" to="/signin" style={{ textDecoration: "none" }}>
+      <Link className="btn-dark py-2 fnt" to="/signin" style={{ textDecoration: "none" }}>
         เข้าสู่ระบบ
       </Link>
-      <Link className="btn-light py-2 hidden md:block" to="/signup" style={{ textDecoration: "none" }}>
+      <Link className="btn-light py-2 hidden md:block fnt" to="/signup" style={{ textDecoration: "none" }}>
         สมัครสมาชิก
       </Link>
     </div>

@@ -253,7 +253,7 @@ const BlogInteraction = () => {
 
   return (
     <>
-      <Toaster />
+      <Toaster toastOptions={{style: {opacity:1}}}  />
       <hr className="border-grey my-2" />
 
       <div className="d-flex gap-2 justify-content-between">
