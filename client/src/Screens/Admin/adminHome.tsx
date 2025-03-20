@@ -444,12 +444,12 @@ const AdminHome: React.FC = () => {
               href="#"
               onClick={(e) => {
                 e.preventDefault();
-                handleCategorySelection("average");
+                handleCategorySelection("manage-report");
               }}
-              className={selectedCate === "average" ? "active" : ""}
+              className={selectedCate === "manage-report" ? "active" : ""}
             >
               <TiDocumentText />
-              <h3>จัดการบล็อก</h3>
+              <h3>จัดการรายงานปัญหา</h3>
             </a>
             <a
               href="#"
