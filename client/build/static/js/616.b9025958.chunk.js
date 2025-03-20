@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkmy_react_app=self.webpackChunkmy_react_app||[]).push([[616],{5616:(e,n,t)=>{t.r(n),t.d(n,{modelJson:()=>r,weightBundles:()=>u});var r=function(){return t.e(882).then(t.bind(t,882))},u=[function(){return t.e(1).then(t.bind(t,1))}]}}]);
+//# sourceMappingURL=616.b9025958.chunk.js.map
