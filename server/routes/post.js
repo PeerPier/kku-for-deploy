@@ -258,7 +258,7 @@ router.get("/trending-blogs", (req, res) => {
       "activity.total_likes": -1,
       publishedAt: -1,
     })
-    .select("blog_id topic publishedAt -_id")
+    .select("blog_id topic publishedAt -_id activity.total_likes")
     .limit(10)
     .then((blogs) => {
       return res.status(200).json({ blogs });
