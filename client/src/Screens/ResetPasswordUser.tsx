@@ -197,7 +197,7 @@ const ResetPassword: React.FC = () => {
         <Box sx={{ marginTop: "20px" }}>
           <Typography variant="body1">
             จำรหัสผ่านได้แล้ว?{" "}
-            <Link to="https://kku-client.vercel.app/signin" style={{ color: "#635bff", textDecoration: "none" }}>
+            <Link to="https://kkublogging.com/signin" style={{ color: "#635bff", textDecoration: "none" }}>
               เข้าสู่ระบบ
             </Link>
           </Typography>

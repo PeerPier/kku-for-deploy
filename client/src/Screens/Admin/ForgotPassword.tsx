@@ -131,7 +131,7 @@ const ForgotPassword = () => {
               disableElevation
               onClick={() => {
                 window.location.href =
-                  "https://kku-client.vercel.app/admin/login";
+                  "https://kkublogging.com/login";
               }}
               sx={{
                 backgroundColor: "#000",

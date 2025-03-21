@@ -101,7 +101,7 @@ const ResetPassword: React.FC = () => {
 
           // Redirect to login page after success
           setTimeout(() => {
-            window.location.href = "https://kku-client.vercel.app/admin/login"; // Redirect to login page
+            window.location.href = "https://kkublogging.com/admin/login"; // Redirect to login page
           }, 3000); // Delay for the user to see success message
         } else {
           toast.error(res.data.message);
@@ -198,7 +198,7 @@ const ResetPassword: React.FC = () => {
         <Box sx={{ marginTop: "20px" }}>
           <Typography variant="body1">
             จำรหัสผ่านได้แล้ว?{" "}
-            <Link to="https://kku-client.vercel.app/admin/login" style={{ color: "#635bff", textDecoration: "none" }}>
+            <Link to="https://kkublogging.com/admin/login" style={{ color: "#635bff", textDecoration: "none" }}>
               เข้าสู่ระบบ
             </Link>
           </Typography>
