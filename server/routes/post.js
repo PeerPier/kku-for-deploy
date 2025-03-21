@@ -259,7 +259,7 @@ router.get("/trending-blogs", (req, res) => {
       publishedAt: -1,
     })
     .select("blog_id topic publishedAt -_id")
-    .limit(5)
+    .limit(10)
     .then((blogs) => {
       return res.status(200).json({ blogs });
     })
