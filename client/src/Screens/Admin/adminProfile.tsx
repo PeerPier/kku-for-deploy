@@ -435,75 +435,129 @@ const AdminProfile: React.FC = () => {
     return (
       <div className="admin-acp confirmation-modal">
         <div className="modal-content">
-          <h2>แก้ไขข้อมูลแอดมิน</h2>
-          <div className="edit-form">
-            <div className="input-group">
-              <label>ชื่อผู้ใช้</label>
-              <input
-                type="text"
-                value={editData.username}
-                onChange={(e) =>
-                  setEditData({ ...editData, username: e.target.value })
-                }
-                className="form-input"
-              />
-            </div>
-            <div className="input-group">
-              <label>อีเมล</label>
-              <input
-                type="email"
-                value={editData.email}
-                onChange={(e) =>
-                  setEditData({ ...editData, email: e.target.value })
-                }
-              />
-            </div>
-            <div className="input-group">
-              <label>ชื่อ</label>
-              <input
-                type="text"
-                value={editData.firstname}
-                onChange={(e) =>
-                  setEditData({ ...editData, firstname: e.target.value })
-                }
-              />
-            </div>
-            <div className="input-group">
-              <label>นามสกุล</label>
-              <input
-                type="text"
-                value={editData.lastname}
-                onChange={(e) =>
-                  setEditData({ ...editData, lastname: e.target.value })
-                }
-              />
-            </div>
-            <div className="input-group">
-              <label>เบอร์โทร</label>
-              <input
-                type="tel"
-                value={editData.tel}
-                onChange={(e) =>
-                  setEditData({ ...editData, tel: e.target.value })
-                }
-              />
-            </div>
-          </div>
-          <div className="modal-actions">
-            <button className="cancel-btn" onClick={onClose}>
-              ยกเลิก
-            </button>
-            <button
-              className="confirm-btn"
-              onClick={() => {
-                onSave(editData);
-                onClose();
-              }}
-            >
-              บันทึก
-            </button>
-          </div>
-        </div>
+  <h2>แก้ไขข้อมูลแอดมิน</h2>
+  <div className="edit-form">
+    <div className="input-group">
+      <label>ชื่อผู้ใช้</label>
+      <input
+        type="text"
+        value={editData.username}
+        onChange={(e) =>
+          setEditData({ ...editData, username: e.target.value })
+        }
+        className="form-input"
+      />
+    </div>
+    <div className="input-group">
+      <label>อีเมล</label>
+      <input
+        type="email"
+        value={editData.email}
+        onChange={(e) =>
+          setEditData({ ...editData, email: e.target.value })
+        }
+        className="form-input"
+      />
+    </div>
+    <div className="input-group">
+      <label>ชื่อ</label>
+      <input
+        type="text"
+        value={editData.firstname}
+        onChange={(e) =>
+          setEditData({ ...editData, firstname: e.target.value })
+        }
+        className="form-input"
+      />
+    </div>
+    <div className="input-group">
+      <label>นามสกุล</label>
+      <input
+        type="text"
+        value={editData.lastname}
+        onChange={(e) =>
+          setEditData({ ...editData, lastname: e.target.value })
+        }
+        className="form-input"
+      />
+    </div>
+    <div className="input-group">
+      <label>เบอร์โทร</label>
+      <input
+        type="tel"
+        value={editData.tel}
+        onChange={(e) =>
+          setEditData({ ...editData, tel: e.target.value })
+        }
+        className="form-input"
+      />
+    </div>
+  </div>
+
+  <div className="modal-actions">
+    <button className="cancel-btn" onClick={onClose}>
+      ยกเลิก
+    </button>
+    <button
+      className="confirm-btn"
+      onClick={() => {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const telPattern = /^\d{10}$/;
+
+        if (editData.username.trim() === "") {
+          toast.error("กรุณากรอกชื่อผู้ใช้");
+          return;
+        }
+
+        if (editData.firstname.trim() === "") {
+          toast.error("กรุณากรอกชื่อ");
+          return;
+        }
+
+        if (editData.lastname.trim() === "") {
+          toast.error("กรุณากรอกนามสกุล");
+          return;
+        }
+
+        if (editData.email.trim() === "") {
+          toast.error("กรุณากรอกอีเมล");
+          return;
+        }
+
+        if (!emailPattern.test(editData.email.trim())) {
+          toast.error("รูปแบบอีเมลไม่ถูกต้อง (ต้องมี @ และโดเมน)");
+          return;
+        }
+
+        if (editData.tel.trim() === "") {
+          toast.error("กรุณากรอกเบอร์โทร");
+          return;
+        }
+
+        if (!telPattern.test(editData.tel)) {
+          toast.error("เบอร์โทรต้องเป็นตัวเลข 10 หลัก(ไม่มี -)");
+          return;
+        }
+
+        // ทำความสะอาดข้อมูลก่อนส่ง
+        const cleanedData = {
+          ...editData,
+          username: editData.username.trimStart().replace(/\s+/g, " "),
+          firstname: editData.firstname.trimStart().replace(/\s+/g, " "),
+          lastname: editData.lastname.trimStart().replace(/\s+/g, " "),
+          email: editData.email.trim(),
+          tel: editData.tel,
+        };
+
+        onSave(cleanedData);
+        onClose();
+      }}
+    >
+      บันทึก
+    </button>
+  </div>
+</div>
+
       </div>
     );
   };
@@ -527,86 +581,180 @@ const AdminProfile: React.FC = () => {
     return (
       <div className="admin-acp confirmation-modal">
         <div className="modal-content">
-          <h2>เพิ่มแอดมิน</h2>
-          <div className="edit-form">
-            <div className="input-group">
-              <label>ชื่อผู้ใช้</label>
-              <input
-                type="text"
-                value={newAdmin.username}
-                onChange={(e) =>
-                  setNewAdmin({ ...newAdmin, username: e.target.value })
-                }
-                className="form-input"
-              />
-            </div>
-            <div className="input-group">
-              <label>รหัสผ่าน</label>
-              <input
-                type="password"
-                value={newAdmin.password}
-                onChange={(e) =>
-                  setNewAdmin({ ...newAdmin, password: e.target.value })
-                }
-                className="form-input"
-              />
-            </div>
-            <div className="input-group">
-              <label>อีเมล</label>
-              <input
-                type="email"
-                value={newAdmin.email}
-                onChange={(e) =>
-                  setNewAdmin({ ...newAdmin, email: e.target.value })
-                }
-              />
-            </div>
-            <div className="input-group">
-              <label>ชื่อ</label>
-              <input
-                type="text"
-                value={newAdmin.firstname}
-                onChange={(e) =>
-                  setNewAdmin({ ...newAdmin, firstname: e.target.value })
-                }
-              />
-            </div>
-            <div className="input-group">
-              <label>นามสกุล</label>
-              <input
-                type="text"
-                value={newAdmin.lastname}
-                onChange={(e) =>
-                  setNewAdmin({ ...newAdmin, lastname: e.target.value })
-                }
-              />
-            </div>
-            <div className="input-group">
-              <label>เบอร์โทร</label>
-              <input
-                type="tel"
-                value={newAdmin.tel}
-                onChange={(e) =>
-                  setNewAdmin({ ...newAdmin, tel: e.target.value })
-                }
-              />
-            </div>
-          </div>
-          <div className="modal-actions">
-            <button className="cancel-btn" onClick={onClose}>
-              ยกเลิก
-            </button>
-            <button
-              className="confirm-btn"
-              onClick={() => {
-                onSave(newAdmin);
-                onClose();
-              }}
-            >
-              บันทึก
-            </button>
-          </div>
-        </div>
+  <h2>เพิ่มแอดมิน</h2>
+  <div className="edit-form">
+    {/* ข้อมูลส่วนตัว */}
+    <fieldset className="form-section">
+      <legend className="legend">ข้อมูลส่วนตัว</legend>
+      <div className="input-group">
+        <label>ชื่อ</label>
+        <input
+          type="text"
+          value={newAdmin.firstname}
+          onChange={(e) =>
+            setNewAdmin({ ...newAdmin, firstname: e.target.value })
+          }
+          className="form-input"
+        />
+      </div>
+
+      <div className="input-group">
+        <label>นามสกุล</label>
+        <input
+          type="text"
+          value={newAdmin.lastname}
+          onChange={(e) =>
+            setNewAdmin({ ...newAdmin, lastname: e.target.value })
+          }
+          className="form-input"
+        />
+      </div>
+    </fieldset>
+
+    {/* ข้อมูลบัญชี */}
+    <fieldset className="form-section">
+      <legend className="legend">ข้อมูลบัญชี</legend>
+      <div className="input-group">
+        <label>ชื่อผู้ใช้</label>
+        <input
+          type="text"
+          value={newAdmin.username}
+          onChange={(e) =>
+            setNewAdmin({ ...newAdmin, username: e.target.value })
+          }
+          className="form-input"
+        />
+      </div>
+      <div className="input-group">
+        <label>รหัสผ่าน</label>
+        <input
+          type="password"
+          value={newAdmin.password}
+          onChange={(e) =>
+            setNewAdmin({ ...newAdmin, password: e.target.value })
+          }
+          className="form-input"
+        />
+      </div>
+    </fieldset>
+
+    {/* ข้อมูลติดต่อ */}
+    <fieldset className="form-section">
+      <legend className="legend">ข้อมูลติดต่อ</legend>
+      <div className="input-group">
+        <label>อีเมล</label>
+        <input
+          type="email"
+          value={newAdmin.email}
+          onChange={(e) =>
+            setNewAdmin({ ...newAdmin, email: e.target.value })
+          }
+          className="form-input"
+        />
+      </div>
+      <div className="input-group">
+        <label>เบอร์โทร</label>
+        <input
+          type="tel"
+          inputMode="numeric"
+          maxLength={10}
+          value={newAdmin.tel}
+          onChange={(e) => {
+            const onlyNums = e.target.value.replace(/\D/g, "");
+            setNewAdmin({ ...newAdmin, tel: onlyNums });
+          }}
+          className="form-input"
+        />
+      </div>
+    </fieldset>
+  </div>
+
+  <div className="modal-actions">
+    <button className="cancel-btn" onClick={onClose}>
+      ยกเลิก
+    </button>
+    <button
+      className="confirm-btn"
+      onClick={() => {
+        const {
+          firstname,
+          lastname,
+          username,
+          password,
+          email,
+          tel,
+        } = newAdmin;
+
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
+        const telPattern = /^\d{10}$/;
+
+        if (firstname.trim() === "") {
+          toast.error("กรุณากรอกชื่อ");
+          return;
+        }
+
+        if (lastname.trim() === "") {
+          toast.error("กรุณากรอกนามสกุล");
+          return;
+        }
+
+        if (username.trim() === "") {
+          toast.error("กรุณากรอกชื่อผู้ใช้");
+          return;
+        }
+
+        if (password === "") {
+          toast.error("กรุณากรอกรหัสผ่าน");
+          return;
+        }
+
+        if (!passwordPattern.test(password)) {
+          toast.error(
+            "รหัสผ่านต้องมีตัวพิมพ์เล็ก, ตัวพิมพ์ใหญ่, ตัวเลข อย่างละ 1 ตัว และไม่น้อยกว่า 6 ตัว"
+          );
+          return;
+        }
+
+        if (email.trim() === "") {
+          toast.error("กรุณากรอกอีเมล");
+          return;
+        }
+
+        if (!emailPattern.test(email.trim())) {
+          toast.error("รูปแบบอีเมลไม่ถูกต้อง (ต้องมี @ และโดเมน)");
+          return;
+        }
+
+        if (tel.trim() === "") {
+          toast.error("กรุณากรอกเบอร์โทร");
+          return;
+        }
+
+        if (!telPattern.test(tel)) {
+          toast.error("เบอร์โทรต้องเป็นตัวเลข 10 หลัก");
+          return;
+        }
+
+        // ถ้าทุกอย่างผ่าน → สะอาดข้อมูลก่อนส่ง
+        const cleanedData = {
+          firstname: firstname.trimStart().replace(/\s+/g, " "),
+          lastname: lastname.trimStart().replace(/\s+/g, " "),
+          username: username.trimStart().replace(/\s+/g, " "),
+          password,
+          email: email.trim(),
+          tel,
+        };
+
+        onSave(cleanedData);
+        onClose();
+      }}
+    >
+      บันทึก
+    </button>
+  </div>
+</div>
+
       </div>
     );
   };
@@ -645,14 +793,39 @@ const AdminProfile: React.FC = () => {
   ) => {
     try {
       const user = JSON.parse(sessionStorage.getItem("user") || "{}");
+
+      // 🔍 1️⃣ ดึงข้อมูลแอดมินทั้งหมดก่อน
+      const { data: existingAdmins } = await axios.get(
+        `${API_BASE_URL}/admin/all-admins`,
+        {
+          headers: {
+            Authorization: `Bearer ${user.access_token}`,
+          },
+        }
+      );
+
+      // 🛑 2️⃣ ตรวจสอบว่ามีอีเมลนี้อยู่แล้วหรือไม่
+      const isEmailTaken = existingAdmins.some(
+        (admin: AdminListData) =>
+          admin.email.toLowerCase() === adminData.email.toLowerCase()
+      );
+
+      if (isEmailTaken) {
+        toast.error("อีเมลนี้ถูกใช้งานแล้ว กรุณาใช้เมลอื่น");
+        return;
+      }
+
+      // ✅ 3️⃣ ถ้าอีเมลไม่ซ้ำ -> ทำการลงทะเบียน
       await axios.post(`${API_BASE_URL}/admin/register`, adminData, {
         headers: {
           Authorization: `Bearer ${user.access_token}`,
         },
       });
+
       toast.success("เพิ่มแอดมินสำเร็จ");
-      fetchAdmins();
+      fetchAdmins(); // 🔄 อัปเดตรายการแอดมินใหม่
     } catch (error) {
+      console.error("Error registering admin:", error);
       toast.error("ไม่สามารถเพิ่มแอดมินได้");
     }
   };
@@ -880,7 +1053,7 @@ const AdminProfile: React.FC = () => {
                   <div
                     className="tab-content"
                     // style={{
-                      
+
                     // }}
                     // style={{
                     //   display: "inline-block",

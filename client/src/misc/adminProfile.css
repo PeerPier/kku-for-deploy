@@ -841,7 +841,7 @@
   background: #fff !important;
   border-radius: 8px;
   width: 90%;
-  max-width: 500px;
+  max-width: 200px;
   padding: 20px;
 }
 
@@ -1467,4 +1467,88 @@
   .tab-content {
     width: 200px;
   }
+}
+
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  height: 600px;
+  width: 1200px;
+}
+
+h2 {
+  text-align: center;
+  font-size: 22px;
+  margin-bottom: 15px;
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-section {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px 15px;
+}
+
+legend {
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.input-group label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.form-input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.cancel-btn,
+.confirm-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background: #ccc;
+  color: black;
+}
+
+.confirm-btn {
+  background: #007bff;
+  color: white;
+}
+
+.legend{
+  font-size: 16px;
+  font-family: 'Kanit', sans-serif;
 }
