@@ -23,6 +23,8 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [fetchUserData, setFetchUserData] = useState<any>([]);
+  const [fetchTop5FollowerUsers, setfetchTop5FollowerUsers] = useState<any>([]);
+
 
   const [passwordVisibility, setPasswordVisibility] = useState<{
     [key: string]: boolean;
@@ -88,6 +90,19 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
     }
   };
 
+  useEffect(()=>{
+    fetchTop5rUsers();
+  },[])
+
+  const fetchTop5rUsers = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/admin/mostfollower-user`);
+      setfetchTop5FollowerUsers(response.data);
+    } catch (error) {
+      console.error("Error fetching reports:", error);
+    }
+  };
+
   // กำหนดรายชื่อผู้ใช้ที่จะนำไปค้นหา:
   // หาก fetchUserData มีข้อมูลให้ใช้ fetchUserData ถ้าไม่มีให้ใช้ allUsers
   const userList =
@@ -137,6 +152,97 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
             </div>
           </div>
         </div>
+
+        <div className="recent-order" style={{ marginTop: "1.5rem" }}>
+          <h2 style={{ marginLeft: "2px" }}>ผู้ใช้ที่มีผู้ติดตามมากที่สุด</h2>
+          <div className="right">
+            <div
+              className="activity-analytics"
+              style={{
+                marginTop: "0.5rem",
+                overflowY: "scroll",
+                maxHeight: "300px",
+              }}
+            >
+              <table>
+                <thead
+                  className="pt-5"
+                  style={{ margin: "20px 10px", backgroundColor: "white" }}
+                >
+                  <tr>
+  
+                    <th
+                      style={{
+                        // position: "sticky",
+                        top: 0,
+                        backgroundColor: "#fff",
+                        zIndex: 1,
+                      }}
+                    >
+                      ชื่อบัญชีผู้ใช้
+                    </th>
+                    <th
+                      style={{
+                        // position: "sticky",
+                        top: 0,
+                        backgroundColor: "#fff",
+                        zIndex: 1,
+                      }}
+                    >
+                      จำนวนผู้ติดตาม
+                    </th>
+                    <th
+                      style={{
+                        // position: "sticky",
+                        top: 0,
+                        backgroundColor: "#fff",
+                        zIndex: 1,
+                      }}
+                    ></th>
+                    <th
+                      style={{
+                        // position: "sticky",
+                        top: 0,
+                        backgroundColor: "#fff",
+                        zIndex: 1,
+                      }}
+                    ></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {fetchTop5FollowerUsers.length > 0 ? (
+                    fetchTop5FollowerUsers.map((u: any) => (
+                      <tr key={u._id}>
+                        <td>{u.fullname}</td>
+                        <td>{u.followersCount}</td>
+
+                        <td className="primary">
+                            <Button
+                            onClick={() => window.open(`/user/${u._id}`, '_blank')}
+                            style={{
+                              backgroundColor: "#f3b15a",
+                              border: "none",
+                            }}
+                            >
+                            โปรไฟล์
+                            </Button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={6}>
+                        <div style={{ margin: "20% 0", textAlign: "center" }}>
+                          ไม่พบผู้ใช้ที่ค้นหา
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>          
 
         <div className="recent-order" style={{ marginTop: "1.5rem" }}>
           <h2 style={{ marginLeft: "2px" }}>รายการ</h2>
