@@ -131,6 +131,29 @@ router.get("/users", async (req, res) => {
     }
 });
 
+router.get("/mostfollower-user", async (req, res) => {
+    try {
+        const topUsers = await User.aggregate([
+            {
+            $project: {
+                username: 1,
+                fullname: 1,
+                profile_picture: 1,
+                followers: 1,
+                followersCount: { $size: "$followers" }
+            }
+            },
+            { $sort: { followersCount: -1 } },
+            { $limit: 5 }
+        ]);
+
+        return res.json(topUsers);
+    } catch (error) {
+        console.error("Error fetching top users by followers:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
 router.get("/users/within24hour", async (req, res) => {
     try {
         const now = new Date();
