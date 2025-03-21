@@ -100,7 +100,7 @@ const ResetPassword: React.FC = () => {
 
           // Redirect to login page after success
           setTimeout(() => {
-            window.location.href = "https://kku-client.vercel.app/signin"; // Redirect to login page
+            window.location.href = "https://kkublogging.com/signin"; // Redirect to login page
           }, 3000); // Delay for the user to see success message
         } else {
           toast.error(res.data.message);
