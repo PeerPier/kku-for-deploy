@@ -2,11 +2,13 @@ import { Link } from "react-router-dom";
 import { Post, Author } from "../types/post";
 import { 
   FaRegHeart, 
-  FaRegCommentDots} from "react-icons/fa";
-  import { FaUserAlt } from "react-icons/fa";
+  FaRegCommentDots,
+  FaUserAlt 
+} from "react-icons/fa";
 import { FaEarthAmericas } from "react-icons/fa6";
 import { getDay } from "../common/date";
 import "../misc/blog.post-component.css";
+
 interface BlogCardProps {
   content: Post;
   author: Author;
@@ -21,8 +23,8 @@ const BlogCard: React.FC<BlogCardProps> = ({ content, author }) => {
     banner,
     activity: { total_likes, total_comments },
     blog_id: id,
-    views,         // view count from content
-    visibility,    // visibility from content ("followers" or other value)
+    views,
+    visibility,
   } = content;
 
   const {
@@ -31,10 +33,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ content, author }) => {
     username = "Unknown User",
   } = author || {};
 
-
   const tagList = Array.isArray(tags) ? tags : [];
-
- 
 
   return (
     <div className="blog-card-wrapper" style={{ position: "relative" }}>
@@ -48,6 +47,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ content, author }) => {
         }}
       >
         <div className="w-100">
+          {/* Header Info */}
           <div className="d-flex gap-2 align-items-center mb-7">
             <img
               src={profile_picture}
@@ -77,34 +77,49 @@ const BlogCard: React.FC<BlogCardProps> = ({ content, author }) => {
                   })}`
                 : "ไม่ทราบวันที่"}
             </p>
-            <span className="d-flex align-items-center gap-2" style={{ color: "#404040" }}>
-              {visibility === "followers" ? (
+
+            {/* 🔒 Visibility Info */}
+            <span
+              className="d-flex align-items-center gap-1"
+              style={{ color: "#404040" }}
+            >
+              {visibility?.toLowerCase() === "followers" ? (
                 <>
-                  <FaUserAlt  style={{ marginRight: "0.2rem" }} />
+                  <FaUserAlt />
                   
                 </>
               ) : (
                 <>
-                <FaEarthAmericas style={{ marginRight: "0.2rem" }} />
+                  <FaEarthAmericas />
                   
                 </>
               )}
             </span>
           </div>
 
+          {/* Content */}
           <h1 className="blog-title mt-3">{topic}</h1>
           <p className="descript-blogpost">{des}</p>
+
+          {/* Likes & Comments */}
           <div className="d-flex gap-4 mt-3" style={{ alignItems: "center" }}>
-            <span className="d-flex align-items-center gap-2" style={{ color: "#404040" }}>
+            <span
+              className="d-flex align-items-center gap-2"
+              style={{ color: "#404040" }}
+            >
               <FaRegHeart />
               {total_likes}
             </span>
-            <span className="d-flex align-items-center gap-2" style={{ color: "#404040" }}>
+            <span
+              className="d-flex align-items-center gap-2"
+              style={{ color: "#404040" }}
+            >
               <FaRegCommentDots />
               {total_comments}
             </span>
           </div>
 
+          {/* Tags */}
           <div className="d-flex gap-3 mt-3 tag-blogpage">
             {tagList.map((tag, index) => (
               <span key={index} className="btn-light">
@@ -114,7 +129,14 @@ const BlogCard: React.FC<BlogCardProps> = ({ content, author }) => {
           </div>
         </div>
 
-        <div style={{ aspectRatio: "1/1", height: "7rem", background: "#f0f0f0" }}>
+        {/* Thumbnail */}
+        <div
+          style={{
+            aspectRatio: "1/1",
+            height: "7rem",
+            background: "#f0f0f0",
+          }}
+        >
           <img
             src={banner}
             alt=""
@@ -128,4 +150,3 @@ const BlogCard: React.FC<BlogCardProps> = ({ content, author }) => {
 };
 
 export default BlogCard;
-

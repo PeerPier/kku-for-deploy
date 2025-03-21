@@ -5,7 +5,6 @@ import MinimalBlogPost from "../../nobanner-blog";
 import Loader from "../../../components/loader.component";
 import { Post } from "../../../types/post";
 import NoDataMessage from "../../../components/nodata.component";
-import { MdAutoGraph } from "react-icons/md";
 import { FcLike } from "react-icons/fc";
 
 const MostPopular = () => {

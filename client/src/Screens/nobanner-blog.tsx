@@ -40,7 +40,7 @@ const MinimalBlogPost: React.FC<BlogCardProps> = ({ blog, index }) => {
             {fullname} @{username}
           </p>
           <p className="w-auto m-0 fw-medium">
-            {getDay(publishedAt)} |{" "}
+            {getDay(publishedAt)} {" "}
             {new Date(publishedAt).toLocaleTimeString("th-TH", {
               hour: "2-digit",
               minute: "2-digit",
