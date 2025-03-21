@@ -16,7 +16,7 @@ const MinimalBlogPost: React.FC<BlogCardProps> = ({ blog, index }) => {
 
   return (
     <Link to={`/blog/${id}`} className="blog-link d-flex gap-4 mb-2">
-      <h1 className="blog-index">{index < 10 ? "0" + (index + 1) : index}</h1>
+      <h1 className="blog-index">{String(index + 1).padStart(2, "0")}</h1>
 
       <div>
         <div className="d-flex gap-2 align-items-center mb-2">
@@ -39,7 +39,13 @@ const MinimalBlogPost: React.FC<BlogCardProps> = ({ blog, index }) => {
           >
             {fullname} @{username}
           </p>
-          <p className="w-auto m-0 fw-medium"> {getDay(publishedAt)}</p>
+          <p className="w-auto m-0 fw-medium">
+            {getDay(publishedAt)} |{" "}
+            {new Date(publishedAt).toLocaleTimeString("th-TH", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </p>
         </div>
 
         <h1 className="blog-title">{topic}</h1>

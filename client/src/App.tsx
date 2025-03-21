@@ -13,6 +13,7 @@ import EditProfile from "./Screens/edit-profile.page";
 import RegisterAdmin from "./Screens/Admin/adminRegister";
 import AdminHome from "./Screens/Admin/adminHome";
 import Footer from "./Navbar/footer";
+import MostPopular from "./Screens/Admin/Chart/mostpopular";
 import ForgotPassword from "./Screens/Admin/ForgotPassword";
 import ResetPassword from "./Screens/Admin/ResetPassword";
 import ResetPasswordUser from "./Screens/ResetPasswordUser";
@@ -188,6 +189,7 @@ function App() {
           <Route path="/admin/login" element={<LoginAdmin type="admin" />} />
           <Route path="/admin/" element={<RegisterAdmin />} />
           <Route path="/admin/managereport" element={<ManageReport />} />
+          <Route path="/admin/mostpopular" element={<MostPopular />} />
           <Route path="/tag/:tag" element={<TagPost />} />
           <Route
             path="/admin/:adminId/profile"

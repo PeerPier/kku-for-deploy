@@ -40,6 +40,7 @@ import "chart.js/auto"; // สำหรับการใช้งาน Chart.j
 import ManageBadwords from "./manage-badwords";
 import GrowthChartAlluser from "./Chart/GrowthChartAlluser";
 import GrowthChartAllblog from "./Chart/GrowthChartAllblog";
+import MostPopular from "./Chart/mostpopular";
 import { useNavigate } from "react-router-dom";
 
 export interface Report {
@@ -126,7 +127,9 @@ const AdminHome: React.FC = () => {
   const { adminId } = useParams<{ adminId: string }>();
   const API_BASE_URL = process.env.REACT_APP_API_ENDPOINT;
   const adminUsername = sessionStorage.getItem("userId");
-  const [selectedChart, setSelectedChart] = useState<"user" | "blog">("user");
+  const [selectedChart, setSelectedChart] = useState<
+    "user" | "blog" | "popular"
+  >("user");
 
   const [adminProfile, setAdminProfile] = useState<any>(true);
   const [userCounter, setUserCounter] = useState<number>(0);
@@ -610,6 +613,28 @@ const AdminHome: React.FC = () => {
                       </div>
                     </div>
                   </div>
+
+                  {/* โพสต์ทั้งหมด */}
+                  <div
+                    className={`popular-post${
+                      selectedChart === "popular" ? "active" : ""
+                    }`}
+                    onClick={() => setSelectedChart("popular")}
+                    style={{
+                      position: "relative",
+                      cursor: "pointer",
+                      backgroundColor:
+                        selectedChart === "popular" ? "#9fa8f6" : "transparent",
+                      color: selectedChart === "popular" ? "white" : "black",
+                    }}
+                  >
+                    <IoDocumentTextOutline className="svg3" />
+                    <div className="middle">
+                      <div className="left">
+                        <h3>Popular Post</h3>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {/* แสดงกราฟด้านล่าง */}
@@ -620,6 +645,8 @@ const AdminHome: React.FC = () => {
                   {selectedChart === "blog" && (
                     <GrowthChartAllblog data={getBlog} />
                   )}
+                  {selectedChart === "popular" && <MostPopular />}{" "}
+                  {/* 👈 ใส่ตรงนี้เลย */}
                 </div>
               </div>
             </div>
