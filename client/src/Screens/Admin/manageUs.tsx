@@ -8,6 +8,7 @@ import axios from "axios";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai"; // Import eye icons
 import DeleteAccountModal from "../DeleteAccount-confirm";
 import DeleteAdminAccountModal from "./adminDelete-account";
+import UserStatsGraph from "./Chart/UserChart"; // อย่าลืม import ก่อนน้า
 
 interface UserProps {
   users: any[];
@@ -24,7 +25,6 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [fetchUserData, setFetchUserData] = useState<any>([]);
   const [fetchTop5FollowerUsers, setfetchTop5FollowerUsers] = useState<any>([]);
-
 
   const [passwordVisibility, setPasswordVisibility] = useState<{
     [key: string]: boolean;
@@ -90,13 +90,15 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchTop5rUsers();
-  },[])
+  }, []);
 
   const fetchTop5rUsers = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/admin/mostfollower-user`);
+      const response = await axios.get(
+        `${API_BASE_URL}/admin/mostfollower-user`
+      );
       setfetchTop5FollowerUsers(response.data);
     } catch (error) {
       console.error("Error fetching reports:", error);
@@ -121,7 +123,7 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
   return (
     <div className="manageUser">
       <div className="main1">
-        <h2
+        <h3
           style={{
             fontSize: "1.8rem",
             fontWeight: "800",
@@ -129,7 +131,7 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
           }}
         >
           จัดการบัญชีผู้ใช้
-        </h2>
+        </h3>
 
         <div className="insights">
           <div className="user-all">
@@ -151,10 +153,15 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
               </div>
             </div>
           </div>
+          <div className="view-all">
+            
+              <UserStatsGraph/>
+            
+          </div>
         </div>
 
         <div className="recent-order" style={{ marginTop: "1.5rem" }}>
-          <h2 style={{ marginLeft: "2px" }}>ผู้ใช้ที่มีผู้ติดตามมากที่สุด</h2>
+          <h3 style={{ marginLeft: "2px" }}>ผู้ใช้ที่มีผู้ติดตามมากที่สุด</h3>
           <div className="right">
             <div
               className="activity-analytics"
@@ -170,7 +177,6 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
                   style={{ margin: "20px 10px", backgroundColor: "white" }}
                 >
                   <tr>
-  
                     <th
                       style={{
                         // position: "sticky",
@@ -217,15 +223,17 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
                         <td>{u.followersCount}</td>
 
                         <td className="primary">
-                            <Button
-                            onClick={() => window.open(`/user/${u._id}`, '_blank')}
+                          <Button
+                            onClick={() =>
+                              window.open(`/user/${u._id}`, "_blank")
+                            }
                             style={{
                               backgroundColor: "#f3b15a",
                               border: "none",
                             }}
-                            >
+                          >
                             โปรไฟล์
-                            </Button>
+                          </Button>
                         </td>
                       </tr>
                     ))
@@ -242,10 +250,10 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
               </table>
             </div>
           </div>
-        </div>          
+        </div>
 
         <div className="recent-order" style={{ marginTop: "1.5rem" }}>
-          <h2 style={{ marginLeft: "2px" }}>รายการ</h2>
+          <h3 style={{ marginLeft: "6px" }}>รายการ</h3>
           {/* ช่องค้นหาผู้ใช้ */}
           {/* เพิ่มเติม: เเก้ Css search-user , input */}
           <div className="search-user">
@@ -272,7 +280,7 @@ const ManageUser: React.FC<UserProps> = ({ users, allUsers }) => {
               style={{
                 marginTop: "0.5rem",
                 overflowY: "scroll",
-                maxHeight: "300px",
+                maxHeight: "500px",
               }}
             >
               <table>

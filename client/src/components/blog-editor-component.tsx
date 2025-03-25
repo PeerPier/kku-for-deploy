@@ -63,7 +63,7 @@ const BlogEditor = () => {
     const img = e.target.files?.[0];
     const loadingToast = toast.loading("Uploading...");
     if (img) {
-      uploadImage(img) // ถ้ามีไฟล์เรียกใช้ uploadImage
+      uploadImage(img)
         .then((url) => {
           console.log("Uploaded URL:", url);
           if (url) {
@@ -168,15 +168,30 @@ const BlogEditor = () => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      let tag = e.currentTarget.value;
+      let tag = e.currentTarget.value.trim();
+
+      if (tag.length === 0) {
+        toast.error("แท็กไม่สามารถเป็นช่องว่างได้");
+        return;
+      }
+
+
+      const specialCharRegex = /[^\u0E00-\u0E7Fa-zA-Z0-9-_#]/;
+      if (specialCharRegex.test(tag)) {
+        toast.error("แท็กไม่สามารถมีอักขระพิเศษได้");
+        return;
+      }
 
       if (tags.length < tagLimit) {
-        if (!tags.includes(tag) && tag.length) {
+        if (!tags.includes(tag)) {
           setBlog({ ...blog, tags: [...tags, tag] });
         } else {
-          toast.error(`คุณเพิ่มสูงสุดแล้ว ${tagLimit}`);
+          toast.error(`คุณเพิ่มแท็ก "${tag}" ไปแล้ว`);
         }
+      } else {
+        toast.error(`คุณเพิ่มแท็กสูงสุดได้ ${tagLimit} แท็ก`);
       }
+
       e.currentTarget.value = "";
     }
   };
@@ -186,31 +201,24 @@ const BlogEditor = () => {
     if (target.className.includes("disable")) {
       return;
     }
+
     if (!banner.length) {
       return toast.error("อัพโหลดแบนเนอร์เพื่อเผยแพร่");
     }
-    if (!topic.length) {
+
+    const trimmedTopic = topic.trim();
+    if (!trimmedTopic) {
       return toast.error("เขียนชื่อบล็อกก่อนเผยแพร่");
     }
 
-    if (textEditor?.isReady) {
-      textEditor
-        .save()
-        .then((data) => {
-          if (data.blocks.length) {
-            setBlog({ ...blog, content: data });
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    const trimmedDes = des.trim();
+    if (!trimmedDes) {
+      return toast.error("เขียนรายละเอียดเกี่ยวกับบล็อกก่อนเผยแพร่");
+    }
+    if (trimmedDes.length > characterLimit) {
+      return toast.error(`รายละเอียดต้องไม่เกิน ${characterLimit} ตัวอักษร`);
     }
 
-    if (!des.length || des.length > characterLimit) {
-      return toast.error(
-        `เขียนรายละเอียดเกี่ยวกับบล็อกของคุณภายใน ${characterLimit} ตัวอักษรก่อนเผยแพร่`
-      );
-    }
     if (!tags.length) {
       return toast.error("กรอกอย่างน้อย 1 แท็ก เพื่อช่วยจัดอันดับบล็อกของคุณ");
     }
@@ -220,15 +228,31 @@ const BlogEditor = () => {
 
     if (textEditor?.isReady) {
       textEditor.save().then(async (content) => {
+        const editorText = content.blocks
+          .map((block) => block.data?.text || "")
+          .join(" ")
+          .replace(/^\s*&nbsp;+|&nbsp;+$/g, "")
+          .replace(/&nbsp;/g, "")
+          .trim();
+
+        if (!editorText.length) {
+          target.classList.remove("disable");
+          toast.dismiss(loadingToast);
+          return toast.error(
+            "เนื้อหาบล็อกต้องมีข้อความ ห้ามมีแต่ช่องว่างหรือ &nbsp;"
+          );
+        }
+
         let blogObj = {
-          topic,
+          topic: trimmedTopic,
           banner,
-          des,
+          des: trimmedDes,
           content,
           tags,
           draft: false,
           visibility,
         };
+
         axios
           .post(
             API_URL + "/create-blog",
@@ -244,7 +268,7 @@ const BlogEditor = () => {
             toast.dismiss(loadingToast);
             toast.success("เผยแพร่แล้ว");
             setTimeout(() => {
-              navigate("/homepage");
+              navigate("/");
             }, 500);
           })
           .catch(({ response }) => {
@@ -280,7 +304,15 @@ const BlogEditor = () => {
         <section>
           <div className="Banner-divhost">
             <div className="Banner-div ">
-              <label htmlFor="uploadBanner" style={{width:"100%", height:"100%", objectFit:"cover", overflow:"hidden"}}>
+              <label
+                htmlFor="uploadBanner"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  overflow: "hidden",
+                }}
+              >
                 <img
                   src={banner}
                   alt=""
@@ -333,7 +365,7 @@ const BlogEditor = () => {
               <div className="position-relative input-box pl-2 pb-4">
                 <input
                   type="text"
-                  placeholder="Enter เพื่อเพิ่มแท็ก"
+                  placeholder="พิมพ์แท็กแล้วกด Enter"
                   className="sticky-bg input-box"
                   onKeyDown={handleKeyDown}
                 />
@@ -345,9 +377,11 @@ const BlogEditor = () => {
             </div>
 
             <hr className="w-100 my-1" style={{ opacity: "0.1" }} />
+
+            <div id="textEditor" className="input-box"></div>
           </div>
 
-          <div id="textEditor"></div>
+          <hr className="w-100 my-1" style={{ opacity: "0.1" }} />
         </section>
       </AnimationWrapper>
     </>

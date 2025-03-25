@@ -215,15 +215,16 @@ const ManageReport: React.FC = () => {
   return (
     <div className="average">
       <div className="main1">
-        <h2
+        <h3
           style={{
             fontSize: "1.8rem",
             fontWeight: "800",
             marginTop: "2rem",
+            marginLeft:"6px"
           }}
         >
           จัดการรายงานปัญหา
-        </h2>
+        </h3>
         <div className="insights">
           <div
             className="blogpost-all"

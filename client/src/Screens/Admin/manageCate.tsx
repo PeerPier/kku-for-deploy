@@ -125,11 +125,11 @@ const ManageCate: React.FC<{ blogsData: Blog[] }> = ({ blogsData }) => {
   return (
     <div className="manageUser">
       <div className="main1">
-      <h2  style={{
+      <h3  style={{
                     fontSize: "1.8rem",
                     fontWeight: "800",
                     marginTop: "2rem"
-                  }}>จัดการหมวดหมู่</h2>
+                  }}>จัดการหมวดหมู่</h3>
         <div className="insights">
           <div className="user-all">
             <MdCategory className="svg1" />
@@ -144,7 +144,7 @@ const ManageCate: React.FC<{ blogsData: Blog[] }> = ({ blogsData }) => {
         </div>
 
         <div className="recent-order" style={{ marginTop: "1.5rem" }}>
-          <h2>รายการหมวดหมู่</h2>
+          <h3>รายการหมวดหมู่</h3>
 
           <div className="right">
             {/* ช่องค้นหา */}

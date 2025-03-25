@@ -42,6 +42,7 @@ import GrowthChartAlluser from "./Chart/GrowthChartAlluser";
 import GrowthChartAllblog from "./Chart/GrowthChartAllblog";
 import MostPopular from "./Chart/mostpopular";
 import { useNavigate } from "react-router-dom";
+import { IoHeartSharp } from "react-icons/io5";
 
 export interface Report {
   _id: string;
@@ -421,7 +422,18 @@ const AdminHome: React.FC = () => {
   return (
     <div className="adminHome adminProfile">
       <div className="contain">
-        <aside>
+        <aside
+          style={{
+            position: "sticky",
+            top: 0,
+            height: "100vh",
+            overflowY: "auto",
+            zIndex: 999,
+            scrollbarWidth: "none", // สำหรับ Firefox
+            msOverflowStyle: "none", // สำหรับ IE และ Edge เก่า
+          }}
+          
+        >
           <div className="top">
             <div className="logo">
               <img src={logostart} alt="" />
@@ -614,7 +626,7 @@ const AdminHome: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* โพสต์ทั้งหมด */}
+                  {/* Popular*/}
                   <div
                     className={`popular-post${
                       selectedChart === "popular" ? "active" : ""
@@ -628,14 +640,16 @@ const AdminHome: React.FC = () => {
                       color: selectedChart === "popular" ? "white" : "black",
                     }}
                   >
-                    <IoDocumentTextOutline className="svg3" />
+                    <IoHeartSharp className="svg3" />
                     <div className="middle">
                       <div className="left">
-                        <h3>Popular Post</h3>
+                        <h3>โพสต์ยอดนิยม</h3>
                       </div>
                     </div>
                   </div>
+                  
                 </div>
+                
 
                 {/* แสดงกราฟด้านล่าง */}
                 <div className="chart-container">

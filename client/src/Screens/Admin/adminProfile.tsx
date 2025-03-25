@@ -435,129 +435,130 @@ const AdminProfile: React.FC = () => {
     return (
       <div className="admin-acp confirmation-modal">
         <div className="modal-content">
-  <h2>แก้ไขข้อมูลแอดมิน</h2>
-  <div className="edit-form">
-    <div className="input-group">
-      <label>ชื่อผู้ใช้</label>
-      <input
-        type="text"
-        value={editData.username}
-        onChange={(e) =>
-          setEditData({ ...editData, username: e.target.value })
-        }
-        className="form-input"
-      />
-    </div>
-    <div className="input-group">
-      <label>อีเมล</label>
-      <input
-        type="email"
-        value={editData.email}
-        onChange={(e) =>
-          setEditData({ ...editData, email: e.target.value })
-        }
-        className="form-input"
-      />
-    </div>
-    <div className="input-group">
-      <label>ชื่อ</label>
-      <input
-        type="text"
-        value={editData.firstname}
-        onChange={(e) =>
-          setEditData({ ...editData, firstname: e.target.value })
-        }
-        className="form-input"
-      />
-    </div>
-    <div className="input-group">
-      <label>นามสกุล</label>
-      <input
-        type="text"
-        value={editData.lastname}
-        onChange={(e) =>
-          setEditData({ ...editData, lastname: e.target.value })
-        }
-        className="form-input"
-      />
-    </div>
-    <div className="input-group">
-      <label>เบอร์โทร</label>
-      <input
-        type="tel"
-        value={editData.tel}
-        onChange={(e) =>
-          setEditData({ ...editData, tel: e.target.value })
-        }
-        className="form-input"
-      />
-    </div>
-  </div>
+          <h2>แก้ไขข้อมูลแอดมิน</h2>
+          <div className="edit-form">
+            <div className="input-group">
+              <label>ชื่อผู้ใช้</label>
+              <input
+                type="text"
+                value={editData.username}
+                onChange={(e) =>
+                  setEditData({ ...editData, username: e.target.value })
+                }
+                className="form-input"
+              />
+            </div>
+            <div className="input-group">
+              <label>อีเมล</label>
+              <input
+                type="email"
+                value={editData.email}
+                onChange={(e) =>
+                  setEditData({ ...editData, email: e.target.value })
+                }
+                className="form-input"
+              />
+            </div>
+            <div className="input-group">
+              <label>ชื่อ</label>
+              <input
+                type="text"
+                value={editData.firstname}
+                onChange={(e) =>
+                  setEditData({ ...editData, firstname: e.target.value })
+                }
+                className="form-input"
+              />
+            </div>
+            <div className="input-group">
+              <label>นามสกุล</label>
+              <input
+                type="text"
+                value={editData.lastname}
+                onChange={(e) =>
+                  setEditData({ ...editData, lastname: e.target.value })
+                }
+                className="form-input"
+              />
+            </div>
+            <div className="input-group">
+              <label>เบอร์โทร</label>
+              <input
+                type="tel"
+                value={editData.tel}
+                onChange={(e) =>
+                  setEditData({ ...editData, tel: e.target.value })
+                }
+                className="form-input"
+              />
+            </div>
+          </div>
 
-  <div className="modal-actions">
-    <button className="cancel-btn" onClick={onClose}>
-      ยกเลิก
-    </button>
-    <button
-      className="confirm-btn"
-      onClick={() => {
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const telPattern = /^\d{10}$/;
+          <div className="modal-actions">
+            <button className="cancel-btn" onClick={onClose}>
+              ยกเลิก
+            </button>
+            <button
+              className="confirm-btn"
+              onClick={() => {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                const telPattern = /^\d{10}$/;
 
-        if (editData.username.trim() === "") {
-          toast.error("กรุณากรอกชื่อผู้ใช้");
-          return;
-        }
+                if (editData.username.trim() === "") {
+                  toast.error("กรุณากรอกชื่อผู้ใช้");
+                  return;
+                }
 
-        if (editData.firstname.trim() === "") {
-          toast.error("กรุณากรอกชื่อ");
-          return;
-        }
+                if (editData.firstname.trim() === "") {
+                  toast.error("กรุณากรอกชื่อ");
+                  return;
+                }
 
-        if (editData.lastname.trim() === "") {
-          toast.error("กรุณากรอกนามสกุล");
-          return;
-        }
+                if (editData.lastname.trim() === "") {
+                  toast.error("กรุณากรอกนามสกุล");
+                  return;
+                }
 
-        if (editData.email.trim() === "") {
-          toast.error("กรุณากรอกอีเมล");
-          return;
-        }
+                if (editData.email.trim() === "") {
+                  toast.error("กรุณากรอกอีเมล");
+                  return;
+                }
 
-        if (!emailPattern.test(editData.email.trim())) {
-          toast.error("รูปแบบอีเมลไม่ถูกต้อง (ต้องมี @ และโดเมน)");
-          return;
-        }
+                if (!emailPattern.test(editData.email.trim())) {
+                  toast.error("รูปแบบอีเมลไม่ถูกต้อง (ต้องมี @ และโดเมน)");
+                  return;
+                }
 
-        if (editData.tel.trim() === "") {
-          toast.error("กรุณากรอกเบอร์โทร");
-          return;
-        }
+                if (editData.tel.trim() === "") {
+                  toast.error("กรุณากรอกเบอร์โทร");
+                  return;
+                }
 
-        if (!telPattern.test(editData.tel)) {
-          toast.error("เบอร์โทรต้องเป็นตัวเลข 10 หลัก(ไม่มี -)");
-          return;
-        }
+                if (!telPattern.test(editData.tel)) {
+                  toast.error("เบอร์โทรต้องเป็นตัวเลข 10 หลัก(ไม่มี -)");
+                  return;
+                }
 
-        // ทำความสะอาดข้อมูลก่อนส่ง
-        const cleanedData = {
-          ...editData,
-          username: editData.username.trimStart().replace(/\s+/g, " "),
-          firstname: editData.firstname.trimStart().replace(/\s+/g, " "),
-          lastname: editData.lastname.trimStart().replace(/\s+/g, " "),
-          email: editData.email.trim(),
-          tel: editData.tel,
-        };
+                // ทำความสะอาดข้อมูลก่อนส่ง
+                const cleanedData = {
+                  ...editData,
+                  username: editData.username.trimStart().replace(/\s+/g, " "),
+                  firstname: editData.firstname
+                    .trimStart()
+                    .replace(/\s+/g, " "),
+                  lastname: editData.lastname.trimStart().replace(/\s+/g, " "),
+                  email: editData.email.trim(),
+                  tel: editData.tel,
+                };
 
-        onSave(cleanedData);
-        onClose();
-      }}
-    >
-      บันทึก
-    </button>
-  </div>
-</div>
-
+                onSave(cleanedData);
+                onClose();
+              }}
+            >
+              บันทึก
+            </button>
+          </div>
+        </div>
       </div>
     );
   };
@@ -581,180 +582,173 @@ const AdminProfile: React.FC = () => {
     return (
       <div className="admin-acp confirmation-modal">
         <div className="modal-content">
-  <h2>เพิ่มแอดมิน</h2>
-  <div className="edit-form">
-    {/* ข้อมูลส่วนตัว */}
-    <fieldset className="form-section">
-      <legend className="legend">ข้อมูลส่วนตัว</legend>
-      <div className="input-group">
-        <label>ชื่อ</label>
-        <input
-          type="text"
-          value={newAdmin.firstname}
-          onChange={(e) =>
-            setNewAdmin({ ...newAdmin, firstname: e.target.value })
-          }
-          className="form-input"
-        />
-      </div>
+          <h2>เพิ่มแอดมิน</h2>
+          <div className="edit-form">
+            {/* ข้อมูลส่วนตัว */}
+            <fieldset className="form-section">
+              <legend className="legend">ข้อมูลส่วนตัว</legend>
+              <div className="input-group">
+                <label>ชื่อ</label>
+                <input
+                  type="text"
+                  value={newAdmin.firstname}
+                  onChange={(e) =>
+                    setNewAdmin({ ...newAdmin, firstname: e.target.value })
+                  }
+                  className="form-input"
+                />
+              </div>
 
-      <div className="input-group">
-        <label>นามสกุล</label>
-        <input
-          type="text"
-          value={newAdmin.lastname}
-          onChange={(e) =>
-            setNewAdmin({ ...newAdmin, lastname: e.target.value })
-          }
-          className="form-input"
-        />
-      </div>
-    </fieldset>
+              <div className="input-group">
+                <label>นามสกุล</label>
+                <input
+                  type="text"
+                  value={newAdmin.lastname}
+                  onChange={(e) =>
+                    setNewAdmin({ ...newAdmin, lastname: e.target.value })
+                  }
+                  className="form-input"
+                />
+              </div>
+            </fieldset>
 
-    {/* ข้อมูลบัญชี */}
-    <fieldset className="form-section">
-      <legend className="legend">ข้อมูลบัญชี</legend>
-      <div className="input-group">
-        <label>ชื่อผู้ใช้</label>
-        <input
-          type="text"
-          value={newAdmin.username}
-          onChange={(e) =>
-            setNewAdmin({ ...newAdmin, username: e.target.value })
-          }
-          className="form-input"
-        />
-      </div>
-      <div className="input-group">
-        <label>รหัสผ่าน</label>
-        <input
-          type="password"
-          value={newAdmin.password}
-          onChange={(e) =>
-            setNewAdmin({ ...newAdmin, password: e.target.value })
-          }
-          className="form-input"
-        />
-      </div>
-    </fieldset>
+            {/* ข้อมูลบัญชี */}
+            <fieldset className="form-section">
+              <legend className="legend">ข้อมูลบัญชี</legend>
+              <div className="input-group">
+                <label>ชื่อผู้ใช้</label>
+                <input
+                  type="text"
+                  value={newAdmin.username}
+                  onChange={(e) =>
+                    setNewAdmin({ ...newAdmin, username: e.target.value })
+                  }
+                  className="form-input"
+                />
+              </div>
+              <div className="input-group">
+                <label>รหัสผ่าน</label>
+                <input
+                  type="password"
+                  value={newAdmin.password}
+                  onChange={(e) =>
+                    setNewAdmin({ ...newAdmin, password: e.target.value })
+                  }
+                  className="form-input"
+                />
+              </div>
+            </fieldset>
 
-    {/* ข้อมูลติดต่อ */}
-    <fieldset className="form-section">
-      <legend className="legend">ข้อมูลติดต่อ</legend>
-      <div className="input-group">
-        <label>อีเมล</label>
-        <input
-          type="email"
-          value={newAdmin.email}
-          onChange={(e) =>
-            setNewAdmin({ ...newAdmin, email: e.target.value })
-          }
-          className="form-input"
-        />
-      </div>
-      <div className="input-group">
-        <label>เบอร์โทร</label>
-        <input
-          type="tel"
-          inputMode="numeric"
-          maxLength={10}
-          value={newAdmin.tel}
-          onChange={(e) => {
-            const onlyNums = e.target.value.replace(/\D/g, "");
-            setNewAdmin({ ...newAdmin, tel: onlyNums });
-          }}
-          className="form-input"
-        />
-      </div>
-    </fieldset>
-  </div>
+            {/* ข้อมูลติดต่อ */}
+            <fieldset className="form-section">
+              <legend className="legend">ข้อมูลติดต่อ</legend>
+              <div className="input-group">
+                <label>อีเมล</label>
+                <input
+                  type="email"
+                  value={newAdmin.email}
+                  onChange={(e) =>
+                    setNewAdmin({ ...newAdmin, email: e.target.value })
+                  }
+                  className="form-input"
+                />
+              </div>
+              <div className="input-group">
+                <label>เบอร์โทร</label>
+                <input
+                  type="tel"
+                  inputMode="numeric"
+                  maxLength={10}
+                  value={newAdmin.tel}
+                  onChange={(e) => {
+                    const onlyNums = e.target.value.replace(/\D/g, "");
+                    setNewAdmin({ ...newAdmin, tel: onlyNums });
+                  }}
+                  className="form-input"
+                />
+              </div>
+            </fieldset>
+          </div>
 
-  <div className="modal-actions">
-    <button className="cancel-btn" onClick={onClose}>
-      ยกเลิก
-    </button>
-    <button
-      className="confirm-btn"
-      onClick={() => {
-        const {
-          firstname,
-          lastname,
-          username,
-          password,
-          email,
-          tel,
-        } = newAdmin;
+          <div className="modal-actions">
+            <button className="cancel-btn" onClick={onClose}>
+              ยกเลิก
+            </button>
+            <button
+              className="confirm-btn"
+              onClick={() => {
+                const { firstname, lastname, username, password, email, tel } =
+                  newAdmin;
 
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
-        const telPattern = /^\d{10}$/;
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
+                const telPattern = /^\d{10}$/;
 
-        if (firstname.trim() === "") {
-          toast.error("กรุณากรอกชื่อ");
-          return;
-        }
+                if (firstname.trim() === "") {
+                  toast.error("กรุณากรอกชื่อ");
+                  return;
+                }
 
-        if (lastname.trim() === "") {
-          toast.error("กรุณากรอกนามสกุล");
-          return;
-        }
+                if (lastname.trim() === "") {
+                  toast.error("กรุณากรอกนามสกุล");
+                  return;
+                }
 
-        if (username.trim() === "") {
-          toast.error("กรุณากรอกชื่อผู้ใช้");
-          return;
-        }
+                if (username.trim() === "") {
+                  toast.error("กรุณากรอกชื่อผู้ใช้");
+                  return;
+                }
 
-        if (password === "") {
-          toast.error("กรุณากรอกรหัสผ่าน");
-          return;
-        }
+                if (password === "") {
+                  toast.error("กรุณากรอกรหัสผ่าน");
+                  return;
+                }
 
-        if (!passwordPattern.test(password)) {
-          toast.error(
-            "รหัสผ่านต้องมีตัวพิมพ์เล็ก, ตัวพิมพ์ใหญ่, ตัวเลข อย่างละ 1 ตัว และไม่น้อยกว่า 6 ตัว"
-          );
-          return;
-        }
+                if (!passwordPattern.test(password)) {
+                  toast.error(
+                    "รหัสผ่านต้องมีตัวพิมพ์เล็ก, ตัวพิมพ์ใหญ่, ตัวเลข อย่างละ 1 ตัว และไม่น้อยกว่า 6 ตัว"
+                  );
+                  return;
+                }
 
-        if (email.trim() === "") {
-          toast.error("กรุณากรอกอีเมล");
-          return;
-        }
+                if (email.trim() === "") {
+                  toast.error("กรุณากรอกอีเมล");
+                  return;
+                }
 
-        if (!emailPattern.test(email.trim())) {
-          toast.error("รูปแบบอีเมลไม่ถูกต้อง (ต้องมี @ และโดเมน)");
-          return;
-        }
+                if (!emailPattern.test(email.trim())) {
+                  toast.error("รูปแบบอีเมลไม่ถูกต้อง (ต้องมี @ และโดเมน)");
+                  return;
+                }
 
-        if (tel.trim() === "") {
-          toast.error("กรุณากรอกเบอร์โทร");
-          return;
-        }
+                if (tel.trim() === "") {
+                  toast.error("กรุณากรอกเบอร์โทร");
+                  return;
+                }
 
-        if (!telPattern.test(tel)) {
-          toast.error("เบอร์โทรต้องเป็นตัวเลข 10 หลัก");
-          return;
-        }
+                if (!telPattern.test(tel)) {
+                  toast.error("เบอร์โทรต้องเป็นตัวเลข 10 หลัก");
+                  return;
+                }
 
-        // ถ้าทุกอย่างผ่าน → สะอาดข้อมูลก่อนส่ง
-        const cleanedData = {
-          firstname: firstname.trimStart().replace(/\s+/g, " "),
-          lastname: lastname.trimStart().replace(/\s+/g, " "),
-          username: username.trimStart().replace(/\s+/g, " "),
-          password,
-          email: email.trim(),
-          tel,
-        };
+                // ถ้าทุกอย่างผ่าน → สะอาดข้อมูลก่อนส่ง
+                const cleanedData = {
+                  firstname: firstname.trimStart().replace(/\s+/g, " "),
+                  lastname: lastname.trimStart().replace(/\s+/g, " "),
+                  username: username.trimStart().replace(/\s+/g, " "),
+                  password,
+                  email: email.trim(),
+                  tel,
+                };
 
-        onSave(cleanedData);
-        onClose();
-      }}
-    >
-      บันทึก
-    </button>
-  </div>
-</div>
-
+                onSave(cleanedData);
+                onClose();
+              }}
+            >
+              บันทึก
+            </button>
+          </div>
+        </div>
       </div>
     );
   };
@@ -772,6 +766,30 @@ const AdminProfile: React.FC = () => {
   const handleSaveEdit = async (updatedData: AdminListData) => {
     try {
       const user = JSON.parse(sessionStorage.getItem("user") || "{}");
+
+      // 🔍 1️⃣ ดึงรายชื่อแอดมินทั้งหมดก่อน
+      const { data: existingAdmins } = await axios.get(
+        `${API_BASE_URL}/admin/all-admins`,
+        {
+          headers: {
+            Authorization: `Bearer ${user.access_token}`,
+          },
+        }
+      );
+
+      // 🛑 2️⃣ ตรวจสอบว่ามีอีเมลนี้อยู่แล้วหรือไม่ (และไม่ใช่ของตัวเอง)
+      const isEmailTaken = existingAdmins.some(
+        (admin: AdminListData) =>
+          admin.email.toLowerCase() === updatedData.email.toLowerCase() &&
+          admin._id !== updatedData._id // ไม่ใช่แอดมินคนเดิม
+      );
+
+      if (isEmailTaken) {
+        toast.error("อีเมลนี้ถูกใช้งานแล้ว กรุณาใช้อีเมลอื่น");
+        return;
+      }
+
+      // ✅ 3️⃣ ถ้าอีเมลไม่ซ้ำ → แก้ไขได้เลย
       await axios.put(
         `${API_BASE_URL}/admin/users/${updatedData._id}`,
         updatedData,
@@ -781,9 +799,11 @@ const AdminProfile: React.FC = () => {
           },
         }
       );
+
       toast.success("แก้ไขข้อมูลสำเร็จ");
-      fetchAdmins();
+      fetchAdmins(); // 🔄 โหลดใหม่
     } catch (error) {
+      console.error("Error editing admin:", error);
       toast.error("ไม่สามารถแก้ไขข้อมูลได้");
     }
   };
@@ -901,7 +921,7 @@ const AdminProfile: React.FC = () => {
               <div className="profile-form">
                 <div className="form-fields">
                   <div className="input-group-profile">
-                    <label>Firstname</label>
+                    <label>ชื่อ</label>
                     <input
                       type="text"
                       name="firstname"
@@ -911,7 +931,7 @@ const AdminProfile: React.FC = () => {
                       onChange={handleInputChange}
                       disabled={!isEditing}
                     />
-                    <label>Lastname</label>
+                    <label>นามสกุล</label>
                     <input
                       type="text"
                       name="lastname"
@@ -921,7 +941,7 @@ const AdminProfile: React.FC = () => {
                       onChange={handleInputChange}
                       disabled={!isEditing}
                     />
-                    <label>Email</label>
+                    <label>อีเมล</label>
                     <input
                       type="email"
                       name="email"
@@ -931,7 +951,7 @@ const AdminProfile: React.FC = () => {
                       onChange={handleInputChange}
                       disabled={!isEditing}
                     />
-                    <label>Tel</label>
+                    <label>เบอร์</label>
                     <input
                       type="tel"
                       name="tel"
@@ -945,9 +965,100 @@ const AdminProfile: React.FC = () => {
                   <div className="action-buttons">
                     {isEditing ? (
                       <>
-                        <button className="edit-btn" onClick={handleUpdate}>
+                        <button
+                          className="edit-btn"
+                          onClick={async () => {
+                            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                            const telPattern = /^\d{10}$/;
+
+                            if (adminData.firstname.trim() === "") {
+                              toast.error("กรุณากรอกชื่อ");
+                              return;
+                            }
+
+                            if (adminData.lastname.trim() === "") {
+                              toast.error("กรุณากรอกนามสกุล");
+                              return;
+                            }
+
+                            if (adminData.email.trim() === "") {
+                              toast.error("กรุณากรอกอีเมล");
+                              return;
+                            }
+
+                            if (!emailPattern.test(adminData.email.trim())) {
+                              toast.error(
+                                "รูปแบบอีเมลไม่ถูกต้อง (ต้องมี @ และโดเมน)"
+                              );
+                              return;
+                            }
+
+                            if (adminData.tel.trim() === "") {
+                              toast.error("กรุณากรอกเบอร์โทร");
+                              return;
+                            }
+
+                            if (!telPattern.test(adminData.tel)) {
+                              toast.error(
+                                "เบอร์โทรต้องเป็นตัวเลข 10 หลัก (ไม่มี -)"
+                              );
+                              return;
+                            }
+
+                            try {
+                              const user = JSON.parse(
+                                sessionStorage.getItem("user") || "{}"
+                              );
+                              const { data: existingAdmins } = await axios.get(
+                                `${process.env.REACT_APP_API_ENDPOINT}/admin/all-admins`,
+                                {
+                                  headers: {
+                                    Authorization: `Bearer ${user.access_token}`,
+                                  },
+                                }
+                              );
+
+                              // 🛑 ตรวจสอบว่าอีเมลซ้ำกับคนอื่นไหม (ไม่รวมตัวเอง)
+                              const isEmailTaken = existingAdmins.some(
+                                (admin: any) =>
+                                  admin.email.toLowerCase() ===
+                                    adminData.email.toLowerCase() &&
+                                  admin._id !== user._id
+                              );
+
+                              if (isEmailTaken) {
+                                toast.error(
+                                  "อีเมลนี้ถูกใช้งานแล้ว กรุณาใช้อีเมลอื่น"
+                                );
+                                return;
+                              }
+
+                              // ✅ ทำความสะอาดข้อมูลก่อนใช้
+                              const cleanedData = {
+                                ...adminData,
+                                firstname: adminData.firstname
+                                  .trimStart()
+                                  .replace(/\s+/g, " "),
+                                lastname: adminData.lastname
+                                  .trimStart()
+                                  .replace(/\s+/g, " "),
+                                email: adminData.email.trim(),
+                                tel: adminData.tel.trim(),
+                              };
+
+                              // ✅ ใช้งาน cleanedData ตามต้องการ
+                              console.log("ข้อมูลที่บันทึก:", cleanedData);
+                              toast.success("บันทึกข้อมูลเรียบร้อยแล้ว!");
+                              setIsEditing(false); // ปิดโหมดแก้ไข
+                            } catch (error) {
+                              console.error("Error checking email:", error);
+                              toast.error("เกิดข้อผิดพลาดในการตรวจสอบอีเมล");
+                            }
+                          }}
+                        >
                           บันทึก
                         </button>
+
                         <button
                           className="cancel-btn"
                           onClick={() => setIsEditing(false)}

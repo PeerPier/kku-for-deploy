@@ -149,5 +149,30 @@ router.post("/update-profile", verifyJWT, (req, res) => {
       return res.status(500).json({ error: err.message });
     });
 });
+const getUserStatistics = async (req, res) => {
+  try {
+    const stats = await User.aggregate([
+      {
+        $group: {
+          _id: "$google_auth",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const formattedStats = {
+      email_users: stats.find((s) => s._id === false)?.count || 0,
+      google_users: stats.find((s) => s._id === true)?.count || 0,
+    };
+
+    res.json(formattedStats);
+  } catch (error) {
+    console.error("Error fetching user statistics:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+router.get("/statistics", getUserStatistics);
+
 
 module.exports = router;
