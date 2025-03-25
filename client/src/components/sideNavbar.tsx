@@ -77,7 +77,7 @@ const SideNav = () => {
   return (
     <>
       <section className="section-editpage gap-2 py-0 m-0 ">
-        <div className="position-sticky" style={{ top: "80px", zIndex: "30" }}>
+        <div className="position-sticky" style={{ top: "80px", zIndex: "0" }}>
           <div className="button-faBars">
             <button
               ref={sideBarIconTab}
