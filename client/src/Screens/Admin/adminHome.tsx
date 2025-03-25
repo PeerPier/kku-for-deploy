@@ -529,7 +529,6 @@ const AdminHome: React.FC = () => {
             <div className="header-content">
               <div className="title-container">
                 {/* Dynamic title */}
-                <h1></h1>
                 <div className="date"></div>
               </div>
               {/* Profile and theme section */}
