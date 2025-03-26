@@ -77,7 +77,7 @@ const SideNav = () => {
   return (
     <>
       <section className="section-editpage gap-2 py-0 m-0 ">
-        <div className="position-sticky" style={{ top: "80px", zIndex: "0" }}>
+        <div className="position-sticky" style={{ top: "80px",zIndex:"30"}}>
           <div className="button-faBars">
             <button
               ref={sideBarIconTab}
@@ -105,8 +105,8 @@ const SideNav = () => {
 
           <div className={`edit-form ${showSideNav ? "active" : ""}`}>
             <h1
-              className="mb-3"
-              style={{ color: "#494949", fontSize: "16px"}}
+              className="dash"
+              style={{ color: "#494949", fontSize: "16px" , marginTop:"20px"}}
             >
               แดชบอร์ด
             </h1>

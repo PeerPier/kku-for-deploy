@@ -31,6 +31,9 @@ const UserNavigationPanel = () => {
         <Link to={`/settings/edit-profile`} className="link pl-8">
           แก้ไขโปรไฟล์
         </Link>
+        <Link to={`/dashboard/blogs`} className="link pl-8 ">
+          แดชบอร์ด
+        </Link>
         <Link to={`/settings/change-password`} className="link pl-8">
           ตั้งค่าบัญชีผู้ใช้
         </Link>
