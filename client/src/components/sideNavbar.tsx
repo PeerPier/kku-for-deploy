@@ -74,6 +74,7 @@ const SideNav = () => {
     pageStateTab.current?.click();
   }, [pageState]);
 
+  
   return (
     <>
       <section className="section-editpage gap-2 py-0 m-0 ">
